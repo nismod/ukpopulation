@@ -11,7 +11,8 @@ class NPPData:
   Other variants are avilable online in zipped xml files
   """
   def __init__(self, cache_dir = "./raw_data"):
-    self.data_api = Api.Nomisweb(cache_dir) 
+    self.cache_dir = cache_dir
+    self.data_api = Api.Nomisweb(self.cache_dir) 
     # map of pandas dataframes keyed by variant code
     self.npp = {}
 
@@ -26,6 +27,9 @@ class NPPData:
       "geography": "2092957699...2092957702"
     }
     self.npp["ppp"] = self.data_api.get_data(table_internal, query_params)
+    # make age actual year
+    self.npp["ppp"].C_AGE = self.npp["ppp"].C_AGE - 1
+    # TODO merge 90+ for consistency with SNPP?
 
     print(self.npp["ppp"].head())
   #def __
