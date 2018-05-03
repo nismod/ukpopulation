@@ -6,7 +6,7 @@ import requests
 from openpyxl import load_workbook
 import ukcensusapi.Nomisweb as Api
 
-def read_cell_range(worksheet, topleft, bottomright):
+def _read_cell_range(worksheet, topleft, bottomright):
   data_rows = []
   for row in worksheet[topleft:bottomright]:
     data_cols = []
@@ -14,7 +14,6 @@ def read_cell_range(worksheet, topleft, bottomright):
       data_cols.append(cell.value)
     data_rows.append(data_cols)
   return np.array(data_rows)
-
 
 class SNPPData:
   """
@@ -28,8 +27,8 @@ class SNPPData:
     self.cache_dir = cache_dir
     self.data_api = Api.Nomisweb(self.cache_dir) 
 
-    self.snpp = self.__do_england().append(self.__do_nireland())
-
+    #self.data = self.__do_england().append(self.__do_wales()).append(self.__do_scotland()).append(self.__do_nireland())
+    self.data = self.__do_england().append(self.__do_wales()).append(self.__do_nireland())
 
   def __do_england(self):
     print("Collating SNPP data for England...")
@@ -52,6 +51,7 @@ class SNPPData:
     # make age actual year
     snpp_e.C_AGE = snpp_e.C_AGE - 101
 
+    assert(len(snpp_e) == 26*2*91*326) # 326 LADs x 91 ages x 2 genders x 26 years
     return snpp_e
 
     # Wales
@@ -95,12 +95,10 @@ class SNPPData:
       # convert gender to census convention 1=M, 2=F
       snpp_w.GENDER = snpp_w.GENDER.map({"M": 1, "F": 2})
 
+      assert(len(snpp_w) == 26*2*91*22) # 22 LADs x 91 ages x 2 genders x 26 years
       snpp_w.to_csv(wales_raw, index=False)
 
-    #print(snpp_w.head())
-
-    snpp_ew = snpp_e.append(snpp_w, ignore_index=False)
-    assert(len(snpp_ew) == 26*2*91*348) # 348 LADs x 91 ages x 2 genders x 26 years
+    return snpp_w
 
   def __do_scotland(self):
     # Scotland https://www.nrscotland.gov.uk/files//statistics/population-projections/snpp-2014/detailed/pop-proj-scot-areas-14-det-tab-ca-year.zip
@@ -140,8 +138,8 @@ class SNPPData:
 
       for d in districts:
         area_code = xls_ni[d]["A2"].value
-        males = read_cell_range(xls_ni[d], "A3", "AA95")
-        females = read_cell_range(xls_ni[d], "A98", "AA190")
+        males = _read_cell_range(xls_ni[d], "A3", "AA95")
+        females = _read_cell_range(xls_ni[d], "A98", "AA190")
         
         dfm = pd.DataFrame(data=males[1:,1:], index=males[1:,0], columns=males[0,1:]).drop(["Age"]).stack().reset_index()
         dfm.columns=["C_AGE", "PROJECTED_YEAR_NAME", "OBS_VALUE"]
@@ -161,5 +159,5 @@ class SNPPData:
       assert(len(snpp_ni) == 26*2*91*11) # 11 districts x 91 ages x 2 genders x 26 years
       snpp_ni.to_csv(ni_raw, index=False)
 
-      print("Done")
+    return snpp_ni
 
