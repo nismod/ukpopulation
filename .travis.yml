@@ -2,25 +2,17 @@
 cache: packages
 sudo: false
 
-matrix:
-  include:
-    - language: python
-      python: 3.5
-      env:
-        - NOMIS_API_KEY=DUMMY
-      install:
-        - pip install -r requirements.txt
-      script:
-        - python setup.py test
-
-    - language: python
-      python: 3.6
-      env:
-        - NOMIS_API_KEY=DUMMY
-      install:
-        - pip install -r requirements.txt
-      script:
-        - python setup.py test
+language: python
+python: 
+  - 3.5
+  - 3.6
+  - 3.7
+env:
+  - NOMIS_API_KEY=DUMMY
+install:
+  - pip install -r requirements.txt
+script:
+  - python setup.py test
 
 warnings_are_errors: false
 
