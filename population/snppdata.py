@@ -1,5 +1,6 @@
 import os.path
 import json
+import zipfile
 import numpy as np
 import pandas as pd
 import requests
@@ -27,8 +28,10 @@ class SNPPData:
     self.cache_dir = cache_dir
     self.data_api = Api.Nomisweb(self.cache_dir) 
 
-    #self.data = self.__do_england().append(self.__do_wales()).append(self.__do_scotland()).append(self.__do_nireland())
-    self.data = self.__do_england().append(self.__do_wales()).append(self.__do_nireland())
+    self.data = self.__do_england().append(self.__do_wales()).append(self.__do_scotland()).append(self.__do_nireland())
+
+    # LADs * 26 years * 91 ages * 2 genders
+    assert len(self.data) == (326+22+32+11) * 26 * 91 * 2
 
   def __do_england(self):
     print("Collating SNPP data for England...")
@@ -101,9 +104,46 @@ class SNPPData:
     return snpp_w
 
   def __do_scotland(self):
-    # Scotland https://www.nrscotland.gov.uk/files//statistics/population-projections/snpp-2014/detailed/pop-proj-scot-areas-14-det-tab-ca-year.zip
-    # (1 csv per gender per year)
-    pass
+    print("Collating SNPP data for Scotland...")
+
+    scotland_raw = self.cache_dir + "/snpp_s.csv"
+
+    scotland_src = "https://www.nrscotland.gov.uk/files//statistics/population-projections/snpp-2014/detailed/pop-proj-scot-areas-14-det-tab-ca-year.zip"
+    scotland_zip = self.cache_dir + "/snpp_s.zip"
+
+    if os.path.isfile(scotland_raw): 
+      snpp_s = pd.read_csv(scotland_raw)
+    else: 
+      response = requests.get(scotland_src)
+      with open(scotland_zip, 'wb') as fd:
+        for chunk in response.iter_content(chunk_size=1024):
+          fd.write(chunk)
+        print("Downloaded", scotland_zip)
+
+      z = zipfile.ZipFile(scotland_zip)
+      #print(z.namelist())  
+
+      snpp_s = pd.DataFrame()
+      for year in range(2014,2040):
+        for gender in [1,2]:
+          filename = "Population-"+str(year)+("-Male" if gender==1 else "-Female")+".csv"
+          chunk = pd.read_csv(z.open(filename)
+          ).drop(["Area", "All Ages"], axis=1
+          ).drop(0 
+          ).rename(columns={"90 and over": "90"}
+          ).set_index("Code")
+
+          chunk = chunk.stack().reset_index() 
+          chunk.columns = ["GEOGRAPHY_CODE", "C_AGE", "OBS_VALUE"]
+          chunk["GENDER"] = gender
+          chunk["PROJECTED_YEAR_NAME"] = year
+          #print(chunk.head())
+          snpp_s = snpp_s.append(chunk)
+
+      print(len(snpp_s))
+      #assert(len(snpp_s) == 26*2*91*32) # 32 districts x 91 ages x 2 genders x 26 years
+      snpp_s.to_csv(scotland_raw, index=False)
+    return snpp_s
 
   def __do_nireland(self):
     # Niron 
