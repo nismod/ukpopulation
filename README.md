@@ -1,4 +1,4 @@
-# Population and Demographics Projection
+# population: Demographic Projections
 
 Population and demographics projection module, developed for ITRC/MISTRAL.
 
