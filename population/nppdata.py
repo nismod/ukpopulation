@@ -1,7 +1,8 @@
 
+import os.path
 import numpy as np
 import pandas as pd
-#import requests
+import requests
 from openpyxl import load_workbook
 import ukcensusapi.Nomisweb as Api
 from bs4 import BeautifulSoup
@@ -28,6 +29,33 @@ class NPPData:
   Nomisweb stores the UK principal variant (only)
   Other variants are avilable online in zipped xml files
   """
+
+  VARIANTS = {
+    "hhh": "High population", 
+    "hpp": "High fertility",
+    "lll": "Low population",
+    "lpp": "Low fertility",
+    "php": "High life expectancy",
+    "pjp": "",
+    "pkp": "",
+    "plp": "Low life expectancy",
+    "pph": "High migration",
+    "ppl": "Low migration",
+    "ppp": "Principal",
+    "ppq": "",
+    "ppr": "",
+    "pps": "",
+    "ppz": "Zero net migration"
+  }
+
+# Young age structure 	hlh 				
+# Old age structure 	lhl 				
+# Replacement fertility 	rpp 				
+# Constant fertility 	cpp 				
+# No mortality improvement 	pnp 				
+# No change 	cnp 				
+# Long term balanced net migration 	ppb 	
+
   def __init__(self, cache_dir = "./raw_data"):
     self.cache_dir = cache_dir
     self.data_api = Api.Nomisweb(self.cache_dir) 
@@ -36,7 +64,7 @@ class NPPData:
 
     self.data["ppp"] = self.__download_ppp()
 
-    #self.__download_variants()
+    self.__download_variants()
 
   def __download_ppp(self):
 
@@ -59,32 +87,30 @@ class NPPData:
   
   def __download_variants(self):
 
-    # TODO by country...(not Uk)
+    datasets = {
+      "e":  "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z3zippedpopulationprojectionsdatafilesengland/2016based/tablez3opendata16england.zip",
+      "w":  "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z4zippedpopulationprojectionsdatafileswales/2016based/tablez4opendata16wales.zip",
+      "s":  "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z5zippedpopulationprojectionsdatafilesscotland/2016based/tablez5opendata16scotland.zip",
+      "ni": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z6zippedpopulationprojectionsdatafilesnorthernireland/2016based/tablez6opendata16northernireland.zip",
+    }
 
-    variant = np.array(_read_excel_xml(self.cache_dir + "/uk_hpp_opendata2016.xml", "Population"))
-    print(variant[0,:])
-    print(variant[:,0])
+    for key in datasets:
+      raw_zip = self.cache_dir + "/npp_" + key + ".zip"
+      if not os.path.isfile(raw_zip): 
+        response = requests.get(datasets[key])
+        with open(raw_zip, 'wb') as fd:
+          for chunk in response.iter_content(chunk_size=1024):
+            fd.write(chunk)
 
-    df = pd.DataFrame(data=variant[1:,0:], columns=variant[0,0:])
-    #pd.DataFrame(data=males[1:,1:], index=males[1:,0], columns=males[0,1:])
-    print(df.head())
-#   Sex           Age    2016    2017    2018    2019    2020    2021    2022  \
-# 0   1             0  401630  389769  403505  408285  412683  416741  420617
-# 1   1             1  402554  404083  392142  405802  410510  414711  418678
-# 2   1             2  406751  405885  407293  395271  408834  413295  417382
-# 3   1             3  416855  409714  408734  410068  397968  411298  415658
-# 4   1             4  430088  419536  412294  411246  412506  400183  413422
+    # variant = np.array(_read_excel_xml(self.cache_dir + "/uk_hpp_opendata2016.xml", "Population"))
+    # print(variant[0,:])
+    # print(variant[:,0])
 
-#      2023   ...      2107    2108    2109    2110    2111    2112    2113  \
-# 0  421718   ...    508106  509490  510829  512100  513313  514466  515555
-# 1  422467   ...    508705  510132  511516  512857  514130  515344  516497
-# 2  421240   ...    509864  511324  512751  514134  515476  516749  517965
-# 3  419646   ...    510674  512153  513614  515043  516424  517767  519040
-# 4  417693   ...    511251  512728  514208  515668  517098  518478  519821
+    # df = pd.DataFrame(data=variant[1:,0:], columns=variant[0,0:])
+    # #pd.DataFrame(data=males[1:,1:], index=males[1:,0], columns=males[0,1:])
 
-#      2114    2115    2116
-# 0  516591  517569  518508
-# 1  517588  518626  519605
-# 2  519117  520208  521247
-# 3  520255  521407  522500
-# 4  521095  522310  523460
+    # df.to_csv(self.cache_dir + "/uk_hpp_opendata2016.csv",index=None)
+    # print(df.head())
+
+
+
