@@ -23,6 +23,3 @@ class Test(TestCase):
     self.assertTrue(np.array_equal(sorted(snpp.data.C_AGE.unique()), np.array(range(0,91))))
     self.assertTrue(np.array_equal(snpp.data.GENDER.unique(), np.array([1,2])))
     
-    #self.assertListEqual(snpp.data.GENDER.unique(), [1,2], "gender failed")
-    #print(len(snpp.data))
-    #self.assertTrue(False)

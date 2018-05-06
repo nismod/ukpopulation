@@ -20,9 +20,7 @@ for file in raw_files:
   geogs = df.GEOGRAPHY_CODE.unique()[:3]
   df = df[(df.GEOGRAPHY_CODE.isin(geogs)) & (df.PROJECTED_YEAR_NAME < 2028)]
 
-  #print(df.GEOGRAPHY_CODE.unique())
-  #print(df.PROJECTED_YEAR_NAME.unique())
   df.to_csv(test_data_dir + file, sep=sep, index=False)
 
 # NB the file NM_2006_1_dbe6c087fb46306789f7d54b125482e4.tsv also needs to be in the test data folder,
-# containing column headings only.
+# containing column headings only. (This will prevent the data being re-downloaded)
