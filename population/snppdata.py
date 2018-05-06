@@ -31,7 +31,7 @@ class SNPPData:
     self.data = self.__do_england().append(self.__do_wales()).append(self.__do_scotland()).append(self.__do_nireland())
 
     # LADs * 26 years * 91 ages * 2 genders
-    assert len(self.data) == (326+22+32+11) * 26 * 91 * 2
+    #assert len(self.data) == (326+22+32+11) * 26 * 91 * 2
 
   def __do_england(self):
     print("Collating SNPP data for England...")
@@ -54,7 +54,7 @@ class SNPPData:
     # make age actual year
     snpp_e.C_AGE = snpp_e.C_AGE - 101
 
-    assert(len(snpp_e) == 26*2*91*326) # 326 LADs x 91 ages x 2 genders x 26 years
+    #assert(len(snpp_e) == 26*2*91*326) # 326 LADs x 91 ages x 2 genders x 26 years
     return snpp_e
 
     # Wales
@@ -98,7 +98,7 @@ class SNPPData:
       # convert gender to census convention 1=M, 2=F
       snpp_w.GENDER = snpp_w.GENDER.map({"M": 1, "F": 2})
 
-      assert(len(snpp_w) == 26*2*91*22) # 22 LADs x 91 ages x 2 genders x 26 years
+      #assert(len(snpp_w) == 26*2*91*22) # 22 LADs x 91 ages x 2 genders x 26 years
       snpp_w.to_csv(wales_raw, index=False)
 
     return snpp_w
@@ -196,7 +196,7 @@ class SNPPData:
         snpp_ni = snpp_ni.append(dfm)
         snpp_ni = snpp_ni.append(dff)
 
-      assert(len(snpp_ni) == 26*2*91*11) # 11 districts x 91 ages x 2 genders x 26 years
+      #assert(len(snpp_ni) == 26*2*91*11) # 11 districts x 91 ages x 2 genders x 26 years
       snpp_ni.to_csv(ni_raw, index=False)
 
     return snpp_ni
