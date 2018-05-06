@@ -3,13 +3,14 @@
 """ 
 create a small subset of real data for testing - 3 LADs per country and years up to 2027
 test data is under source control - this script only required if the data format changes
+NOTE: ensure NOMIS_API_KEY=DUMMY in order to match the cached filenames for England
 """
 import pandas as pd
 
 real_data_dir = "./raw_data/"
 test_data_dir = "./tests/raw_data/"
 
-raw_files = ["NM_2006_1_56aba41fc0fab32f58ead6ae91a867b4.tsv", # England 
+raw_files = ["NM_2006_1_d9b41c77ffd9da86c7ff40ddedd64fe6.tsv", # England 
              "snpp_w.csv","snpp_s.csv","snpp_ni.csv"]
 
 
@@ -22,5 +23,5 @@ for file in raw_files:
 
   df.to_csv(test_data_dir + file, sep=sep, index=False)
 
-# NB the file NM_2006_1_dbe6c087fb46306789f7d54b125482e4.tsv also needs to be in the test data folder,
+# NB the file NM_2006_1_80dd181418e34b263810a07ede7655a6.tsv also needs to be in the test data folder,
 # containing column headings only. (This will prevent the data being re-downloaded)
