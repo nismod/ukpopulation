@@ -88,7 +88,8 @@ class NPPData:
   
   def __download_variants(self):
 
-    variants = ["hhh", "lll"]
+    # TODO use 
+    variants = ["hhh"]#, "lll"]
 
     datasets = {
       "en": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z3zippedpopulationprojectionsdatafilesengland/2016based/tablez3opendata16england.zip",
@@ -99,39 +100,79 @@ class NPPData:
 
     codes = {
       "en": "E92000001",
-      "wa": "W92000001",
-      "sc": "S92000001",
-      "ni": "N92000001",
+      "wa": "W92000004",
+      "sc": "S92000003",
+      "ni": "N92000002"
     }
 
     for variant in variants: 
       dataset = self.cache_dir + "/npp_" + variant + ".csv"
-      if not os.path.isfile():
+      if not os.path.isfile(dataset):
         pass 
+      self.data[variant] = pd.DataFrame()
 
     # download, unzip collate and reformat data if not presentcd
-    for key in ["en"]: #datasets:
-      raw_zip = self.cache_dir + "/npp_" + key + ".zip"
+    for country in ["en"]: #datasets:
+      raw_zip = self.cache_dir + "/npp_" + country + ".zip"
       if not os.path.isfile(raw_zip): 
-        response = requests.get(datasets[key])
+        response = requests.get(datasets[country])
         with open(raw_zip, 'wb') as fd:
           for chunk in response.iter_content(chunk_size=1024):
             fd.write(chunk)   
       z = zipfile.ZipFile(raw_zip)
+
       #variants = z.namelist() 
       for vname in variants:
         print(vname)
-        vfile = self.cache_dir + "/" + vname
-        if not os.path.isfile(vfile):
+        vxml = country + "_" + vname + "_opendata2016.xml"
+        #vcsv = self.cache_dir + "/" + country + "_" + vname + "_opendata2016.csv"
+        if not os.path.isfile(self.cache_dir + "/" + vxml):
           z.extract(vname, path=self.cache_dir)
         start = time.time()
-        variant = np.array(_read_excel_xml(vfile, "Population"))
+        variant = np.array(_read_excel_xml(self.cache_dir + "/" + vxml, "Population"))
         print("read xml in " + str(time.time() - start))
-        df = pd.DataFrame(data=variant[1:,2:], columns=variant[0,2:], index=variant[0:,:2])
-        # TODO replace xml->csv
-        print(df.head())
-        df.to_csv(vfile + ".csv", index=None)
-        break
+        #df = pd.DataFrame(data=variant[1:,2:], columns=variant[0,2:], index=variant[1:,:2])
+        df = pd.DataFrame(data=variant[1:,0:], columns=variant[0,0:])
+        df = df.set_index(["Sex", "Age"]).stack().reset_index()
+        # remove padding
+        df.Age = df.Age.str.strip()
+        df.columns = ["GENDER", "C_AGE", "PROJECTED_YEAR_NAME", "OBS_VALUE"]
+        #print(df.head())
+
+        # list age categories we are aggregating
+        a = ["90", "91", "92", "93", "94", "95", "96", "97", "98", "99", "100", "101", "102", "103", "104", "105 - 109", "110 and over"]
+
+        # copy the data in these categories
+        dfagg = df[df.C_AGE.isin(a)]
+        print(dfagg.head())
+
+        # The aggregration goes haywire unless the data is saved and reloaded - comment out lines below to see
+        # TODO this needs to be fixed and/or reported as a (reproducible) bug
+        tmpfile = "./tmp.csv"
+        dfagg.to_csv(tmpfile, index=False)
+        dfagg = pd.read_csv(tmpfile)
+
+        dfagg = dfagg.groupby(["GENDER", "PROJECTED_YEAR_NAME"])["OBS_VALUE"].sum().reset_index()
+        dfagg["C_AGE"] = "90"
+        print(dfagg.head())
+
+        # print(df.head())
+        # print(dfagg.head())
+        # print(df.columns)
+        # print(dfagg.columns)
+        # remove the aggregated categories from the original and append the aggregate
+        df = df[~df.C_AGE.isin(a)].append(dfagg, ignore_index=True)
+ 
+        # add the country code
+        df["GEOGRAPHY_CODE"] = codes[country]
+
+        #df.to_csv(vcsv, index=None)
+        self.data[vname] = self.data[vname].append(df, ignore_index=True)
+    
+    for variant in variants: 
+      filename = self.cache_dir + "/npp_" + variant + ".csv"
+      self.data[variant].to_csv(filename, index=None)
+
 
       # snpp_s = pd.DataFrame()
       # for year in range(2014,2040):
