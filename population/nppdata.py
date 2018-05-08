@@ -1,8 +1,10 @@
 
 import os.path
+import requests
+import zipfile
+import time
 import numpy as np
 import pandas as pd
-import requests
 from openpyxl import load_workbook
 import ukcensusapi.Nomisweb as Api
 from bs4 import BeautifulSoup
@@ -21,7 +23,6 @@ def _read_excel_xml(path, sheet_name):
               row_as_list.append(data.text)
         worksheet.append(row_as_list)
   return worksheet
-
 
 class NPPData:
   """
@@ -87,22 +88,57 @@ class NPPData:
   
   def __download_variants(self):
 
+    variants = ["hhh", "lll"]
+
     datasets = {
-      "e":  "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z3zippedpopulationprojectionsdatafilesengland/2016based/tablez3opendata16england.zip",
-      "w":  "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z4zippedpopulationprojectionsdatafileswales/2016based/tablez4opendata16wales.zip",
-      "s":  "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z5zippedpopulationprojectionsdatafilesscotland/2016based/tablez5opendata16scotland.zip",
+      "en": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z3zippedpopulationprojectionsdatafilesengland/2016based/tablez3opendata16england.zip",
+      "wa": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z4zippedpopulationprojectionsdatafileswales/2016based/tablez4opendata16wales.zip",
+      "sc": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z5zippedpopulationprojectionsdatafilesscotland/2016based/tablez5opendata16scotland.zip",
       "ni": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z6zippedpopulationprojectionsdatafilesnorthernireland/2016based/tablez6opendata16northernireland.zip",
     }
 
-    for key in datasets:
+    codes = {
+      "en": "E92000001",
+      "wa": "W92000001",
+      "sc": "S92000001",
+      "ni": "N92000001",
+    }
+
+    for variant in variants: 
+      dataset = self.cache_dir + "/npp_" + variant + ".csv"
+      if not os.path.isfile():
+        pass 
+
+    # download, unzip collate and reformat data if not presentcd
+    for key in ["en"]: #datasets:
       raw_zip = self.cache_dir + "/npp_" + key + ".zip"
       if not os.path.isfile(raw_zip): 
         response = requests.get(datasets[key])
         with open(raw_zip, 'wb') as fd:
           for chunk in response.iter_content(chunk_size=1024):
-            fd.write(chunk)
+            fd.write(chunk)   
+      z = zipfile.ZipFile(raw_zip)
+      #variants = z.namelist() 
+      for vname in variants:
+        print(vname)
+        vfile = self.cache_dir + "/" + vname
+        if not os.path.isfile(vfile):
+          z.extract(vname, path=self.cache_dir)
+        start = time.time()
+        variant = np.array(_read_excel_xml(vfile, "Population"))
+        print("read xml in " + str(time.time() - start))
+        df = pd.DataFrame(data=variant[1:,2:], columns=variant[0,2:], index=variant[0:,:2])
+        # TODO replace xml->csv
+        print(df.head())
+        df.to_csv(vfile + ".csv", index=None)
+        break
 
-    # variant = np.array(_read_excel_xml(self.cache_dir + "/uk_hpp_opendata2016.xml", "Population"))
+      # snpp_s = pd.DataFrame()
+      # for year in range(2014,2040):
+      #   for gender in [1,2]:
+      #     filename = "Population-"+str(year)+("-Male" if gender==1 else "-Female")+".csv"
+      #     chunk = pd.read_csv(z.open(filename)    
+
     # print(variant[0,:])
     # print(variant[:,0])
 
@@ -113,4 +149,10 @@ class NPPData:
     # print(df.head())
 
 
+# file = "raw_data/en_pph_opendata2016.xml.csv"
+# #df = pd.DataFrame(data=variant[1:,2:], columns=variant[0,2:], index=variant[0:,:2])
+# df = pd.read_csv(file).set_index(keys=["Sex","Age"])
+# s = df.stack().reset_index()
+# s.columns=["GENDER", "C_AGE", "PROJECTED_YEAR_NAME", "OBS_VALUE"]
+# s["GEOGRAPHY_CODE"] = "K000"
 
