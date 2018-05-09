@@ -233,27 +233,3 @@ class NPPData:
       filename = self.cache_dir + "/npp_" + variant + ".csv"
       self.data[variant].to_csv(filename, index=None)
 
-
-      # snpp_s = pd.DataFrame()
-      # for year in range(2014,2040):
-      #   for gender in [1,2]:
-      #     filename = "Population-"+str(year)+("-Male" if gender==1 else "-Female")+".csv"
-      #     chunk = pd.read_csv(z.open(filename)    
-
-    # print(variant[0,:])
-    # print(variant[:,0])
-
-    # df = pd.DataFrame(data=variant[1:,0:], columns=variant[0,0:])
-    # #pd.DataFrame(data=males[1:,1:], index=males[1:,0], columns=males[0,1:])
-
-    # df.to_csv(self.cache_dir + "/uk_hpp_opendata2016.csv",index=None)
-    # print(df.head())
-
-
-# file = "raw_data/en_pph_opendata2016.xml.csv"
-# #df = pd.DataFrame(data=variant[1:,2:], columns=variant[0,2:], index=variant[0:,:2])
-# df = pd.read_csv(file).set_index(keys=["Sex","Age"])
-# s = df.stack().reset_index()
-# s.columns=["GENDER", "C_AGE", "PROJECTED_YEAR_NAME", "OBS_VALUE"]
-# s["GEOGRAPHY_CODE"] = "K000"
-

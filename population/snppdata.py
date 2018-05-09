@@ -16,6 +16,10 @@ def _read_cell_range(worksheet, topleft, bottomright):
     data_rows.append(data_cols)
   return np.array(data_rows)
 
+def _country(lad_code):
+  lookup={"E": "en", "W": "wa", "S": "sc", "N": "ni"}
+  return lookup[lad_code[0]]
+
 class SNPPData:
   """
   Functionality for downloading and collating UK Subnational Population Projection (NPP) data
@@ -52,7 +56,13 @@ class SNPPData:
       categories.append("PROJECTED_YEAR_NAME")
     return data.groupby(categories)["OBS_VALUE"].sum().reset_index()
 
-  def extrapolate(self):
+  # For now one LAD at a time due to multiple countries
+  # For now allow extrapolation of years already in data
+  def extrapolate(self, npp, geog_code, years):
+    print(_country(geog_code))
+    data = self.filter([geog_code], years)
+    print(len(data))
+    scaling = npp.filter()
     pass
 
   def apply_variant(self): 

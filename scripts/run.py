@@ -9,7 +9,7 @@ def main():
 
   print(NPPData.NPPData.EW)
 
-  data = npp.detail("hhh", NPPData.NPPData.EW, range(2016,2051))
+  data = npp.detail("lll", NPPData.NPPData.EW, range(2016,2051))
 
   print(data.GEOGRAPHY_CODE.unique())
   print(data.PROJECTED_YEAR_NAME.unique())

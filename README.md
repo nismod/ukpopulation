@@ -40,9 +40,28 @@ Long term balanced net migration | ppb  |   |   | x |   |
 
 # Rationale
 
-The purpose of the code in this repo is provide a unified interface to SNPP and NPP data, including variants:
-- encapsulate the downloading of the NPP and SNPP data from the various sources.
+The purpose of the code in this repo is provide a unified interface to both SNPP and NPP data, including variants:
+- encapsulate the downloading, processing and cacheing of the NPP and SNPP data from the various sources.
 - unify the format of the NPP and SNPP data from the various sources.
 - provide a method of synthesising SNPP variant projections using SNPP principal and NPP principal/variant projections
 - provide a method of extrapolating SNPP data using NPP data
-- enable easy subsetting of the data, e.g. extracting projections of the working-age population.
+- enable easy filtering and aggregating of of the data, e.g. extracting projections of the working-age population.
+
+# Methodology and Detail
+## Data Sources
+- [Nomisweb](www.nomisweb.co.uk): UK NPP by country/SYoA/gender, England SNPP by LAD/SYoA/gender
+- [ONS](https://www.ons.gov.uk): UK NPP variants by country/SYoA/gender
+- [Stats Wales](http://open.statswales.gov.wales): Wales SNPP by LAD/SYoA/gender
+- [National Records of Scotland](https://www.nrscotland.gov.uk): Scotland SNPP by LAD equivalent/SYoA/gender
+- [Northern Ireland Statistics and Research Agency](https://www.nisra.gov.uk): Northern Ireland SNPP by LAD equivalent/SYoA/gender
+
+## Data processing
+- Note that SNPP data is 2014-based while NPP data is 2016-based.
+- NPP data is broken down by country (England/Wales/Scotland/Northern Ireland), 
+- Column headings and category values follow the nomisweb/census conventions:
+  - `GEOGRAPHY_CODE`: ONS country, LAD, or LAD-equivalent code
+  - `GENDER`: 1=Male, 2=Female
+  - `C_AGE`: 0-90, where 90 represents 90 or over. To avoid ambiguity, this is an exception - nomisweb census values are typically age+1)
+  - `PROJECTED_YEAR_NAME`: 2014-2039 for SNPP, 2016-2116 for NPP  
+  - `OBS_VALUE`: count of persons
+
