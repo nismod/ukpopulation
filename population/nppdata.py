@@ -30,6 +30,16 @@ class NPPData:
   Nomisweb stores the UK principal variant (only)
   Other variants are avilable online in zipped xml files
   """
+  CODES = {
+    "en": "E92000001",
+    "wa": "W92000004",
+    "sc": "S92000003",
+    "ni": "N92000002"
+  }
+  EW = ["en", "wa"]
+  GB = ["en", "wa", "sc"]
+  UK = ["en", "wa", "sc", "ni"]
+
 
   VARIANTS = {
     "hhh": "High population", 
@@ -49,13 +59,13 @@ class NPPData:
     "ppz": "Zero net migration"
   }
 
-# Young age structure 	hlh 				
-# Old age structure 	lhl 				
-# Replacement fertility 	rpp 				
-# Constant fertility 	cpp 				
-# No mortality improvement 	pnp 				
-# No change 	cnp 				
-# Long term balanced net migration 	ppb 	
+  # Young age structure 	hlh 				
+  # Old age structure 	lhl 				
+  # Replacement fertility 	rpp 				
+  # Constant fertility 	cpp 				
+  # No mortality improvement 	pnp 				
+  # No change 	cnp 				
+  # Long term balanced net migration 	ppb 	
 
   def __init__(self, cache_dir = "./raw_data"):
     self.cache_dir = cache_dir
@@ -65,7 +75,34 @@ class NPPData:
 
     self.data["ppp"] = self.__download_ppp()
 
-    self.__download_variants()
+    # lazy eval for variants
+    #self.__download_variants()
+
+  #  
+  def get_npp(self, variant_name, geog, years, ages=range(0,91), genders=[1,2]):
+    # if not variant_name in NPPData.VARIANTS:
+    #   raise RuntimeError("invalid variant name" + variant_name)
+    file = self.cache_dir + "/npp_" + variant_name + ".csv"
+    if not os.path.isfile(file):
+      self.__download_variants()
+    data = pd.read_csv(file)
+
+    # apply filters
+    geog_codes = [NPPData.CODES[g] for g in geog]
+    return data[(data.GEOGRAPHY_CODE.isin(geog_codes)) & 
+                (data.PROJECTED_YEAR_NAME.isin(years)) &
+                (data.C_AGE.isin(ages)) &
+                (data.GENDER.isin(genders))]
+
+  # TODO not class member?
+  def aggregate(self, data, categories):
+    # ensure list
+    if isinstance(categories, str):
+      categories = [categories]
+    if not "PROJECTED_YEAR_NAME" in categories:
+      print("Not aggregating over PROJECTED_YEAR_NAME as it makes no sense")
+      categories.append("PROJECTED_YEAR_NAME")
+    return data.groupby(categories)["OBS_VALUE"].sum()
 
   def __download_ppp(self):
 
@@ -88,6 +125,8 @@ class NPPData:
   
   def __download_variants(self):
 
+    # [4 country zips] -> [60 xml] -> [60 raw csv] -> [15 variant csv]
+
     # TODO use 
     variants = ["hhh"]#, "lll"]
 
@@ -98,36 +137,36 @@ class NPPData:
       "ni": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z6zippedpopulationprojectionsdatafilesnorthernireland/2016based/tablez6opendata16northernireland.zip",
     }
 
-    codes = {
-      "en": "E92000001",
-      "wa": "W92000004",
-      "sc": "S92000003",
-      "ni": "N92000002"
-    }
-
     for variant in variants: 
       dataset = self.cache_dir + "/npp_" + variant + ".csv"
       if not os.path.isfile(dataset):
         pass 
       self.data[variant] = pd.DataFrame()
 
-    # download, unzip collate and reformat data if not presentcd
-    for country in ["en"]: #datasets:
+    # step 1: download, country-level zip file containing all variants (if not already there)
+    for country in datasets:
       raw_zip = self.cache_dir + "/npp_" + country + ".zip"
       if not os.path.isfile(raw_zip): 
+        print("downloading " + raw_zip)
         response = requests.get(datasets[country])
         with open(raw_zip, 'wb') as fd:
           for chunk in response.iter_content(chunk_size=1024):
             fd.write(chunk)   
-      z = zipfile.ZipFile(raw_zip)
+      else:
+        print("using " + raw_zip)
 
+
+    for country in datasets:
+      raw_zip = self.cache_dir + "/npp_" + country + ".zip"
+      z = zipfile.ZipFile(raw_zip)
+      # step 2: unzip, collate and reformat data if not presentcd
       #variants = z.namelist() 
       for vname in variants:
-        print(vname)
+        print(country + "_" + vname)
         vxml = country + "_" + vname + "_opendata2016.xml"
         #vcsv = self.cache_dir + "/" + country + "_" + vname + "_opendata2016.csv"
         if not os.path.isfile(self.cache_dir + "/" + vxml):
-          z.extract(vname, path=self.cache_dir)
+          z.extract(vxml, path=self.cache_dir)
         start = time.time()
         variant = np.array(_read_excel_xml(self.cache_dir + "/" + vxml, "Population"))
         print("read xml in " + str(time.time() - start))
@@ -144,17 +183,17 @@ class NPPData:
 
         # copy the data in these categories
         dfagg = df[df.C_AGE.isin(a)]
-        print(dfagg.head())
+        #print(dfagg.head())
 
         # The aggregration goes haywire unless the data is saved and reloaded - comment out lines below to see
         # TODO this needs to be fixed and/or reported as a (reproducible) bug
-        tmpfile = "./tmp.csv"
+        tmpfile = self.cache_dir + "/tmp.csv"
         dfagg.to_csv(tmpfile, index=False)
         dfagg = pd.read_csv(tmpfile)
 
         dfagg = dfagg.groupby(["GENDER", "PROJECTED_YEAR_NAME"])["OBS_VALUE"].sum().reset_index()
         dfagg["C_AGE"] = "90"
-        print(dfagg.head())
+        #print(dfagg.head())
 
         # print(df.head())
         # print(dfagg.head())
@@ -164,11 +203,12 @@ class NPPData:
         df = df[~df.C_AGE.isin(a)].append(dfagg, ignore_index=True)
  
         # add the country code
-        df["GEOGRAPHY_CODE"] = codes[country]
+        df["GEOGRAPHY_CODE"] = NPPData.CODES[country]
 
         #df.to_csv(vcsv, index=None)
         self.data[vname] = self.data[vname].append(df, ignore_index=True)
     
+    # step 3: save preprocessed data
     for variant in variants: 
       filename = self.cache_dir + "/npp_" + variant + ".csv"
       self.data[variant].to_csv(filename, index=None)

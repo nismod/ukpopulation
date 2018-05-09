@@ -1,4 +1,4 @@
-
+import sys
 import os
 import unittest
 import numpy as np
@@ -9,14 +9,17 @@ import population.snppdata as SNPPData
 
 class Test(unittest.TestCase):
 
-  def __init__(self, *args, **kwargs):
-    super(Test, self).__init__(*args, **kwargs)
+  # def __init__(self, *args, **kwargs):
+  #   super(Test, self).__init__(*args, **kwargs)
 
-  def test__env(self):
+  def setUp(self):
     """ 
-    Ensure environmnet set up correctly for tests
+    Check env set up correctly for tests
+    (it's too late to override the env in this function unfortunately)
     """
-    self.assertEqual(os.environ["NOMIS_API_KEY"], "DUMMY")
+    if not os.environ["NOMIS_API_KEY"] == "DUMMY":
+      print("Test requires NOMIS_API_KEY=DUMMY in env")
+      sys.exit()
 
   def test_snpp(self):
     snpp = SNPPData.SNPPData("./tests/raw_data")    
