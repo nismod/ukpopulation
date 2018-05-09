@@ -57,5 +57,12 @@ class Test(unittest.TestCase):
     self.assertEqual(len(agg), 4)
     self.assertEqual(agg.OBS_VALUE.sum(), 37906626) # remember this is population under 46
 
+  def test_snpp_extrapolate(self):
+    pass
+
+  def test_snpp_variant(self):
+    pass 
+
+
 if __name__ == "__main__":
   unittest.main()

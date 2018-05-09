@@ -24,5 +24,9 @@ def main():
   print(len(snpp.data))
   print(snpp.data.head())
 
+  r = npp.year_ratio("ppp", ["en"], 2039, range(2040,2051))
+
+  print(r)
+
 if __name__ == "__main__":
   main()

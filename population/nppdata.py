@@ -92,7 +92,7 @@ class NPPData:
     return data[(data.GEOGRAPHY_CODE.isin(geog_codes)) & 
                 (data.PROJECTED_YEAR_NAME.isin(years)) &
                 (data.C_AGE.isin(ages)) &
-                (data.GENDER.isin(genders))]
+                (data.GENDER.isin(genders))].reset_index()
 
 
   def aggregate(self, categories, variant_name, geog, years, ages=range(0,91), genders=[1,2]):
@@ -106,6 +106,22 @@ class NPPData:
       print("Not aggregating over PROJECTED_YEAR_NAME as it makes no sense")
       categories.append("PROJECTED_YEAR_NAME")
     return data.groupby(categories)["OBS_VALUE"].sum().reset_index()
+
+  def year_ratio(self, variant_name, geog, ref_year, year, ages=range(0,91), genders=[1,2]):
+    """
+    Ratio to ref_year projection for selected geog/years/ages/genders 
+    """
+    ref = self.detail(variant_name, geog, [ref_year], ages, genders)
+    num = self.detail(variant_name, geog, [year], ages, genders)
+
+    num.OBS_VALUE = num.OBS_VALUE / ref.OBS_VALUE
+    return num
+
+  def variant_ratio(self, variant_numerator, geog, years, ages=range(0,91), genders=[1,2]): 
+    """
+    Ratio to principal projection for selected geog/years/ages/genders 
+    """
+    pass
 
   def __download_ppp(self):
 
