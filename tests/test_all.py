@@ -9,9 +9,6 @@ import population.snppdata as SNPPData
 
 class Test(unittest.TestCase):
 
-  # def __init__(self, *args, **kwargs):
-  #   super(Test, self).__init__(*args, **kwargs)
-
   def setUp(self):
     """ 
     Check env set up correctly for tests
@@ -34,6 +31,14 @@ class Test(unittest.TestCase):
     self.assertTrue(np.array_equal(sorted(snpp.data.PROJECTED_YEAR_NAME.unique()), np.array(range(2014,2028))))
     self.assertTrue(np.array_equal(sorted(snpp.data.C_AGE.unique()), np.array(range(0,91))))
     self.assertTrue(np.array_equal(snpp.data.GENDER.unique(), np.array([1,2])))
+
+    data = snpp.filter(["E06000001","S12000041"], range(2016,2020))
+    self.assertEqual(len(data), 1456) # 91(ages) * 2(genders) * 2(LADs) * 4(years)
+    self.assertEqual(data[data.PROJECTED_YEAR_NAME==2016].OBS_VALUE.sum(), 209799) 
+
+    agg = snpp.aggregate(["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME"], ["E06000001","S12000041"], [2016])
+    self.assertEqual(len(agg), 2)
+    self.assertEqual(agg.OBS_VALUE.sum(), 209799) # remember this is population under 46
 
   def test_npp(self):
     npp = NPPData.NPPData("./tests/raw_data")    

@@ -121,7 +121,11 @@ class NPPData:
     """
     Ratio to principal projection for selected geog/years/ages/genders 
     """
-    pass
+    ref = self.detail("ppp", geog, years, ages, genders)
+    num = self.detail(variant_numerator, geog, years, ages, genders)
+
+    num.OBS_VALUE = num.OBS_VALUE / ref.OBS_VALUE
+    return num
 
   def __download_ppp(self):
 

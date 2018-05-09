@@ -24,9 +24,11 @@ def main():
   print(len(snpp.data))
   print(snpp.data.head())
 
-  r = npp.year_ratio("ppp", ["en"], 2039, range(2040,2051))
+  e = npp.year_ratio("ppp", ["en"], 2039, 2050)
+  print(e)
 
-  print(r)
+  v = npp.variant_ratio("hhh", ["en"], range(2016,2039))
+  print(v[v.PROJECTED_YEAR_NAME==2039])
 
 if __name__ == "__main__":
   main()

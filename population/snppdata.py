@@ -33,6 +33,31 @@ class SNPPData:
     # LADs * 26 years * 91 ages * 2 genders
     #assert len(self.data) == (326+22+32+11) * 26 * 91 * 2
 
+  def filter(self, geog_codes, years, ages=range(0,91), genders=[1,2]):
+
+    # apply filters
+    return self.data[(self.data.GEOGRAPHY_CODE.isin(geog_codes)) & 
+                     (self.data.PROJECTED_YEAR_NAME.isin(years)) &
+                     (self.data.C_AGE.isin(ages)) &
+                     (self.data.GENDER.isin(genders))].reset_index()
+
+  def aggregate(self, categories, geog_codes, years, ages=range(0,91), genders=[1,2]):
+
+    data = self.filter(geog_codes, years, ages, genders)
+    # ensure list
+    if isinstance(categories, str):
+      categories = [categories]
+    if not "PROJECTED_YEAR_NAME" in categories:
+      print("Not aggregating over PROJECTED_YEAR_NAME as it makes no sense")
+      categories.append("PROJECTED_YEAR_NAME")
+    return data.groupby(categories)["OBS_VALUE"].sum().reset_index()
+
+  def extrapolate(self):
+    pass
+
+  def apply_variant(self): 
+    pass
+
   def __do_england(self):
     print("Collating SNPP data for England...")
 
