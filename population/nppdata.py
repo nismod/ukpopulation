@@ -47,18 +47,18 @@ class NPPData:
     "lll": "Low population",
     "lpp": "Low fertility",
     "php": "High life expectancy",
-    "pjp": "",
-    "pkp": "",
+    "pjp": "Moderately high life expectancy",
+    "pkp": "Moderately low life expectancy",
     "plp": "Low life expectancy",
     "pph": "High migration",
     "ppl": "Low migration",
     "ppp": "Principal",
-    "ppq": "",
-    "ppr": "",
-    "pps": "",
+    "ppq": "0% future EU migration (non-ONS)",
+    "ppr": "50% future EU migration (non-ONS)",
+    "pps": "150% future EU migration (non-ONS)",
     "ppz": "Zero net migration"
   }
-
+  # Other variants not in data?
   # Young age structure 	hlh 				
   # Old age structure 	lhl 				
   # Replacement fertility 	rpp 				
@@ -73,15 +73,15 @@ class NPPData:
     # map of pandas dataframes keyed by variant code
     self.data = {}
 
+    # load principal aggressively...
     self.data["ppp"] = self.__download_ppp()
 
-    # lazy eval for variants
+    # ...and variants lazily
     #self.__download_variants()
 
-  #  
-  def get_npp(self, variant_name, geog, years, ages=range(0,91), genders=[1,2]):
-    # if not variant_name in NPPData.VARIANTS:
-    #   raise RuntimeError("invalid variant name" + variant_name)
+  def detail(self, variant_name, geog, years, ages=range(0,91), genders=[1,2]):
+    if not variant_name in NPPData.VARIANTS:
+      raise RuntimeError("invalid variant name: " + variant_name)
     file = self.cache_dir + "/npp_" + variant_name + ".csv"
     if not os.path.isfile(file):
       self.__download_variants()
@@ -94,15 +94,18 @@ class NPPData:
                 (data.C_AGE.isin(ages)) &
                 (data.GENDER.isin(genders))]
 
-  # TODO not class member?
-  def aggregate(self, data, categories):
+
+  def aggregate(self, categories, variant_name, geog, years, ages=range(0,91), genders=[1,2]):
+
+    data = self.detail(variant_name, geog, years, ages, genders)
+
     # ensure list
     if isinstance(categories, str):
       categories = [categories]
     if not "PROJECTED_YEAR_NAME" in categories:
       print("Not aggregating over PROJECTED_YEAR_NAME as it makes no sense")
       categories.append("PROJECTED_YEAR_NAME")
-    return data.groupby(categories)["OBS_VALUE"].sum()
+    return data.groupby(categories)["OBS_VALUE"].sum().reset_index()
 
   def __download_ppp(self):
 
@@ -127,9 +130,6 @@ class NPPData:
 
     # [4 country zips] -> [60 xml] -> [60 raw csv] -> [15 variant csv]
 
-    # TODO use 
-    variants = ["hhh"]#, "lll"]
-
     datasets = {
       "en": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z3zippedpopulationprojectionsdatafilesengland/2016based/tablez3opendata16england.zip",
       "wa": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z4zippedpopulationprojectionsdatafileswales/2016based/tablez4opendata16wales.zip",
@@ -137,7 +137,7 @@ class NPPData:
       "ni": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z6zippedpopulationprojectionsdatafilesnorthernireland/2016based/tablez6opendata16northernireland.zip",
     }
 
-    for variant in variants: 
+    for variant in NPPData.VARIANTS: 
       dataset = self.cache_dir + "/npp_" + variant + ".csv"
       if not os.path.isfile(dataset):
         pass 
@@ -161,7 +161,7 @@ class NPPData:
       z = zipfile.ZipFile(raw_zip)
       # step 2: unzip, collate and reformat data if not presentcd
       #variants = z.namelist() 
-      for vname in variants:
+      for vname in NPPData.VARIANTS:
         print(country + "_" + vname)
         vxml = country + "_" + vname + "_opendata2016.xml"
         #vcsv = self.cache_dir + "/" + country + "_" + vname + "_opendata2016.csv"
@@ -209,7 +209,7 @@ class NPPData:
         self.data[vname] = self.data[vname].append(df, ignore_index=True)
     
     # step 3: save preprocessed data
-    for variant in variants: 
+    for variant in NPPData.VARIANTS: 
       filename = self.cache_dir + "/npp_" + variant + ".csv"
       self.data[variant].to_csv(filename, index=None)
 

@@ -9,15 +9,15 @@ def main():
 
   print(NPPData.NPPData.EW)
 
-  data = npp.get_npp("hhh", NPPData.NPPData.EW, range(2016,2051))
+  data = npp.detail("hhh", NPPData.NPPData.EW, range(2016,2051))
 
   print(data.GEOGRAPHY_CODE.unique())
   print(data.PROJECTED_YEAR_NAME.unique())
   print(data.C_AGE.unique())
   print(data.GENDER.unique())
 
-  # sum over age and gender
-  agg = npp.aggregate(data, "GEOGRAPHY_CODE")
+  # sum over age and gender for each geography (and year)
+  agg = npp.aggregate("GEOGRAPHY_CODE","hhh", NPPData.NPPData.EW, range(2016,2051))
   print(agg)
 
   snpp = SNPPData.SNPPData("./raw_data")
