@@ -46,9 +46,13 @@ class Test(unittest.TestCase):
     self.assertTrue(np.array_equal(sorted(npp.data["ppp"].C_AGE.unique()), np.array(range(0,45))))
     self.assertTrue(np.array_equal(npp.data["ppp"].GENDER.unique(), np.array([1,2])))
 
-    data = npp.detail("hhh", NPPData.NPPData.EW, range(2016,2020))
-    
     # country populations for 2016 high variant
+    data = npp.detail("hhh", NPPData.NPPData.EW, range(2016,2020))
+    print(data[data.PROJECTED_YEAR_NAME==2016].OBS_VALUE.sum())
+    self.assertEqual(len(data), 736) # 46(ages) * 2(genders) * 2(countries) * 4(years)
+    self.assertEqual(data[data.PROJECTED_YEAR_NAME==2016].OBS_VALUE.sum(), 33799230) 
+
+    # similar to above, but all of UK summed by age and gender
     agg = npp.aggregate(["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME"], "hhh", NPPData.NPPData.UK, [2016])
     self.assertEqual(len(agg), 4)
     self.assertEqual(agg.OBS_VALUE.sum(), 37906626) # remember this is population under 46
