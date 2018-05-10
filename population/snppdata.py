@@ -18,7 +18,7 @@ def _read_cell_range(worksheet, topleft, bottomright):
 
 def _country(lad_code):
   lookup={"E": "en", "W": "wa", "S": "sc", "N": "ni"}
-  return lookup[lad_code[0]]
+  return [lookup[lad_code[0]]]
 
 class SNPPData:
   """
@@ -36,6 +36,18 @@ class SNPPData:
 
     # LADs * 26 years * 91 ages * 2 genders
     #assert len(self.data) == (326+22+32+11) * 26 * 91 * 2
+
+  def min_year(self):
+    """
+    Returns the first year in the projection
+    """
+    return min(self.data.PROJECTED_YEAR_NAME.unique())
+
+  def max_year(self):
+    """
+    Returns the final year in the projection
+    """
+    return max(self.data.PROJECTED_YEAR_NAME.unique())
 
   def filter(self, geog_codes, years, ages=range(0,91), genders=[1,2]):
 
@@ -56,14 +68,16 @@ class SNPPData:
       categories.append("PROJECTED_YEAR_NAME")
     return data.groupby(categories)["OBS_VALUE"].sum().reset_index()
 
-  # For now one LAD at a time due to multiple countries
+  # For now one LAD at a time (due to multiple countries)
   # For now allow extrapolation of years already in data
-  def extrapolate(self, npp, geog_code, years):
+  def extrapolate(self, npp, geog_code, year):
     print(_country(geog_code))
-    data = self.filter([geog_code], years)
-    print(len(data))
-    scaling = npp.filter()
-    pass
+    data = self.filter([geog_code], [self.max_year()])
+    print(data.head())
+    scaling = npp.year_ratio("ppp", _country(geog_code), self.max_year(), year)
+    print(scaling.head())
+    data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
+    print(data.head())
 
   def apply_variant(self): 
     pass

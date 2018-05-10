@@ -30,5 +30,8 @@ def main():
   v = npp.variant_ratio("hhh", ["en"], range(2016,2039))
   print(v[v.PROJECTED_YEAR_NAME==2039])
 
+  snpp.extrapolate(npp, "E08000021", 2040)
+  snpp.extrapolate(npp, "E08000021", 2100)
+
 if __name__ == "__main__":
   main()

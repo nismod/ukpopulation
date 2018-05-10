@@ -79,6 +79,19 @@ class NPPData:
     # ...and variants lazily
     #self.__download_variants()
 
+  def min_year(self):
+    """
+    Returns the first year in the projection
+    """
+    return min(self.data["ppp"].PROJECTED_YEAR_NAME.unique())
+
+  def max_year(self):
+    """
+    Returns the final year in the projection
+    """
+    return max(self.data["ppp"].PROJECTED_YEAR_NAME.unique())
+
+
   def detail(self, variant_name, geog, years, ages=range(0,91), genders=[1,2]):
     if not variant_name in NPPData.VARIANTS:
       raise RuntimeError("invalid variant name: " + variant_name)

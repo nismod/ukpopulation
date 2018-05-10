@@ -21,6 +21,9 @@ class Test(unittest.TestCase):
   def test_snpp(self):
     snpp = SNPPData.SNPPData("./tests/raw_data")    
 
+    self.assertEqual(snpp.min_year(), 2014)
+    self.assertEqual(snpp.max_year(), 2027) # for test data, real data is 2039
+
     # 12 LADs * 91 ages * 2 genders * 14 years
     self.assertEqual(len(snpp.data), 12 * 91 * 2 * 14)    
 
@@ -52,6 +55,9 @@ class Test(unittest.TestCase):
 
   def test_npp(self):
     npp = NPPData.NPPData("./tests/raw_data")    
+
+    self.assertEqual(npp.min_year(), 2016)
+    self.assertEqual(npp.max_year(), 2035) # for test data, real data is 2116
 
     # only ppp is present
     self.assertCountEqual(list(npp.data.keys()), ["ppp"])
