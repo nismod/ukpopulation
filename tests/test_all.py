@@ -40,8 +40,19 @@ class Test(unittest.TestCase):
     self.assertEqual(len(agg), 2)
     self.assertEqual(agg.OBS_VALUE.sum(), 209799) # remember this is population under 46
 
+  def test_snpp_errors(self):
+    snpp = SNPPData.SNPPData("./tests/raw_data")
+    # invalid variant code
+    #self.assertRaises(RuntimeError, snpp.filter, "xxx", NPPData.NPPData.UK, [2016])
+    # invalid column name 
+    self.assertRaises(KeyError, snpp.aggregate, ["WRONG_CODE", "PROJECTED_YEAR_NAME"], ["E06000001","S12000041"], [2016])
+    #invalid year? for now return empty
+    self.assertEqual(len(snpp.filter(["E06000001","S12000041"], [2040])), 0)
+    #self.assert
+
   def test_npp(self):
     npp = NPPData.NPPData("./tests/raw_data")    
+
     # only ppp is present
     self.assertListEqual(list(npp.data.keys()), ["ppp"])
 
@@ -53,21 +64,32 @@ class Test(unittest.TestCase):
 
     # country populations for 2016 high variant
     data = npp.detail("hhh", NPPData.NPPData.EW, range(2016,2020))
-    print(data[data.PROJECTED_YEAR_NAME==2016].OBS_VALUE.sum())
     self.assertEqual(len(data), 736) # 46(ages) * 2(genders) * 2(countries) * 4(years)
     self.assertEqual(data[data.PROJECTED_YEAR_NAME==2016].OBS_VALUE.sum(), 33799230) 
+
+    # now hhh and ppp are present
+    self.assertListEqual(list(npp.data.keys()), ["ppp", "hhh"])
 
     # similar to above, but all of UK summed by age and gender
     agg = npp.aggregate(["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME"], "hhh", NPPData.NPPData.UK, [2016])
     self.assertEqual(len(agg), 4)
     self.assertEqual(agg.OBS_VALUE.sum(), 37906626) # remember this is population under 46
 
+  def test_npp_errors(self):
+    npp = NPPData.NPPData("./tests/raw_data")
+    # invalid variant code
+    self.assertRaises(RuntimeError, npp.detail, "xxx", NPPData.NPPData.UK, [2016])
+    # invalid column name 
+    self.assertRaises(KeyError, npp.aggregate, ["WRONG_CODE", "PROJECTED_YEAR_NAME"], "hhh", NPPData.NPPData.UK, [2016])
+    #invalid year? for now return empty
+    self.assertEqual(len(npp.detail("ppp", NPPData.NPPData.UK, [2015])), 0)
+    #self.assert
+
   def test_snpp_extrapolate(self):
     pass
 
   def test_snpp_variant(self):
     pass 
-
 
 if __name__ == "__main__":
   unittest.main()

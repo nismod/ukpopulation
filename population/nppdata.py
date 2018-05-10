@@ -82,17 +82,15 @@ class NPPData:
   def detail(self, variant_name, geog, years, ages=range(0,91), genders=[1,2]):
     if not variant_name in NPPData.VARIANTS:
       raise RuntimeError("invalid variant name: " + variant_name)
-    file = self.cache_dir + "/npp_" + variant_name + ".csv"
-    if not os.path.isfile(file):
-      self.__download_variants()
-    data = pd.read_csv(file)
+    if not variant_name in self.data:
+      self.__load_variant(variant_name)
 
     # apply filters
     geog_codes = [NPPData.CODES[g] for g in geog]
-    return data[(data.GEOGRAPHY_CODE.isin(geog_codes)) & 
-                (data.PROJECTED_YEAR_NAME.isin(years)) &
-                (data.C_AGE.isin(ages)) &
-                (data.GENDER.isin(genders))].reset_index()
+    return self.data[variant_name][(self.data[variant_name].GEOGRAPHY_CODE.isin(geog_codes)) & 
+                                   (self.data[variant_name].PROJECTED_YEAR_NAME.isin(years)) &
+                                   (self.data[variant_name].C_AGE.isin(ages)) &
+                                   (self.data[variant_name].GENDER.isin(genders))].reset_index()
 
 
   def aggregate(self, categories, variant_name, geog, years, ages=range(0,91), genders=[1,2]):
@@ -146,7 +144,7 @@ class NPPData:
 
     return ppp
   
-  def __download_variants(self):
+  def __load_variant(self, variant):
 
     # [4 country zips] -> [60 xml] -> [60 raw csv] -> [15 variant csv]
 
@@ -157,34 +155,30 @@ class NPPData:
       "ni": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z6zippedpopulationprojectionsdatafilesnorthernireland/2016based/tablez6opendata16northernireland.zip",
     }
 
-    for variant in NPPData.VARIANTS: 
-      dataset = self.cache_dir + "/npp_" + variant + ".csv"
-      if not os.path.isfile(dataset):
-        pass 
+    # check for cached data
+    dataset = self.cache_dir + "/npp_" + variant + ".csv"
+    if not os.path.isfile(dataset):
+      # assemble data if not already cached
       self.data[variant] = pd.DataFrame()
 
-    # step 1: download, country-level zip file containing all variants (if not already there)
-    for country in datasets:
-      raw_zip = self.cache_dir + "/npp_" + country + ".zip"
-      if not os.path.isfile(raw_zip): 
-        print("downloading " + raw_zip)
-        response = requests.get(datasets[country])
-        with open(raw_zip, 'wb') as fd:
-          for chunk in response.iter_content(chunk_size=1024):
-            fd.write(chunk)   
-      else:
-        print("using " + raw_zip)
+      # step 1: download, country-level zip file containing all variants (if not already there)
+      for country in datasets:
+        raw_zip = self.cache_dir + "/npp_" + country + ".zip"
+        if not os.path.isfile(raw_zip): 
+          print("downloading " + raw_zip)
+          response = requests.get(datasets[country])
+          with open(raw_zip, 'wb') as fd:
+            for chunk in response.iter_content(chunk_size=1024):
+              fd.write(chunk)   
+        else:
+          print("using " + raw_zip)
 
-
-    for country in datasets:
-      raw_zip = self.cache_dir + "/npp_" + country + ".zip"
-      z = zipfile.ZipFile(raw_zip)
-      # step 2: unzip, collate and reformat data if not presentcd
-      #variants = z.namelist() 
-      for vname in NPPData.VARIANTS:
-        print(country + "_" + vname)
-        vxml = country + "_" + vname + "_opendata2016.xml"
-        #vcsv = self.cache_dir + "/" + country + "_" + vname + "_opendata2016.csv"
+      for country in datasets:
+        raw_zip = self.cache_dir + "/npp_" + country + ".zip"
+        z = zipfile.ZipFile(raw_zip)
+        # step 2: unzip, collate and reformat data if not presentcd
+        print("Extracting " + country + "_" + variant)
+        vxml = country + "_" + variant + "_opendata2016.xml"
         if not os.path.isfile(self.cache_dir + "/" + vxml):
           z.extract(vxml, path=self.cache_dir)
         start = time.time()
@@ -221,15 +215,14 @@ class NPPData:
         # print(dfagg.columns)
         # remove the aggregated categories from the original and append the aggregate
         df = df[~df.C_AGE.isin(a)].append(dfagg, ignore_index=True)
- 
+
         # add the country code
         df["GEOGRAPHY_CODE"] = NPPData.CODES[country]
 
         #df.to_csv(vcsv, index=None)
-        self.data[vname] = self.data[vname].append(df, ignore_index=True)
-    
-    # step 3: save preprocessed data
-    for variant in NPPData.VARIANTS: 
-      filename = self.cache_dir + "/npp_" + variant + ".csv"
-      self.data[variant].to_csv(filename, index=None)
+        self.data[variant] = self.data[variant].append(df, ignore_index=True)
+      
+      # step 3: save preprocessed data
+      self.data[variant].to_csv(dataset, index=None)
 
+    self.data[variant] = pd.read_csv(dataset)

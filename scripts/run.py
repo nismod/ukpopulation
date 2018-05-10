@@ -9,7 +9,7 @@ def main():
 
   print(NPPData.NPPData.EW)
 
-  data = npp.detail("lll", NPPData.NPPData.EW, range(2016,2051))
+  data = npp.detail("lll", NPPData.NPPData.EW, range(2015,2051))
 
   print(data.GEOGRAPHY_CODE.unique())
   print(data.PROJECTED_YEAR_NAME.unique())
@@ -17,7 +17,7 @@ def main():
   print(data.GENDER.unique())
 
   # sum over age and gender for each geography (and year)
-  agg = npp.aggregate("GEOGRAPHY_CODE","hhh", NPPData.NPPData.EW, range(2016,2051))
+  agg = npp.aggregate("GEOGRAPHY_CODE","lll", NPPData.NPPData.EW, range(2016,2051))
   print(agg)
 
   snpp = SNPPData.SNPPData("./raw_data")
