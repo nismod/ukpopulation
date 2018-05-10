@@ -54,7 +54,7 @@ class Test(unittest.TestCase):
     npp = NPPData.NPPData("./tests/raw_data")    
 
     # only ppp is present
-    self.assertListEqual(list(npp.data.keys()), ["ppp"])
+    self.assertCountEqual(list(npp.data.keys()), ["ppp"])
 
     geogs = np.array(['E92000001', 'N92000002', 'S92000003', 'W92000004'])
     self.assertTrue(np.array_equal(sorted(npp.data["ppp"].GEOGRAPHY_CODE.unique()), geogs))
@@ -68,7 +68,7 @@ class Test(unittest.TestCase):
     self.assertEqual(data[data.PROJECTED_YEAR_NAME==2016].OBS_VALUE.sum(), 33799230) 
 
     # now hhh and ppp are present
-    self.assertListEqual(list(npp.data.keys()), ["ppp", "hhh"])
+    self.assertCountEqual(list(npp.data.keys()), ["ppp", "hhh"])
 
     # similar to above, but all of UK summed by age and gender
     agg = npp.aggregate(["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME"], "hhh", NPPData.NPPData.UK, [2016])
