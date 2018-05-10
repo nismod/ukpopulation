@@ -8,7 +8,7 @@ ONS produce projections of the count of persons by gender and single year of age
  - National (UK) and country-level population projections (NPP) with variants as listed in the table below. The data is currently 2016-based and projects to 2116.
  - Subnational (England at LAD level) *principal-only* population projections. The data is currently 2014-based and projects to 2039.
  
-With the exeption of the NPP variants Nomisweb hosts the ONS data. [This may change](https://www.nomisweb.co.uk/forum/posts.aspx?tID=565&fID=2)
+With the exception of the NPP variants Nomisweb hosts the ONS data. [This may change](https://www.nomisweb.co.uk/forum/posts.aspx?tID=565&fID=2)
 
 Other countries within the UK produce (and host) their own SNPP data, typically in spreadsheet format. 
 
@@ -64,4 +64,59 @@ The purpose of the code in this repo is provide a unified interface to both SNPP
   - `C_AGE`: 0-90, where 90 represents 90 or over. To avoid ambiguity, this is an exception - nomisweb census values are typically age+1)
   - `PROJECTED_YEAR_NAME`: 2014-2039 for SNPP, 2016-2116 for NPP  
   - `OBS_VALUE`: count of persons
+
+# Installation
+
+## Requirements
+Python 3.5 or higher, dependencies should resolve automatically
+
+```
+$ pip3 install git+https://github.com/nismod/population.git
+```
+
+## Testing
+
+Requires that `NOMIS_API_KEY` is defined, but set to "DUMMY" so that the cached data filenames match those in the test dataset:
+
+```
+$ NOMIS_API_KEY=DUMMY ./setup.py test
+```
+
+## Troubleshooting
+
+Please post any issues you encounter in the repo, with as much supporting information as possible.
+
+If installation has missing dependencies, try:
+```
+$ pip install -r requirements.txt
+$ ./setup.py install
+```
+
+If (with python 3.5?) you encounter 
+```
+AttributeError: module 'html5lib.treebuilders' has no attribute '_base'
+```
+then
+```
+$ pip3 install html5lib=0.9999999
+```
+should fix it. But better solution is to upgrade to python3.6
+
+# Usage Examples
+
+## Retrieve SNPP for specific LADs
+TODO...
+
+## Retrieve NPP and SNPP filtered by age
+TODO...
+
+## Retrieve NPP variants for England & Wales
+TODO...
+
+## Extrapolate SNPP using NPP data
+TODO...
+
+## Construct a SNPP variant by applying NPP variant to a specific LAD
+TODO...
+
 
