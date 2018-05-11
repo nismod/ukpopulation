@@ -122,6 +122,7 @@ should fix it. But better solution is to upgrade to python3.6
 
 ## Retrieve SNPP for specific LADs
 ### Detailed data
+This example fetches the 2018 projection for Newcastle by gender and age. 
 ```python
 >>> import population.snppdata as SNPPData
 >>> snpp = SNPPData.SNPPData("./raw_data")
@@ -149,11 +150,42 @@ Collating SNPP data for Northern Ireland...
 2      2       1      E08000021     1770.0                 2018
 3      3       1      E08000021     1757.0                 2018
 4      4       1      E08000021     1747.0                 2018
->>>
 ```
 
 ### Aggregated data
-TODO...
+This example fetches the 2018 total population projections for Newcastle.
+```python 
+>>> import population.snppdata as SNPPData
+>>> snpp = SNPPData.SNPPData("./raw_data")
+```
+```
+Cache directory:  ./raw_data/
+using cached LAD codes: ./raw_data/lad_codes.json
+Collating SNPP data for England...
+./raw_data/NM_2006_1_metadata.json found, using cached metadata...
+Using cached data: ./raw_data/NM_2006_1_56aba41fc0fab32f58ead6ae91a867b4.tsv
+./raw_data/NM_2006_1_metadata.json found, using cached metadata...
+Using cached data: ./raw_data/NM_2006_1_dbe6c087fb46306789f7d54b125482e4.tsv
+Collating SNPP data for Wales...
+Collating SNPP data for Scotland...
+Collating SNPP data for Northern Ireland...
+```python
+>>> newcastle=snpp.aggregate(["GEOGRAPHY_CODE"], "E08000021", range(2018,2039))
+```
+```
+Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
+```
+```python
+>>> newcastle.head()
+```
+```
+  GEOGRAPHY_CODE  PROJECTED_YEAR_NAME  OBS_VALUE
+0      E08000021                 2018   299132.0
+1      E08000021                 2019   300530.0
+2      E08000021                 2020   301699.0
+3      E08000021                 2021   302729.0
+4      E08000021                 2022   303896.0
+```
 
 ## Retrieve NPP and SNPP filtered by age
 TODO...
