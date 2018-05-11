@@ -51,7 +51,6 @@ The purpose of the code in this repo is provide a unified interface to both SNPP
 ## Data Sources
 - [Nomisweb](www.nomisweb.co.uk): UK NPP by country/SYoA/gender, England SNPP by LAD/SYoA/gender
 - [ONS](https://www.ons.gov.uk): UK NPP variants by country/SYoA/gender
-  - 
 - [Stats Wales](http://open.statswales.gov.wales): Wales SNPP by LAD/SYoA/gender
 - [National Records of Scotland](https://www.nrscotland.gov.uk): Scotland SNPP by LAD equivalent/SYoA/gender
 - [Northern Ireland Statistics and Research Agency](https://www.nisra.gov.uk): Northern Ireland SNPP by LAD equivalent/SYoA/gender
@@ -87,7 +86,7 @@ The purpose of the code in this repo is provide a unified interface to both SNPP
 ## Requirements
 Python 3.5 or higher, dependencies should resolve automatically
 
-```
+```bash
 $ pip3 install git+https://github.com/nismod/population.git
 ```
 
@@ -95,7 +94,7 @@ $ pip3 install git+https://github.com/nismod/population.git
 
 Requires that `NOMIS_API_KEY` is defined, but set to "DUMMY" so that the cached data filenames match those in the test dataset:
 
-```
+```bash
 $ NOMIS_API_KEY=DUMMY ./setup.py test
 ```
 
@@ -104,17 +103,17 @@ $ NOMIS_API_KEY=DUMMY ./setup.py test
 Please post any issues you encounter in the repo, with as much supporting information as possible.
 
 If installation has missing dependencies, try:
-```
+```bash
 $ pip install -r requirements.txt
 $ ./setup.py install
 ```
 
 If (with python 3.5?) you encounter 
-```
+```bash
 AttributeError: module 'html5lib.treebuilders' has no attribute '_base'
 ```
 then
-```
+```bash
 $ pip3 install html5lib=0.9999999
 ```
 should fix it. But better solution is to upgrade to python3.6
@@ -123,13 +122,11 @@ should fix it. But better solution is to upgrade to python3.6
 
 ## Retrieve SNPP for specific LADs
 ### Detailed data
-<pre>
-$ <b>python3</b>
-Python 3.6.5 (default, Apr  1 2018, 05:46:30)
-[GCC 7.3.0] on linux
-Type "help", "copyright", "credits" or "license" for more information.
->>> <b>import population.snppdata as SNPPData</b>
->>> <b>snpp = SNPPData.SNPPData("./raw_data")</b>
+```python
+>>> import population.snppdata as SNPPData
+>>> snpp = SNPPData.SNPPData("./raw_data")
+```
+```
 Cache directory:  ./raw_data/
 using cached LAD codes: ./raw_data/lad_codes.json
 Collating SNPP data for England...
@@ -140,8 +137,12 @@ Using cached data: ./raw_data/NM_2006_1_dbe6c087fb46306789f7d54b125482e4.tsv
 Collating SNPP data for Wales...
 Collating SNPP data for Scotland...
 Collating SNPP data for Northern Ireland...
->>> <b>newcastle=snpp.filter("E08000021", 2018)</b>
->>> <b>newcastle.head()</b>
+```
+```python
+>>> newcastle=snpp.filter("E08000021", 2018)
+>>> newcastle.head()
+```
+```
    C_AGE  GENDER GEOGRAPHY_CODE  OBS_VALUE  PROJECTED_YEAR_NAME
 0      0       1      E08000021     1814.0                 2018
 1      1       1      E08000021     1780.0                 2018
@@ -149,7 +150,7 @@ Collating SNPP data for Northern Ireland...
 3      3       1      E08000021     1757.0                 2018
 4      4       1      E08000021     1747.0                 2018
 >>>
-</pre>
+```
 
 ### Aggregated data
 TODO...
