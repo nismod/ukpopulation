@@ -51,11 +51,17 @@ class SNPPData:
 
   def filter(self, geog_codes, years, ages=range(0,91), genders=[1,2]):
 
+    # convery geog_codes and years to arrays if single values supplied (for isin)
+    if isinstance(geog_codes, str):
+      geog_codes = [geog_codes]
+    if isinstance(years, int):
+      years = [years]
+
     # apply filters
     return self.data[(self.data.GEOGRAPHY_CODE.isin(geog_codes)) & 
                      (self.data.PROJECTED_YEAR_NAME.isin(years)) &
                      (self.data.C_AGE.isin(ages)) &
-                     (self.data.GENDER.isin(genders))].reset_index()
+                     (self.data.GENDER.isin(genders))].reset_index(drop=True)
 
   def aggregate(self, categories, geog_codes, years, ages=range(0,91), genders=[1,2]):
 

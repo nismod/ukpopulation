@@ -51,19 +51,36 @@ The purpose of the code in this repo is provide a unified interface to both SNPP
 ## Data Sources
 - [Nomisweb](www.nomisweb.co.uk): UK NPP by country/SYoA/gender, England SNPP by LAD/SYoA/gender
 - [ONS](https://www.ons.gov.uk): UK NPP variants by country/SYoA/gender
+  - 
 - [Stats Wales](http://open.statswales.gov.wales): Wales SNPP by LAD/SYoA/gender
 - [National Records of Scotland](https://www.nrscotland.gov.uk): Scotland SNPP by LAD equivalent/SYoA/gender
 - [Northern Ireland Statistics and Research Agency](https://www.nisra.gov.uk): Northern Ireland SNPP by LAD equivalent/SYoA/gender
 
-## Data processing
+## Data Processing
 - Note that SNPP data is 2014-based while NPP data is 2016-based.
-- NPP data is broken down by country (England/Wales/Scotland/Northern Ireland), 
+- NPP data is broken down by country (England/Wales/Scotland/Northern Ireland), with the following variants available:
+  - hhh: High population, 
+  - hpp: High fertility,
+  - lll: Low population,
+  - lpp: Low fertility,
+  - php: High life expectancy,
+  - pjp: Moderately high life expectancy,
+  - pkp: Moderately low life expectancy,
+  - plp: Low life expectancy,
+  - pph: High migration,
+  - ppl: Low migration,
+  - ppp: Principal,
+  - ppq: 0% future EU migration (non-ONS),
+  - ppr: 50% future EU migration (non-ONS),
+  - pps: 150% future EU migration (non-ONS),
+  - ppz: Zero net migration
 - Column headings and category values follow the nomisweb/census conventions:
   - `GEOGRAPHY_CODE`: ONS country, LAD, or LAD-equivalent code
   - `GENDER`: 1=Male, 2=Female
   - `C_AGE`: 0-90, where 90 represents 90 or over. To avoid ambiguity, this is an exception - nomisweb census values are typically age+1)
-  - `PROJECTED_YEAR_NAME`: 2014-2039 for SNPP, 2016-2116 for NPP  
+  - `PROJECTED_YEAR_NAME`: 2014-2116   
   - `OBS_VALUE`: count of persons
+- All data are cached for swift retrieval.  
 
 # Installation
 
@@ -105,6 +122,36 @@ should fix it. But better solution is to upgrade to python3.6
 # Usage Examples
 
 ## Retrieve SNPP for specific LADs
+### Detailed data
+<pre>
+$ <b>python3</b>
+Python 3.6.5 (default, Apr  1 2018, 05:46:30)
+[GCC 7.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> <b>import population.snppdata as SNPPData</b>
+>>> <b>snpp = SNPPData.SNPPData("./raw_data")</b>
+Cache directory:  ./raw_data/
+using cached LAD codes: ./raw_data/lad_codes.json
+Collating SNPP data for England...
+./raw_data/NM_2006_1_metadata.json found, using cached metadata...
+Using cached data: ./raw_data/NM_2006_1_56aba41fc0fab32f58ead6ae91a867b4.tsv
+./raw_data/NM_2006_1_metadata.json found, using cached metadata...
+Using cached data: ./raw_data/NM_2006_1_dbe6c087fb46306789f7d54b125482e4.tsv
+Collating SNPP data for Wales...
+Collating SNPP data for Scotland...
+Collating SNPP data for Northern Ireland...
+>>> <b>newcastle=snpp.filter("E08000021", 2018)</b>
+>>> <b>newcastle.head()</b>
+   C_AGE  GENDER GEOGRAPHY_CODE  OBS_VALUE  PROJECTED_YEAR_NAME
+0      0       1      E08000021     1814.0                 2018
+1      1       1      E08000021     1780.0                 2018
+2      2       1      E08000021     1770.0                 2018
+3      3       1      E08000021     1757.0                 2018
+4      4       1      E08000021     1747.0                 2018
+>>>
+</pre>
+
+### Aggregated data
 TODO...
 
 ## Retrieve NPP and SNPP filtered by age
@@ -116,7 +163,8 @@ TODO...
 ## Extrapolate SNPP using NPP data
 TODO...
 
-## Construct a SNPP variant by applying NPP variant to a specific LAD
+## Construct an SNPP variant by applying NPP variant to a specific LAD
 TODO...
 
+## Extrapolating an SNPP variant
 
