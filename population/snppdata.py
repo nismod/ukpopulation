@@ -76,14 +76,31 @@ class SNPPData:
 
   # For now one LAD at a time (due to multiple countries)
   # For now allow extrapolation of years already in data
-  def extrapolate(self, npp, geog_code, year):
-    print(_country(geog_code))
-    data = self.filter([geog_code], [self.max_year()])
-    print(data.head())
-    scaling = npp.year_ratio("ppp", _country(geog_code), self.max_year(), year)
-    print(scaling.head())
-    data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
-    print(data.head())
+  # Filtering age and gender is not (currently) supported
+  def extrapolate(self, npp, geog_code, year_range):
+
+    all_years = pd.DataFrame()
+    for year in year_range:
+      data = self.filter([geog_code], [self.max_year()])
+      scaling = npp.year_ratio("ppp", _country(geog_code), self.max_year(), year)
+      data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
+      data.PROJECTED_YEAR_NAME = year
+      all_years = all_years.append(data, ignore_index=True)
+
+    return all_years
+
+  def extrapolagg(self, categories, npp, geog_code, year_range):
+    """
+    Extrapolate and then aggregate
+    """
+    data = self.extrapolate(npp, geog_code, year_range)
+    # ensure list
+    if isinstance(categories, str):
+      categories = [categories]
+    if not "PROJECTED_YEAR_NAME" in categories:
+      print("Not aggregating over PROJECTED_YEAR_NAME as it makes no sense")
+      categories.append("PROJECTED_YEAR_NAME")
+    return data.groupby(categories)["OBS_VALUE"].sum().reset_index()
 
   def apply_variant(self): 
     pass

@@ -125,7 +125,7 @@ should fix it. But better solution is to upgrade to python3.6
 This example fetches the 2018 projection for Newcastle by gender and age. 
 ```python
 >>> import population.snppdata as SNPPData
->>> snpp = SNPPData.SNPPData("./raw_data")
+>>> snpp = SNPPData.SNPPData()
 ```
 ```
 Cache directory:  ./raw_data/
@@ -156,7 +156,7 @@ Collating SNPP data for Northern Ireland...
 This example fetches the 2018 total population projections for Newcastle.
 ```python 
 >>> import population.snppdata as SNPPData
->>> snpp = SNPPData.SNPPData("./raw_data")
+>>> snpp = SNPPData.SNPPData()
 ```
 ```
 Cache directory:  ./raw_data/
@@ -187,17 +187,124 @@ Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
 4      E08000021                 2022   303896.0
 ```
 
-## Retrieve NPP and SNPP filtered by age
-TODO...
+## Retrieve NPP data filtered by age
+Here's how to get the total working-age population by country from 2016 to 2050:
+
+```python
+>>> import population.nppdata as NPPData
+>>> npp = NPPData.NPPData()
+```
+```
+Cache directory:  ./raw_data/
+using cached LAD codes: ./raw_data/lad_codes.json
+Loading NPP principal (ppp) data for England, Wales, Scotland & Nortern Ireland
+./raw_data/NM_2009_1_metadata.json found, using cached metadata...
+Using cached data: ./raw_data/NM_2009_1_444caf1f672f0646722e389963289973.tsv
+```
+```python
+>>> uk_working_age=npp.aggregate("GEOGRAPHY_CODE", "ppp", NPPData.NPPData.UK, range(2016,2051), ages=range(16,75))
+Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
+>>> ukwap.head()
+  GEOGRAPHY_CODE  PROJECTED_YEAR_NAME  OBS_VALUE
+0      E92000001                 2016   40269470
+1      E92000001                 2017   40460118
+2      E92000001                 2018   40591965
+3      E92000001                 2019   40704521
+4      E92000001                 2020   40834471
+```
+And this aggregates the figures for Great Britain:
+```python
+>>> uk_working_age=npp.aggregate([], "ppp", NPPData.NPPData.GB, range(2016,2051), ages=range(16,75))
+Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
+>>> uk_working_age.head()
+   PROJECTED_YEAR_NAME  OBS_VALUE
+0                 2016   46590014
+1                 2017   46801693
+2                 2018   46944219
+3                 2019   47063069
+4                 2020   47201882
+```
+NB SNPP data can also be filtered by age and/or gender and/or geography in the same way.
 
 ## Retrieve NPP variants for England & Wales
-TODO...
+
+```python
+>>> import population.nppdata as NPPData
+>>> npp=NPPData.NPPData()
+Cache directory:  ./raw_data/
+using cached LAD codes: ./raw_data/lad_codes.json
+Loading NPP principal (ppp) data for England, Wales, Scotland & Nortern Ireland
+./raw_data/NM_2009_1_metadata.json found, using cached metadata...
+Using cached data: ./raw_data/NM_2009_1_444caf1f672f0646722e389963289973.tsv
+>>> high_growth = npp.detail("hhh", NPPData.NPPData.EW)
+>>> high_growth.GEOGRAPHY_CODE.unique()
+array(['E92000001', 'W92000004'], dtype=object)
+>>> high_growth.head()
+   C_AGE  GENDER  OBS_VALUE  PROJECTED_YEAR_NAME GEOGRAPHY_CODE
+0      0       1     343198                 2016      E92000001
+1      0       1     334025                 2017      E92000001
+2      0       1     345332                 2018      E92000001
+3      0       1     349796                 2019      E92000001
+4      0       1     354274                 2020      E92000001
+```
 
 ## Extrapolate SNPP using NPP data
-TODO...
+Construct SNPP data for Newcastle from 2040-2050 using NPP data but preserving Newcastle's (2039) age structure (i.e. weighted sum). The second dataset aggregates the data by age and gender. 
 
+```python
+>>> import population.nppdata as NPPData
+>>> import population.snppdata as SNPPData
+>>> npp = NPPData.NPPData()
+Cache directory:  ./raw_data/
+using cached LAD codes: ./raw_data/lad_codes.json
+Loading NPP principal (ppp) data for England, Wales, Scotland & Nortern Ireland
+./raw_data/NM_2009_1_metadata.json found, using cached metadata...
+Using cached data: ./raw_data/NM_2009_1_444caf1f672f0646722e389963289973.tsv
+>>> snpp = SNPPData.SNPPData()
+Cache directory:  ./raw_data/
+using cached LAD codes: ./raw_data/lad_codes.json
+Collating SNPP data for England...
+./raw_data/NM_2006_1_metadata.json found, using cached metadata...
+Using cached data: ./raw_data/NM_2006_1_56aba41fc0fab32f58ead6ae91a867b4.tsv
+./raw_data/NM_2006_1_metadata.json found, using cached metadata...
+Using cached data: ./raw_data/NM_2006_1_dbe6c087fb46306789f7d54b125482e4.tsv
+Collating SNPP data for Wales...
+Collating SNPP data for Scotland...
+Collating SNPP data for Northern Ireland...
+>>> newcastle_ex = snpp.extrapolate(npp, "E08000021", range(2040,2051))
+>>> newcastle_ex.head()
+   C_AGE  GENDER GEOGRAPHY_CODE    OBS_VALUE  PROJECTED_YEAR_NAME
+0      0       1      E08000021  1850.276291                 2040
+1      1       1      E08000021  1828.268680                 2040
+2      2       1      E08000021  1815.785822                 2040
+3      3       1      E08000021  1806.036407                 2040
+4      4       1      E08000021  1804.868065                 2040
+>>> newcastle_ex_agg = snpp.extrapolagg("GEOGRAPHY_CODE", npp, "E08000021", range(2040,2051))
+Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
+>>> newcastle_ex_agg.head()
+  GEOGRAPHY_CODE  PROJECTED_YEAR_NAME      OBS_VALUE
+0      E08000021                 2040  327746.409271
+1      E08000021                 2041  328491.090111
+2      E08000021                 2042  329339.498765
+3      E08000021                 2043  330352.294999
+4      E08000021                 2044  331269.728582
+>>>
+```
 ## Construct an SNPP variant by applying NPP variant to a specific LAD
 TODO...
 
 ## Extrapolating an SNPP variant
+TODO...
+
+# Code Documentation
+Package documentation can be viewed like so:
+```python
+import population.nppdata as NPPData
+help(NPPData)
+```
+and
+```python
+import population.snppdata as SNPPData
+
+```
 

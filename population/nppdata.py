@@ -92,18 +92,23 @@ class NPPData:
     return max(self.data["ppp"].PROJECTED_YEAR_NAME.unique())
 
 
-  def detail(self, variant_name, geog, years, ages=range(0,91), genders=[1,2]):
+  def detail(self, variant_name, geog, years=None, ages=range(0,91), genders=[1,2]):
     if not variant_name in NPPData.VARIANTS:
       raise RuntimeError("invalid variant name: " + variant_name)
+    # if years not specifed use the full range available
+    if years is None:
+     years = range(self.min_year(), self.max_year())
+
     if not variant_name in self.data:
       self.__load_variant(variant_name)
+
 
     # apply filters
     geog_codes = [NPPData.CODES[g] for g in geog]
     return self.data[variant_name][(self.data[variant_name].GEOGRAPHY_CODE.isin(geog_codes)) & 
                                    (self.data[variant_name].PROJECTED_YEAR_NAME.isin(years)) &
                                    (self.data[variant_name].C_AGE.isin(ages)) &
-                                   (self.data[variant_name].GENDER.isin(genders))].reset_index()
+                                   (self.data[variant_name].GENDER.isin(genders))].reset_index(drop=True)
 
 
   def aggregate(self, categories, variant_name, geog, years, ages=range(0,91), genders=[1,2]):
@@ -139,6 +144,8 @@ class NPPData:
     return num
 
   def __download_ppp(self):
+
+    print("Loading NPP principal (ppp) data for England, Wales, Scotland & Nortern Ireland")
 
     table_internal = "NM_2009_1" # 2016-based NPP (principal)
     query_params = {
