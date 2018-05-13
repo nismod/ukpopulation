@@ -7,12 +7,12 @@ python:
   - 3.5
   - 3.6
 #  - 3.7-dev
-env:
-  - NOMIS_API_KEY=DUMMY
+#env:
+#  - NOMIS_API_KEY=DUMMY
 install:
   - pip install -r requirements.txt
 script:
-  - python setup.py test
+  - NOMIS_API_KEY=DUMMY ./setup.py test
 
 warnings_are_errors: false
 
