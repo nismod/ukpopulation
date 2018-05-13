@@ -40,12 +40,13 @@ Long term balanced net migration | ppb  |   |   | x |   |
 
 # Rationale
 
-The purpose of the code in this repo is provide a unified interface to both SNPP and NPP data, including variants:
-- encapsulate the downloading, processing and cacheing of the NPP and SNPP data from the various sources.
-- unify the format of the NPP and SNPP data from the various sources.
-- provide a method of synthesising SNPP variant projections using SNPP principal and NPP principal/variant projections
-- provide a method of extrapolating SNPP data using NPP data
-- enable easy filtering and aggregating of of the data, e.g. extracting projections of the working-age population.
+The purpose of this package is to provide a unified interface to both SNPP and NPP data, including variants:
+- encapsulating the downloading, processing and cacheing of the NPP and SNPP data from the various sources.
+- differentiating by age (single year, up to 90) and gender.
+- providing a unified format for both the NPP and SNPP data.
+- providing a method of synthesising SNPP variant projections using SNPP principal and NPP principal/variant projections
+- providing a method of extrapolating SNPP data using NPP data
+- enabling easy filtering and aggregating of of the data, e.g. extracting projections of the working-age population.
 
 # Methodology and Detail
 ## Data Sources
@@ -153,7 +154,7 @@ Collating SNPP data for Northern Ireland...
 ```
 
 ### Aggregated data
-This example fetches the 2018 total population projections for Newcastle.
+This example fetches the total population projections for Newcastle from 2018 to 2039.
 ```python 
 >>> import population.snppdata as SNPPData
 >>> snpp = SNPPData.SNPPData()
@@ -305,6 +306,6 @@ help(NPPData)
 and
 ```python
 import population.snppdata as SNPPData
-
+help(SNPPData)
 ```
 
