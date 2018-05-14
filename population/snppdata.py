@@ -106,6 +106,8 @@ class SNPPData:
 
     data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
 
+    return data
+
   def __do_england(self):
     print("Collating SNPP data for England...")
 
