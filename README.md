@@ -269,8 +269,10 @@ array(['E92000001', 'W92000004'], dtype=object)
 Construct SNPP data for Newcastle from 2040-2050 using NPP data but preserving Newcastle's (2039) age structure (i.e. weighted sum). The second dataset aggregates the data by age and gender. 
 
 ```python
+>>> import matplotlib.pyplot as plt
 >>> import population.nppdata as NPPData
 >>> import population.snppdata as SNPPData
+>>>
 >>> npp = NPPData.NPPData()
 Cache directory:  ./raw_data/
 using cached LAD codes: ./raw_data/lad_codes.json
@@ -288,25 +290,24 @@ Using cached data: ./raw_data/NM_2006_1_dbe6c087fb46306789f7d54b125482e4.tsv
 Collating SNPP data for Wales...
 Collating SNPP data for Scotland...
 Collating SNPP data for Northern Ireland...
->>> newcastle_ex = snpp.extrapolate(npp, "E08000021", range(2040,2051))
->>> newcastle_ex.head()
-   C_AGE  GENDER GEOGRAPHY_CODE    OBS_VALUE  PROJECTED_YEAR_NAME
-0      0       1      E08000021  1850.276291                 2040
-1      1       1      E08000021  1828.268680                 2040
-2      2       1      E08000021  1815.785822                 2040
-3      3       1      E08000021  1806.036407                 2040
-4      4       1      E08000021  1804.868065                 2040
->>> newcastle_ex_agg = snpp.extrapolagg("GEOGRAPHY_CODE", npp, "E08000021", range(2040,2051))
-Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
->>> newcastle_ex_agg.head()
-  GEOGRAPHY_CODE  PROJECTED_YEAR_NAME      OBS_VALUE
-0      E08000021                 2040  327746.409271
-1      E08000021                 2041  328491.090111
-2      E08000021                 2042  329339.498765
-3      E08000021                 2043  330352.294999
-4      E08000021                 2044  331269.728582
 >>>
+>>> newcastle = snpp.aggregate("GEOGRAPHY_CODE", "E08000021", range(2018,2040))
+Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
+>>> newcastle_ex = snpp.extrapolagg("GEOGRAPHY_CODE", npp, "E08000021", range(2040,2065))
+Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
+>>>
+>>> plt.plot(newcastle.PROJECTED_YEAR_NAME, newcastle.OBS_VALUE, "bo", newcastle_ex.PROJECTED_YEAR_NAME, newcastle_ex.OBS_VALUE, "ro")
+[<matplotlib.lines.Line2D object at 0x7f8c5a46f978>, <matplotlib.lines.Line2D object at 0x7f8c5a46fc18>]
+>>> plt.xlabel("Year")
+Text(0.5,0,'Year')
+>>> plt.ylabel("Persons")
+Text(0,0.5,'Persons')
+>>> plt.title("Newcastle Population Projection (red=extrapolated NPP)")
+Text(0.5,1,'Newcastle Population Projection (red=extrapolated NPP)')
+>>> plt.show()
 ```
+![Extrapolated Newcastle Population Projection](doc/img/Newcastle_ex.png)
+
 ## Construct an SNPP variant by applying NPP variant to a specific LAD
 TODO...
 
