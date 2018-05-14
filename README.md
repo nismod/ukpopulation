@@ -108,6 +108,10 @@ If installation has missing dependencies, try:
 $ pip install -r requirements.txt
 $ ./setup.py install
 ```
+The UKCensusAPI dependency *should* be resolved automatically, but if not you can force installation using
+```bash
+pip3 install git+https://github.com/virgesmith/UKCensusAPI.git
+```
 
 If (with python 3.5?) you encounter 
 ```bash
