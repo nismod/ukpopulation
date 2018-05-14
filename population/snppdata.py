@@ -95,8 +95,16 @@ class SNPPData:
     # invert categories (they're the ones to aggregate, not preserve)
     return data.groupby(utils.check_and_invert(categories))["OBS_VALUE"].sum().reset_index()
 
-  def apply_variant(self): 
-    pass
+  def create_variant(self, variant_name, npp, geog_code, year_range):
+    """
+    Apply NPP variant to SNPP: SNPP(v) = SNPP(0) * sum(a,g) [ NPP(v) / NPP(0) ]
+    Preserves age-gender structure of SNPP data
+    """ 
+    #variant_ratio(self, variant_numerator, geog, years, ages=range(0,91), genders=[1,2]): 
+    scaling = npp.variant_ratio(variant_name, geog_code, year_range)
+    data = self.filter(geog_code, years)
+
+    data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
 
   def __do_england(self):
     print("Collating SNPP data for England...")
