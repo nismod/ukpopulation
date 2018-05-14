@@ -20,3 +20,9 @@ def check_and_invert(categories):
     inverted.remove(cat)
 
   return inverted
+
+def aggregate(detail, categories):
+  """
+  Aggregate OBS_VALUE over categories
+  """
+  return detail.groupby(check_and_invert(categories))["OBS_VALUE"].sum().reset_index()

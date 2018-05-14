@@ -101,11 +101,26 @@ class SNPPData:
     Preserves age-gender structure of SNPP data
     """ 
     #variant_ratio(self, variant_numerator, geog, years, ages=range(0,91), genders=[1,2]): 
-    scaling = npp.variant_ratio(variant_name, geog_code, year_range)
-    data = self.filter(geog_code, years)
+    scaling = npp.variant_ratio(variant_name, _country(geog_code), year_range).reset_index().sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
+
+    scaling.to_csv(variant_name + ".csv", index=False)
+    data = self.filter(geog_code, year_range).sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"]).reset_index()
+    data.to_csv("data.csv", index=False)
+
+#     #data = data.join(scaling, on=["C_AGE"])#, "GENDER", "PROJECTED_YEAR_NAME"])
+# #    (data, scaling) = data.align(scaling)
+    print(scaling.head())
+    print(data.head())
+#     #print(data.ix[1000])
+    # for y in year_range:
+    #   for g in [1,2]:
+    #     for a in range(0,91):
+    #       data.loc[(data.C_AGE==a) & (data.GENDER==g) & (data.PROJECTED_YEAR_NAME==y), "OBS_VALUE"] = \
+    #         data[(data.C_AGE==a) & (data.GENDER==g) & (data.PROJECTED_YEAR_NAME==y), "OBS_VALUE"] * \
+    #         scaling[(scaling.C_AGE==a) & (scaling.GENDER==g) & (scaling.PROJECTED_YEAR_NAME==y)].OBS_VALUE
 
     data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
-
+    data.to_csv("WTF.csv", index=False)
     return data
 
   def __do_england(self):

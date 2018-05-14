@@ -122,6 +122,7 @@ class NPPData:
     """
     Ratio to ref_year projection for selected geog/years/ages/genders 
     """
+    # TODO do we need to index these to ensure the piecewise mult is correct?
     ref = self.detail(variant_name, geog, [ref_year], ages, genders)
     num = self.detail(variant_name, geog, [year], ages, genders)
 
@@ -132,10 +133,17 @@ class NPPData:
     """
     Ratio to principal projection for selected geog/years/ages/genders 
     """
-    ref = self.detail("ppp", geog, years, ages, genders)
-    num = self.detail(variant_numerator, geog, years, ages, genders)
+    ref = self.detail("ppp", geog, years, ages, genders).set_index(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
+
+    num = self.detail(variant_numerator, geog, years, ages, genders).set_index(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
+
+    #print(ref.head())
+    #print(num.head())
 
     num.OBS_VALUE = num.OBS_VALUE / ref.OBS_VALUE
+    #print(num.query("GENDER==2 and C_AGE==6 and PROJECTED_YEAR_NAME==2018"))
+
+    # return multiindexed df
     return num
 
   def __download_ppp(self):
