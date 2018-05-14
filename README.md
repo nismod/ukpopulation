@@ -85,7 +85,19 @@ The purpose of this package is to provide a unified interface to both SNPP and N
 # Installation
 
 ## Requirements
-Python 3.5 or higher, dependencies should resolve automatically
+
+### API Key
+
+This package downloads data from [nomisweb](https://www.nomisweb.co.uk) and requires an API key to do so. You will need to [register](https://www.nomisweb.co.uk/myaccount/userjoin.asp) to obtain one. Once registered, you will find your API key on [this page](https://www.nomisweb.co.uk/myaccount/webservice.asp). You should not divulge this key to others.
+
+The key should be defined in an environment variable, like so:
+
+user@host:~$ echo $NOMIS_API_KEY
+0x0000000000000000000000000000000000000000
+
+### Python
+
+Requires Python 3.5 or higher. Dependencies *should* resolve automatically, but if not see [troubleshooting](#troubleshooting) 
 
 ```bash
 $ pip3 install git+https://github.com/nismod/population.git
@@ -100,8 +112,6 @@ $ NOMIS_API_KEY=DUMMY ./setup.py test
 ```
 
 ## Troubleshooting
-
-Please post any issues you encounter in the repo, with as much supporting information as possible.
 
 If installation has missing dependencies, try:
 ```bash
@@ -122,6 +132,8 @@ then
 $ pip3 install html5lib=0.9999999
 ```
 should fix it. But better solution is to upgrade to python3.6
+
+If your problem isn't addressed above, please post an issue including as much supporting information as possible.
 
 # Usage Examples
 
