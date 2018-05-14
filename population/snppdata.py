@@ -104,17 +104,8 @@ class SNPPData:
     scaling = npp.variant_ratio(variant_name, _country(geog_code), year_range).reset_index().sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
     scaling.to_csv(variant_name + ".csv", index=False)
     
-    data = self.filter(geog_code, year_range).sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"]).reset_index()
-    data.to_csv("data.csv", index=False)
-
-    # print(scaling.head())
-    # print(data.head())
-    # for y in year_range:
-    #   for g in [1,2]:
-    #     for a in range(0,91):
-    #       data.loc[(data.C_AGE==a) & (data.GENDER==g) & (data.PROJECTED_YEAR_NAME==y), "OBS_VALUE"] = \
-    #         data[(data.C_AGE==a) & (data.GENDER==g) & (data.PROJECTED_YEAR_NAME==y), "OBS_VALUE"] * \
-    #         scaling[(scaling.C_AGE==a) & (scaling.GENDER==g) & (scaling.PROJECTED_YEAR_NAME==y)].OBS_VALUE
+    data = self.filter(geog_code, year_range).sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"]).reset_index(drop=True)
+    #data.to_csv("data.csv", index=False)
 
     data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
     return data

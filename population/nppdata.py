@@ -163,7 +163,13 @@ class NPPData:
     ppp = self.data_api.get_data(table_internal, query_params)
     # make age actual year
     ppp.C_AGE = ppp.C_AGE - 1
-    # TODO merge 90+ for consistency with SNPP?
+    # TODO merge 90+ for consistency with SNPP
+    pop90plus = ppp[ppp.C_AGE >= 90].groupby(["GENDER", "PROJECTED_YEAR_NAME", "GEOGRAPHY_CODE"])["OBS_VALUE"].sum().reset_index()
+    pop90plus["C_AGE"] = 90
+    #print(pop90plus.head())
+
+    # remove the aggregated categories from the original and append the aggregate
+    ppp = ppp[ppp.C_AGE < 90].append(pop90plus, ignore_index=True)
 
     return ppp
   
