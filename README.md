@@ -266,47 +266,64 @@ array(['E92000001', 'W92000004'], dtype=object)
 ```
 
 ## Extrapolate SNPP using NPP data
-Construct SNPP data for Newcastle from 2040-2050 using NPP data but preserving Newcastle's (2039) age structure (i.e. weighted sum). The second dataset aggregates the data by age and gender. 
+Construct aggregate SNPP data for Newcastle from 2018-2065, using the SNPP data up to 2039 then extrapolating using NPP data while preserving Newcastle's (2039) age-gender structure. 
 
+Source code:
 ```python
->>> import matplotlib.pyplot as plt
->>> import population.nppdata as NPPData
->>> import population.snppdata as SNPPData
->>>
->>> npp = NPPData.NPPData()
-Cache directory:  ./raw_data/
-using cached LAD codes: ./raw_data/lad_codes.json
-Loading NPP principal (ppp) data for England, Wales, Scotland & Nortern Ireland
-./raw_data/NM_2009_1_metadata.json found, using cached metadata...
-Using cached data: ./raw_data/NM_2009_1_444caf1f672f0646722e389963289973.tsv
->>> snpp = SNPPData.SNPPData()
-Cache directory:  ./raw_data/
-using cached LAD codes: ./raw_data/lad_codes.json
-Collating SNPP data for England...
-./raw_data/NM_2006_1_metadata.json found, using cached metadata...
-Using cached data: ./raw_data/NM_2006_1_56aba41fc0fab32f58ead6ae91a867b4.tsv
-./raw_data/NM_2006_1_metadata.json found, using cached metadata...
-Using cached data: ./raw_data/NM_2006_1_dbe6c087fb46306789f7d54b125482e4.tsv
-Collating SNPP data for Wales...
-Collating SNPP data for Scotland...
-Collating SNPP data for Northern Ireland...
->>>
->>> newcastle = snpp.aggregate("GEOGRAPHY_CODE", "E08000021", range(2018,2040))
-Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
->>> newcastle_ex = snpp.extrapolagg("GEOGRAPHY_CODE", npp, "E08000021", range(2040,2065))
-Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
->>>
->>> plt.plot(newcastle.PROJECTED_YEAR_NAME, newcastle.OBS_VALUE, "bo", newcastle_ex.PROJECTED_YEAR_NAME, newcastle_ex.OBS_VALUE, "ro")
-[<matplotlib.lines.Line2D object at 0x7f8c5a46f978>, <matplotlib.lines.Line2D object at 0x7f8c5a46fc18>]
->>> plt.xlabel("Year")
-Text(0.5,0,'Year')
->>> plt.ylabel("Persons")
-Text(0,0.5,'Persons')
->>> plt.title("Newcastle Population Projection (red=extrapolated NPP)")
-Text(0.5,1,'Newcastle Population Projection (red=extrapolated NPP)')
->>> plt.show()
+import matplotlib.pyplot as plt
+import population.nppdata as NPPData
+import population.snppdata as SNPPData
+
+# initialise the population modules
+npp = NPPData.NPPData()
+snpp = SNPPData.SNPPData()
+
+# get the first year where extrapolation is necessary
+ex_start = snpp.max_year() + 1
+
+# get the total projected population for newcastle up to the SNPP horizon (2039)
+newcastle = snpp.aggregate("GEOGRAPHY_CODE", "E08000021", range(2018, ex_start))
+# extrapolate for another 25 years
+newcastle_ex = snpp.extrapolagg("GEOGRAPHY_CODE", npp, "E08000021", range(ex_start, ex_start + 25))
+
+# plot the data
+plt.plot(newcastle.PROJECTED_YEAR_NAME, newcastle.OBS_VALUE, "bo", newcastle_ex.PROJECTED_YEAR_NAME, newcastle_ex.OBS_VALUE, "ro")
+plt.xlabel("Year")
+plt.ylabel("Persons")
+plt.title("Newcastle Population Projection (red=extrapolated NPP)")
+plt.show()
 ```
 ![Extrapolated Newcastle Population Projection](doc/img/Newcastle_ex.png)
+
+This extrapolates every LAD (or equivalent) to 2050 and saves the result as a csv file:
+
+```python
+import pandas as pd
+import population.nppdata as NPPData
+import population.snppdata as SNPPData
+
+# initialise the population modules
+npp = NPPData.NPPData()
+snpp = SNPPData.SNPPData()
+
+# get the first year where extrapolation is necessary
+ex_start = snpp.max_year() + 1
+# we extrapolate to 2050
+ex_end = 2050 
+
+# start with an empty data frame
+result = pd.DataFrame()
+
+# loop over all the UK LAD (or LAD-equivalents)
+for lad in snpp.data.GEOGRAPHY_CODE.unique():
+  # extrapolate 
+  lad_ex = snpp.extrapolagg("GEOGRAPHY_CODE", npp, lad, range(ex_start, ex_end + 1))
+  # append to data
+  result = result.append(lad_ex, ignore_index=True)
+
+# write out results
+result.to_csv("snpp_extrap_2050.csv")
+```
 
 ## Construct an SNPP variant by applying NPP variant to a specific LAD
 TODO...
