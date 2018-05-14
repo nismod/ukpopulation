@@ -39,7 +39,7 @@ class Test(unittest.TestCase):
     self.assertEqual(len(data), 1456) # 91(ages) * 2(genders) * 2(LADs) * 4(years)
     self.assertEqual(data[data.PROJECTED_YEAR_NAME==2016].OBS_VALUE.sum(), 209799) 
 
-    agg = snpp.aggregate(["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME"], ["E06000001","S12000041"], [2016])
+    agg = snpp.aggregate(["GENDER", "C_AGE"], ["E06000001","S12000041"], [2016])
     self.assertEqual(len(agg), 2)
     self.assertEqual(agg.OBS_VALUE.sum(), 209799) # remember this is population under 46
 
@@ -48,7 +48,8 @@ class Test(unittest.TestCase):
     # invalid variant code
     #self.assertRaises(RuntimeError, snpp.filter, "xxx", NPPData.NPPData.UK, [2016])
     # invalid column name 
-    self.assertRaises(KeyError, snpp.aggregate, ["WRONG_CODE", "PROJECTED_YEAR_NAME"], ["E06000001","S12000041"], [2016])
+    self.assertRaises(ValueError, snpp.aggregate, ["INVALID_CAT"], ["E06000001","S12000041"], [2016])
+    self.assertRaises(RuntimeError, snpp.aggregate, ["GENDER", "PROJECTED_YEAR_NAME"], ["E06000001","S12000041"], [2016])
     #invalid year? for now return empty
     self.assertEqual(len(snpp.filter(["E06000001","S12000041"], [2040])), 0)
     #self.assert
@@ -77,7 +78,7 @@ class Test(unittest.TestCase):
     self.assertCountEqual(list(npp.data.keys()), ["ppp", "hhh"])
 
     # similar to above, but all of UK summed by age and gender
-    agg = npp.aggregate(["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME"], "hhh", NPPData.NPPData.UK, [2016])
+    agg = npp.aggregate(["GENDER", "C_AGE"], "hhh", NPPData.NPPData.UK, [2016])
     self.assertEqual(len(agg), 4)
     self.assertEqual(agg.OBS_VALUE.sum(), 37906626) # remember this is population under 46
 
@@ -86,7 +87,8 @@ class Test(unittest.TestCase):
     # invalid variant code
     self.assertRaises(RuntimeError, npp.detail, "xxx", NPPData.NPPData.UK, [2016])
     # invalid column name 
-    self.assertRaises(KeyError, npp.aggregate, ["WRONG_CODE", "PROJECTED_YEAR_NAME"], "hhh", NPPData.NPPData.UK, [2016])
+    #self.assertRaises(ValueError, npp.aggregate, ["WRONG_CODE", "GENDER"], "hhh", NPPData.NPPData.UK, [2016])
+    self.assertRaises(RuntimeError, npp.aggregate, ["PROJECTED_YEAR_NAME"], "hhh", NPPData.NPPData.UK, [2016])
     #invalid year? for now return empty
     self.assertEqual(len(npp.detail("ppp", NPPData.NPPData.UK, [2015])), 0)
     #self.assert

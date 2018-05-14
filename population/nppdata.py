@@ -8,6 +8,7 @@ import pandas as pd
 from openpyxl import load_workbook
 import ukcensusapi.Nomisweb as Api
 from bs4 import BeautifulSoup
+import population.utils as utils
 
 def _read_excel_xml(path, sheet_name):
   file = open(path).read()
@@ -115,13 +116,7 @@ class NPPData:
 
     data = self.detail(variant_name, geog, years, ages, genders)
 
-    # ensure list
-    if isinstance(categories, str):
-      categories = [categories]
-    if not "PROJECTED_YEAR_NAME" in categories:
-      print("Not aggregating over PROJECTED_YEAR_NAME as it makes no sense")
-      categories.append("PROJECTED_YEAR_NAME")
-    return data.groupby(categories)["OBS_VALUE"].sum().reset_index()
+    return data.groupby(utils.check_and_invert(categories))["OBS_VALUE"].sum().reset_index()
 
   def year_ratio(self, variant_name, geog, ref_year, year, ages=range(0,91), genders=[1,2]):
     """

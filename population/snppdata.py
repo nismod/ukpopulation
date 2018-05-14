@@ -6,6 +6,7 @@ import pandas as pd
 import requests
 from openpyxl import load_workbook
 import ukcensusapi.Nomisweb as Api
+import population.utils as utils
 
 def _read_cell_range(worksheet, topleft, bottomright):
   data_rows = []
@@ -66,13 +67,9 @@ class SNPPData:
   def aggregate(self, categories, geog_codes, years, ages=range(0,91), genders=[1,2]):
 
     data = self.filter(geog_codes, years, ages, genders)
-    # ensure list
-    if isinstance(categories, str):
-      categories = [categories]
-    if not "PROJECTED_YEAR_NAME" in categories:
-      print("Not aggregating over PROJECTED_YEAR_NAME as it makes no sense")
-      categories.append("PROJECTED_YEAR_NAME")
-    return data.groupby(categories)["OBS_VALUE"].sum().reset_index()
+
+    # invert categories (they're the ones to aggregate, not preserve)
+    return data.groupby(utils.check_and_invert(categories))["OBS_VALUE"].sum().reset_index()
 
   # For now one LAD at a time (due to multiple countries)
   # For now allow extrapolation of years already in data
@@ -94,13 +91,9 @@ class SNPPData:
     Extrapolate and then aggregate
     """
     data = self.extrapolate(npp, geog_code, year_range)
-    # ensure list
-    if isinstance(categories, str):
-      categories = [categories]
-    if not "PROJECTED_YEAR_NAME" in categories:
-      print("Not aggregating over PROJECTED_YEAR_NAME as it makes no sense")
-      categories.append("PROJECTED_YEAR_NAME")
-    return data.groupby(categories)["OBS_VALUE"].sum().reset_index()
+
+    # invert categories (they're the ones to aggregate, not preserve)
+    return data.groupby(utils.check_and_invert(categories))["OBS_VALUE"].sum().reset_index()
 
   def apply_variant(self): 
     pass
@@ -272,4 +265,3 @@ class SNPPData:
       snpp_ni.to_csv(ni_raw, index=False)
 
     return snpp_ni
-
