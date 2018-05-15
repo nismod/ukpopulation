@@ -59,7 +59,7 @@ class Test(unittest.TestCase):
     #self.assertRaises(RuntimeError, self.snpp.filter, "xxx", NPPData.NPPData.UK, [2016])
     # invalid column name 
     self.assertRaises(ValueError, self.snpp.aggregate, ["INVALID_CAT"], ["E06000001","S12000041"], [2016])
-    self.assertRaises(RuntimeError, self.snpp.aggregate, ["GENDER", "PROJECTED_YEAR_NAME"], ["E06000001","S12000041"], [2016])
+    self.assertRaises(ValueError, self.snpp.aggregate, ["GENDER", "PROJECTED_YEAR_NAME"], ["E06000001","S12000041"], [2016])
     #invalid year? for now return empty
     self.assertEqual(len(self.snpp.filter(["E06000001","S12000041"], [2040])), 0)
     #self.assert
@@ -96,7 +96,7 @@ class Test(unittest.TestCase):
     self.assertRaises(RuntimeError, self.npp.detail, "xxx", NPPData.NPPData.UK, [2016])
     # invalid column name 
     #self.assertRaises(ValueError, self.npp.aggregate, ["WRONG_CODE", "GENDER"], "hhh", NPPData.NPPData.UK, [2016])
-    self.assertRaises(RuntimeError, self.npp.aggregate, ["PROJECTED_YEAR_NAME"], "hhh", NPPData.NPPData.UK, [2016])
+    self.assertRaises(ValueError, self.npp.aggregate, ["PROJECTED_YEAR_NAME"], "hhh", NPPData.NPPData.UK, [2016])
     #invalid year? for now return empty
     self.assertEqual(len(self.npp.detail("ppp", NPPData.NPPData.UK, [2015])), 0)
     #self.assert

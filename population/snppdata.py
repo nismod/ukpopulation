@@ -50,13 +50,13 @@ class SNPPData:
     """
     return max(self.data.PROJECTED_YEAR_NAME.unique())
 
-  def filter(self, geog_codes, years, ages=range(0,91), genders=[1,2]):
+  def filter(self, geog_codes, years=None, ages=range(0,91), genders=[1,2]):
 
-    # convery geog_codes and years to arrays if single values supplied (for isin)
+    # convert geog_codes and years to arrays if single values supplied (for isin)
     if isinstance(geog_codes, str):
       geog_codes = [geog_codes]
-    if isinstance(years, int):
-      years = [years]
+
+    years = utils.trim_range(years, self.min_year(), self.max_year())
 
     # apply filters
     return self.data[(self.data.GEOGRAPHY_CODE.isin(geog_codes)) & 
@@ -64,7 +64,7 @@ class SNPPData:
                      (self.data.C_AGE.isin(ages)) &
                      (self.data.GENDER.isin(genders))].reset_index(drop=True)
 
-  def aggregate(self, categories, geog_codes, years, ages=range(0,91), genders=[1,2]):
+  def aggregate(self, categories, geog_codes, years=None, ages=range(0,91), genders=[1,2]):
 
     data = self.filter(geog_codes, years, ages, genders)
 
@@ -117,18 +117,12 @@ class SNPPData:
     """
     Apply NPP variant to SNPP: SNPP(v) = SNPP(0) * sum(a,g) [ NPP(v) / NPP(0) ]
     Preserves age-gender structure of SNPP data
-    """ 
-    
-    # ex_data = pd.DataFrame()
+    """    
     # (in_range, ex_range) = utils.split_range(year_range, self.max_year())
     data = self.extrapolate(npp, geog_code, year_range).sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"]).reset_index(drop=True)
 
     scaling = npp.variant_ratio(variant_name, _country(geog_code), year_range).reset_index().sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
     #scaling.to_csv(variant_name + ".csv", index=False)
-
-    #data = self.filter(geog_code, in_range)
-    #data = data.append(ex_data).sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"]).reset_index(drop=True)
-    #data.to_csv("exdata.csv", index=False)
 
     data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
     return data

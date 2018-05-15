@@ -99,13 +99,15 @@ class NPPData:
     """
     if not variant_name in NPPData.VARIANTS:
       raise RuntimeError("invalid variant name: " + variant_name)
-    # if years not specifed use the full range available
-    if years is None:
-     years = range(self.min_year(), self.max_year())
+    # make years a valid range (this *silently* removes invalid years)
+    years = utils.trim_range(years, self.min_year(), self.max_year())
 
     if not variant_name in self.data:
-      self.__load_variant(variant_name)
-
+      # is it a standard variant
+      if variant_name in NPPData.VARIANTS:
+        self.__load_variant(variant_name)
+      else:
+        raise RuntimeError("Invalid variant name / custom variants are not yet implemented")
 
     # apply filters
     geog_codes = [NPPData.CODES[g] for g in geog]

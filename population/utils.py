@@ -14,7 +14,7 @@ def check_and_invert(categories):
     categories = [categories]
 
   if "PROJECTED_YEAR_NAME" in categories:
-    raise RuntimeError("It makes no sense to aggregate data over PROJECTED_YEAR_NAME")
+    raise ValueError("It makes no sense to aggregate data over PROJECTED_YEAR_NAME")
 
   for cat in categories:
     inverted.remove(cat)
@@ -29,6 +29,23 @@ def aggregate(detail, categories):
 
 def split_range(full_range, cutoff):
   """
-  Split a year range into those within (incl) cutoff and those without
+  Split a range of values into those within (<=) cutoff and those without (>)
+  Returns a tuple containing 2 lists (which can be empty)
   """
+  if isinstance(full_range, int) or isinstance(full_range, float):
+    full_range = [full_range]
+
   return ([x for x in full_range if x <= cutoff], [x for x in full_range if x > cutoff])
+
+def trim_range(input_range, minval, maxval):
+  """
+  Removes values < minval or > maxval from input_range
+  If input_range is None, defaults to the inclusive range: range(minval, maxval + 1) 
+  """
+  if input_range is None:
+    return range(minval, maxval + 1)
+  
+  if isinstance(input_range, int) or isinstance(input_range, float):
+    input_range = [input_range]
+
+  return [x for x in input_range if x >= minval and x <= maxval]
