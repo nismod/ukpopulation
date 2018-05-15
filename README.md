@@ -95,7 +95,7 @@ The purpose of this package is to provide a unified interface to both SNPP and N
 
 The extrapolation methodology is explained by the following equation for the aggregate SNPP _S(g,y)_ for a given geography and year.
 
-[eq1](doc/img/Extrapolate_eqn.gif)
+![eq1](doc/img/Extrapolate_eqn.gif)
 
 where _N_ is the NPP, _a_ is age, _s_ is gender, _y bar_ is a reference year (typically the final year in the SNPP data), and _c(g)_ represents a mapping from a SNPP geography (LAD) to a NPP one (country).
 
@@ -103,7 +103,7 @@ where _N_ is the NPP, _a_ is age, _s_ is gender, _y bar_ is a reference year (ty
 
 Similarly the methodology for synthesising SNPP variants from SNPP and NPP data is:
 
-[eq2](doc/img/Variant_eqn.gif)
+![eq2](doc/img/Variant_eqn.gif)
 
 where the subscripts _V_ and _0_ refer to the variant and the principal projections respectively. 
 
