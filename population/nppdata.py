@@ -173,7 +173,7 @@ class NPPData:
 
     return ppp
   
-  def __load_variant(self, variant):
+  def __load_variant(self, variant_name):
 
     # [4 country zips] -> [60 xml] -> [60 raw csv] -> [15 variant csv]
 
@@ -185,10 +185,10 @@ class NPPData:
     }
 
     # check for cached data
-    dataset = self.cache_dir + "/npp_" + variant + ".csv"
+    dataset = self.cache_dir + "/npp_" + variant_name + ".csv"
     if not os.path.isfile(dataset):
       # assemble data if not already cached
-      self.data[variant] = pd.DataFrame()
+      self.data[variant_name] = pd.DataFrame()
 
       # step 1: download, country-level zip file containing all variants (if not already there)
       for country in datasets:
@@ -206,15 +206,14 @@ class NPPData:
         raw_zip = self.cache_dir + "/npp_" + country + ".zip"
         z = zipfile.ZipFile(raw_zip)
         # step 2: unzip, collate and reformat data if not presentcd
-        print("Extracting " + country + "_" + variant)
-        vxml = country + "_" + variant + "_opendata2016.xml"
+        print("Extracting " + country + "_" + variant_name)
+        vxml = country + "_" + variant_name + "_opendata2016.xml"
         if not os.path.isfile(self.cache_dir + "/" + vxml):
           z.extract(vxml, path=self.cache_dir)
         start = time.time()
-        variant = np.array(_read_excel_xml(self.cache_dir + "/" + vxml, "Population"))
+        vdata = np.array(_read_excel_xml(self.cache_dir + "/" + vxml, "Population"))
         print("read xml in " + str(time.time() - start))
-        #df = pd.DataFrame(data=variant[1:,2:], columns=variant[0,2:], index=variant[1:,:2])
-        df = pd.DataFrame(data=variant[1:,0:], columns=variant[0,0:])
+        df = pd.DataFrame(data=vdata[1:,0:], columns=vdata[0,0:])
         df = df.set_index(["Sex", "Age"]).stack().reset_index()
         # remove padding
         df.Age = df.Age.str.strip()
@@ -249,9 +248,9 @@ class NPPData:
         df["GEOGRAPHY_CODE"] = NPPData.CODES[country]
 
         #df.to_csv(vcsv, index=None)
-        self.data[variant] = self.data[variant].append(df, ignore_index=True)
+        self.data[variant_name] = self.data[variant_name].append(df, ignore_index=True)
       
       # step 3: save preprocessed data
-      self.data[variant].to_csv(dataset, index=None)
+      self.data[variant_name].to_csv(dataset, index=None)
 
-    self.data[variant] = pd.read_csv(dataset)
+    self.data[variant_name] = pd.read_csv(dataset)
