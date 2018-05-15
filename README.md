@@ -115,10 +115,13 @@ where the subscripts _V_ and _0_ refer to the variant and the principal projecti
 
 This package downloads data from [nomisweb](https://www.nomisweb.co.uk) and requires an API key to do so. You will need to [register](https://www.nomisweb.co.uk/myaccount/userjoin.asp) to obtain one. Once registered, you will find your API key on [this page](https://www.nomisweb.co.uk/myaccount/webservice.asp). You should not divulge this key to others.
 
-The key should be defined in an environment variable, like so:
+The key should be defined in an environment variable, on linux like so:
 
-user@host:~$ echo $NOMIS_API_KEY
+```bash
+$ export NOMIS_API_KEY=0x0000000000000000000000000000000000000000
+$ echo $NOMIS_API_KEY
 0x0000000000000000000000000000000000000000
+```
 
 ### Python
 
