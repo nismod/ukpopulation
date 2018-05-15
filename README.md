@@ -103,6 +103,11 @@ Requires Python 3.5 or higher. Dependencies *should* resolve automatically, but 
 $ pip3 install git+https://github.com/nismod/population.git
 ```
 
+Some of the examples (see below) plot graphs and have a dependency on matplotlib, which can be installed with
+```bash
+$ pip3 install matplotlib
+```
+
 ## Testing
 
 Requires that `NOMIS_API_KEY` is defined, but set to "DUMMY" so that the cached data filenames match those in the test dataset:
@@ -132,6 +137,12 @@ then
 $ pip3 install html5lib=0.9999999
 ```
 should fix it. But better solution is to upgrade to python3.6
+
+If matplotlib fails to install due to a missing dependency (tkinter), this can be fixed on Debian variants by
+
+```bash
+$ sudo apt install python3-tk
+```
 
 If your problem isn't addressed above, please post an issue including as much supporting information as possible.
 
@@ -221,7 +232,7 @@ Using cached data: ./raw_data/NM_2009_1_444caf1f672f0646722e389963289973.tsv
 ```python
 >>> uk_working_age=npp.aggregate("GEOGRAPHY_CODE", "ppp", NPPData.NPPData.UK, range(2016,2051), ages=range(16,75))
 Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
->>> ukwap.head()
+>>> uk_working_age.head()
   GEOGRAPHY_CODE  PROJECTED_YEAR_NAME  OBS_VALUE
 0      E92000001                 2016   40269470
 1      E92000001                 2017   40460118
@@ -231,9 +242,9 @@ Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
 ```
 And this aggregates the figures for Great Britain:
 ```python
->>> uk_working_age=npp.aggregate([], "ppp", NPPData.NPPData.GB, range(2016,2051), ages=range(16,75))
+>>> gb_working_age=npp.aggregate([], "ppp", NPPData.NPPData.GB, range(2016,2051), ages=range(16,75))
 Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
->>> uk_working_age.head()
+>>> gb_working_age.head()
    PROJECTED_YEAR_NAME  OBS_VALUE
 0                 2016   46590014
 1                 2017   46801693
@@ -266,67 +277,42 @@ array(['E92000001', 'W92000004'], dtype=object)
 ```
 
 ## Extrapolate SNPP using NPP data
-Construct aggregate SNPP data for Newcastle from 2018-2065, using the SNPP data up to 2039 then extrapolating using NPP data while preserving Newcastle's (2039) age-gender structure. 
 
-Source code:
-```python
-import matplotlib.pyplot as plt
-import population.nppdata as NPPData
-import population.snppdata as SNPPData
+### Single Area
 
-# initialise the population modules
-npp = NPPData.NPPData()
-snpp = SNPPData.SNPPData()
+Construct aggregate SNPP data for Newcastle from 2018-2065:
+- use the SNPP data up to 2039, aggregated by age and gender. 
+- extrapolate the NPP data whilst preserving Newcastle's (2039) age-gender structure.
+- aggregrate the extrapolated data by age and gender
+- plot the data. 
 
-# get the first year where extrapolation is necessary
-ex_start = snpp.max_year() + 1
+[Source Code](doc/example_extrapolate.py)
 
-# get the total projected population for newcastle up to the SNPP horizon (2039)
-newcastle = snpp.aggregate("GEOGRAPHY_CODE", "E08000021", range(2018, ex_start))
-# extrapolate for another 25 years
-newcastle_ex = snpp.extrapolagg("GEOGRAPHY_CODE", npp, "E08000021", range(ex_start, ex_start + 25))
-
-# plot the data
-plt.plot(newcastle.PROJECTED_YEAR_NAME, newcastle.OBS_VALUE, "bo", newcastle_ex.PROJECTED_YEAR_NAME, newcastle_ex.OBS_VALUE, "ro")
-plt.xlabel("Year")
-plt.ylabel("Persons")
-plt.title("Newcastle Population Projection (red=extrapolated NPP)")
-plt.show()
-```
 ![Extrapolated Newcastle Population Projection](doc/img/Newcastle_ex.png)
 
-This extrapolates every LAD (or equivalent) to 2050 and saves the result as a csv file:
+### Bulk Calculation
 
-```python
-import pandas as pd
-import population.nppdata as NPPData
-import population.snppdata as SNPPData
+In this example we extraplolate and aggregrate the SNPP for every LAD (or equivalent) in the UK:
+- for each area, 
+  - extrapolate from 2039 to 2050 using the 2039 age-gender structure.
+  - aggregate the extrapolated data by age and gender.
+  - append to full dataset.
+- save UK-wide dataset as csv.
 
-# initialise the population modules
-npp = NPPData.NPPData()
-snpp = SNPPData.SNPPData()
-
-# get the first year where extrapolation is necessary
-ex_start = snpp.max_year() + 1
-# we extrapolate to 2050
-ex_end = 2050 
-
-# start with an empty data frame
-result = pd.DataFrame()
-
-# loop over all the UK LAD (or LAD-equivalents)
-for lad in snpp.data.GEOGRAPHY_CODE.unique():
-  # extrapolate 
-  lad_ex = snpp.extrapolagg("GEOGRAPHY_CODE", npp, lad, range(ex_start, ex_end + 1))
-  # append to data
-  result = result.append(lad_ex, ignore_index=True)
-
-# write out results
-result.to_csv("snpp_extrap_2050.csv")
-```
+[Source Code](doc/example_extrapolate_all.py)
 
 ## Construct an SNPP variant by applying NPP variant to a specific LAD
-TODO...
+
+Here we apply the "hhh" (high growth) and "lll" (low growth) NPP variants to the SNPP data for Newcastle:
+- calculate the principal ("ppp") projection by simply aggregrating the SNPP data for Newcastle, 2018-2039, by age and gender.
+- calculate the variants by weighting the unaggregated data (i.e. by age and gender) by the ratio of the NPP variant/principal.
+- aggregrate the variant data by age and gender.
+- plot the results.
+ 
+[Source Code](doc/example_variant.py)
+
+![Newcastle Population Projection Variants](doc/img/Newcastle_var.png)
+
 
 ## Extrapolating an SNPP variant
 TODO...
