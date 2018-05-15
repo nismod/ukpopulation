@@ -6,21 +6,19 @@ import population.snppdata as SNPPData
 npp = NPPData.NPPData()
 snpp = SNPPData.SNPPData()
 
-# get the first year where extrapolation is necessary
-ex_start = snpp.max_year() + 1
-# we extrapolate to 2050
-ex_end = 2050 
+# get the first year where extrapolation is necessary, extrapolate to 2050
+ex_years = range(snpp.max_year() + 1, 2051)
 
 # start with an empty data frame
 result = pd.DataFrame()
 
 # loop over all the UK LAD (or LAD-equivalents)
 for lad in snpp.data.GEOGRAPHY_CODE.unique()[:5]:
-  print(lad_ex)
+  print(lad)
   # extrapolate and aggregate
-  lad_ex = snpp.extrapolagg(["GENDER", "C_AGE"], npp, lad, range(ex_start, ex_end + 1))
+  lad = snpp.extrapolagg(["GENDER", "C_AGE"], npp, lad, ex_years)
   # append to data
-  result = result.append(lad_ex, ignore_index=True)
+  result = result.append(lad, ignore_index=True)
 
 # write out results
 result.to_csv("snpp_extrap_2050.csv", index=False)

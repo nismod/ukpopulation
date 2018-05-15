@@ -76,8 +76,11 @@ class SNPPData:
   # Filtering age and gender is not (currently) supported
   def extrapolate(self, npp, geog_code, year_range):
 
-    all_years = pd.DataFrame()
-    for year in year_range:
+    (in_range, ex_range) = utils.split_range(year_range, self.max_year())
+
+    all_years = self.filter(geog_code, in_range)
+
+    for year in ex_range:
       data = self.filter([geog_code], [self.max_year()])
       scaling = npp.year_ratio("ppp", _country(geog_code), self.max_year(), year)
       data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
@@ -95,17 +98,37 @@ class SNPPData:
     # invert categories (they're the ones to aggregate, not preserve)
     return data.groupby(utils.check_and_invert(categories))["OBS_VALUE"].sum().reset_index()
 
+  # def create_variant(self, variant_name, npp, geog_code, year_range):
+  #   """
+  #   Apply NPP variant to SNPP: SNPP(v) = SNPP(0) * sum(a,g) [ NPP(v) / NPP(0) ]
+  #   Preserves age-gender structure of SNPP data
+  #   """ 
+  #   #variant_ratio(self, variant_numerator, geog, years, ages=range(0,91), genders=[1,2]): 
+  #   scaling = npp.variant_ratio(variant_name, _country(geog_code), year_range).reset_index().sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
+  #   #scaling.to_csv(variant_name + ".csv", index=False)
+    
+  #   data = self.filter(geog_code, year_range).sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"]).reset_index(drop=True)
+  #   #data.to_csv("data.csv", index=False)
+
+  #   data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
+  #   return data
+
   def create_variant(self, variant_name, npp, geog_code, year_range):
     """
     Apply NPP variant to SNPP: SNPP(v) = SNPP(0) * sum(a,g) [ NPP(v) / NPP(0) ]
     Preserves age-gender structure of SNPP data
     """ 
-    #variant_ratio(self, variant_numerator, geog, years, ages=range(0,91), genders=[1,2]): 
-    scaling = npp.variant_ratio(variant_name, _country(geog_code), year_range).reset_index().sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
-    scaling.to_csv(variant_name + ".csv", index=False)
     
-    data = self.filter(geog_code, year_range).sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"]).reset_index(drop=True)
-    #data.to_csv("data.csv", index=False)
+    # ex_data = pd.DataFrame()
+    # (in_range, ex_range) = utils.split_range(year_range, self.max_year())
+    data = self.extrapolate(npp, geog_code, year_range).sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"]).reset_index(drop=True)
+
+    scaling = npp.variant_ratio(variant_name, _country(geog_code), year_range).reset_index().sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
+    #scaling.to_csv(variant_name + ".csv", index=False)
+
+    #data = self.filter(geog_code, in_range)
+    #data = data.append(ex_data).sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"]).reset_index(drop=True)
+    #data.to_csv("exdata.csv", index=False)
 
     data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
     return data

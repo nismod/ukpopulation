@@ -26,3 +26,9 @@ def aggregate(detail, categories):
   Aggregate OBS_VALUE over categories
   """
   return detail.groupby(check_and_invert(categories))["OBS_VALUE"].sum().reset_index()
+
+def split_range(full_range, cutoff):
+  """
+  Split a year range into those within (incl) cutoff and those without
+  """
+  return ([x for x in full_range if x <= cutoff], [x for x in full_range if x > cutoff])

@@ -4,46 +4,55 @@
 
 Population and demographics projection module, developed for ITRC/MISTRAL.
 
-ONS produce projections of the count of persons by gender and single year of age, specifically:
- - National (UK) and country-level population projections (NPP) with variants as listed in the table below. The data is currently 2016-based and projects to 2116.
- - Subnational (England at LAD level) *principal-only* population projections. The data is currently 2014-based and projects to 2039.
- 
-With the exception of the NPP variants Nomisweb hosts the ONS data. [This may change](https://www.nomisweb.co.uk/forum/posts.aspx?tID=565&fID=2)
+The statistical agencies of the United Kingdom, that is: ONS, StatsWales, NR Scotland, and NISRA, all produce population projection data. Although the data are essentially the same, the quantity, format, and availability varies between agencies and datasets. All of the projection data is available by (single year of) age and gender.
 
-Other countries within the UK produce (and host) their own SNPP data, typically in spreadsheet format. 
+National population projections (NPP) are the responsibility of ONS who provide the data for each country within the UK, including 15 variants covering a number of possible future scenarios. The current data is based on 2016 population estimates and project a century to 2116.
 
- 
-**E**ngland **S**cotland **W**ales and **N**orthern Ireland statistics authorities
-separately produce sub-national population projections (at LAD or LAD-equivalent
-level) for the variants as indicated by an `x` in the table. The ONS currently regard these (the England ones at least) as ["experimental"](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationprojections/articles/subnationalpopulationprojectionsresearchreportonvariantprojections/2014basedprojections).
+Subnational population projections (SNPP) are the responsiblity of each country's agencies (ONS for England), are based on 2014 population estimates and project 25 years to 2039.
 
+## Coverage
 
-scenario                         | code | E | S | W | N |
----------------------------------|------|---|---|---|---|
-Principal                        | ppp  | x | x | x | x |
-High fertility                   | hpp  | x | x |   |   |
-Low fertility                    | lpp  |   | x |   |   |
-High life expectancy             | php  |   | x |   |   |
-Low life expectancy              | plp  |   | x |   |   |
-High migration                   | pph  |   | x |   |   |
-Low migration                    | ppl  |   | x |   |   |
-High population                  | hhh  |   |   | x |   |
-Low population                   | lll  |   |   | x |   |
-Zero net migration               | ppz  | x | x | x |   |
-Young age structure              | hlh  |   |   |   |   |
-Old age structure                | lhl  |   |   |   |   |
-Replacement fertility            | rpp  |   |   |   |   |
-Constant fertility               | cpp  |   |   |   |   |
-No mortality improvement         | pnp  |   |   |   |   |
-No change                        | cnp  |   |   |   |   |
-Long term balanced net migration | ppb  |   |   | x |   |
+The countries within the UK produce their own SNPP data, and also produce some (patchy) variant projections. The ONS currently regard these (the England ones at least) as ["experimental"](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationprojections/articles/subnationalpopulationprojectionsresearchreportonvariantprojections/2014basedprojections). 
+
+Scenario/Variant                 | Code | E | S | W | N |NPP|
+---------------------------------|------|---|---|---|---|---|
+Principal                        | ppp  | x | x | x | x | x |
+High fertility                   | hpp  | x | x |   |   | x |
+Low fertility                    | lpp  |   | x |   |   | x |
+High life expectancy             | php  |   | x |   |   | x |
+Low life expectancy              | plp  |   | x |   |   | x |
+Moderately high life expectancy  | pjp  |   |   |   |   | x |
+Moderately low life expectancy   | plp  |   |   |   |   | x |
+High migration                   | pph  |   | x |   |   | x |
+Low migration                    | ppl  |   | x |   |   | x |
+High population                  | hhh  |   |   | x |   | x |
+Low population                   | lll  |   |   | x |   | x |
+0% future EU migration           | ppq  |   |   |   |   | x |
+50% future EU migration          | ppr  |   |   |   |   | x |
+150% future EU migration         | pps  |   |   |   |   | x |
+Zero net migration               | ppz  | x | x | x |   | x |
+Young age structure              | hlh  |   |   |   |   |   |
+Old age structure                | lhl  |   |   |   |   |   |
+Replacement fertility            | rpp  |   |   |   |   |   |
+Constant fertility               | cpp  |   |   |   |   |   |
+No mortality improvement         | pnp  |   |   |   |   |   |
+No change                        | cnp  |   |   |   |   |   |
+Long term balanced net migration | ppb  |   |   | x |   |   |
+
+## Accessibility
+
+[Nomisweb](www.nomisweb.co.uk) provides an API which allows relatively easy programmatical access the to data, and by far the preferred source of data. Currently not all the data is available from this source but [this may change](https://www.nomisweb.co.uk/forum/posts.aspx?tID=565&fID=2).
+
+Nomisweb currently hosts the ONS principal NPP data for the UK, and the SNPP data for England.  
+
+All other data: ONS NPP variants, SNPP data for Wales, Scotland and Northern Ireland are available in different formats from the appropriate agency's website.
 
 # Rationale
 
 The purpose of this package is to provide a unified interface to both SNPP and NPP data, including variants:
 - encapsulating the downloading, processing and cacheing of the NPP and SNPP data from the various sources.
-- differentiating by age (single year, up to 90) and gender.
-- providing a unified format for both the NPP and SNPP data.
+- consistently differentiating by age (single year, up to 90) and gender over the various datasets.
+- providing a unified format for all the data.
 - providing a method of synthesising SNPP variant projections using SNPP principal and NPP principal/variant projections
 - providing a method of extrapolating SNPP data using NPP data
 - enabling easy filtering and aggregating of of the data, e.g. extracting projections of the working-age population.
@@ -313,9 +322,14 @@ Here we apply the "hhh" (high growth) and "lll" (low growth) NPP variants to the
 
 ![Newcastle Population Projection Variants](doc/img/Newcastle_var.png)
 
-
 ## Extrapolating an SNPP variant
-TODO...
+
+Here we extend the example above by not only applying the NPP variant, but extrapolating too. The process first involves extrapolating the SNPP by the NPP principal variant. The extrapolated data then has the variant adjustments applied to it.  
+ 
+[Source Code](doc/example_variant_ex.py)
+
+![Newcastle Population Projection Variants](doc/img/Newcastle_var_ex.png)
+
 
 # Code Documentation
 Package documentation can be viewed like so:
