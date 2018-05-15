@@ -91,6 +91,22 @@ The purpose of this package is to provide a unified interface to both SNPP and N
   - `OBS_VALUE`: count of persons
 - All data are cached for swift retrieval.  
 
+# Extrapolation 
+
+The extrapolation methodology is explained by the following equation for the aggregate SNPP _S(g,y)_ for a given geography and year.
+
+[eq1](doc/img/Extrapolate_eqn.gif)
+
+where _N_ is the NPP, _a_ is age, _s_ is gender, _y bar_ is a reference year (typically the final year in the SNPP data), and _c(g)_ represents a mapping from a SNPP geography (LAD) to a NPP one (country).
+
+# Projection of Variants
+
+Similarly the methodology for synthesising SNPP variants from SNPP and NPP data is:
+
+[eq2](doc/img/Variant_eqn.gif)
+
+where the subscripts _V_ and _0_ refer to the variant and the principal projections respectively. 
+
 # Installation
 
 ## Requirements
@@ -207,12 +223,7 @@ Collating SNPP data for Wales...
 Collating SNPP data for Scotland...
 Collating SNPP data for Northern Ireland...
 ```python
->>> newcastle=snpp.aggregate(["GEOGRAPHY_CODE"], "E08000021", range(2018,2039))
-```
-```
-Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
-```
-```python
+>>> newcastle=snpp.aggregate(["GENDER", "C_AGE"], "E08000021", range(2018,2039))
 >>> newcastle.head()
 ```
 ```
@@ -239,8 +250,7 @@ Loading NPP principal (ppp) data for England, Wales, Scotland & Nortern Ireland
 Using cached data: ./raw_data/NM_2009_1_444caf1f672f0646722e389963289973.tsv
 ```
 ```python
->>> uk_working_age=npp.aggregate("GEOGRAPHY_CODE", "ppp", NPPData.NPPData.UK, range(2016,2051), ages=range(16,75))
-Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
+>>> uk_working_age=npp.aggregate(["GENDER", "C_AGE"], "ppp", NPPData.NPPData.UK, range(2016,2051), ages=range(16,75))
 >>> uk_working_age.head()
   GEOGRAPHY_CODE  PROJECTED_YEAR_NAME  OBS_VALUE
 0      E92000001                 2016   40269470
@@ -251,8 +261,7 @@ Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
 ```
 And this aggregates the figures for Great Britain:
 ```python
->>> gb_working_age=npp.aggregate([], "ppp", NPPData.NPPData.GB, range(2016,2051), ages=range(16,75))
-Not aggregating over PROJECTED_YEAR_NAME as it makes no sense
+>>> gb_working_age=npp.aggregate(["GEOGRAPHY_CODE", "GENDER", "C_AGE"], "ppp", NPPData.NPPData.GB, range(2016,2051), ages=range(16,75))
 >>> gb_working_age.head()
    PROJECTED_YEAR_NAME  OBS_VALUE
 0                 2016   46590014
@@ -265,6 +274,8 @@ NB SNPP data can also be filtered by age and/or gender and/or geography in the s
 
 ## Retrieve NPP variants for England & Wales
 
+First detailed data (by age, gender and country), then aggregated by age and gender.
+
 ```python
 >>> import population.nppdata as NPPData
 >>> npp=NPPData.NPPData()
@@ -274,8 +285,6 @@ Loading NPP principal (ppp) data for England, Wales, Scotland & Nortern Ireland
 ./raw_data/NM_2009_1_metadata.json found, using cached metadata...
 Using cached data: ./raw_data/NM_2009_1_444caf1f672f0646722e389963289973.tsv
 >>> high_growth = npp.detail("hhh", NPPData.NPPData.EW)
->>> high_growth.GEOGRAPHY_CODE.unique()
-array(['E92000001', 'W92000004'], dtype=object)
 >>> high_growth.head()
    C_AGE  GENDER  OBS_VALUE  PROJECTED_YEAR_NAME GEOGRAPHY_CODE
 0      0       1     343198                 2016      E92000001
@@ -283,6 +292,15 @@ array(['E92000001', 'W92000004'], dtype=object)
 2      0       1     345332                 2018      E92000001
 3      0       1     349796                 2019      E92000001
 4      0       1     354274                 2020      E92000001
+>>> high_growth_agg = npp.aggregate(["GENDER", "C_AGE"], "hhh", NPPData.NPPData.EW)
+>>> high_growth_agg.head()
+  GEOGRAPHY_CODE  PROJECTED_YEAR_NAME  OBS_VALUE
+0      E92000001                 2016   55268067
+1      E92000001                 2017   55660155
+2      E92000001                 2018   56115027
+3      E92000001                 2019   56568795
+4      E92000001                 2020   57019007
+>>>
 ```
 
 ## Extrapolate SNPP using NPP data
@@ -324,7 +342,7 @@ Here we apply the "hhh" (high growth) and "lll" (low growth) NPP variants to the
 
 ## Extrapolating an SNPP variant
 
-Here we extend the example above by not only applying the NPP variant, but extrapolating too. The process first involves extrapolating the SNPP by the NPP principal variant. The extrapolated data then has the variant adjustments applied to it.  
+Here we build on the examples above by not only applying the NPP variant, but extrapolating too. The process first involves extrapolating the SNPP by the NPP principal variant. The extrapolated data then has the variant adjustments applied to it.  
  
 [Source Code](doc/example_variant_ex.py)
 

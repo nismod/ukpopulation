@@ -94,6 +94,9 @@ class NPPData:
 
 
   def detail(self, variant_name, geog, years=None, ages=range(0,91), genders=[1,2]):
+    """
+    Return a subset of the raw data
+    """
     if not variant_name in NPPData.VARIANTS:
       raise RuntimeError("invalid variant name: " + variant_name)
     # if years not specifed use the full range available
@@ -112,7 +115,10 @@ class NPPData:
                                    (self.data[variant_name].GENDER.isin(genders))].reset_index(drop=True)
 
 
-  def aggregate(self, categories, variant_name, geog, years, ages=range(0,91), genders=[1,2]):
+  def aggregate(self, categories, variant_name, geog, years=None, ages=range(0,91), genders=[1,2]):
+    """
+    Subset and aggregate the raw data
+    """
 
     data = self.detail(variant_name, geog, years, ages, genders)
 
@@ -122,7 +128,7 @@ class NPPData:
     """
     Ratio to ref_year projection for selected geog/years/ages/genders 
     """
-    # TODO do we need to index these to ensure the piecewise mult is correct?
+    # TODO do we need to (re)index these to ensure the piecewise mult is correct?
     ref = self.detail(variant_name, geog, [ref_year], ages, genders)
     num = self.detail(variant_name, geog, [year], ages, genders)
 
@@ -136,9 +142,6 @@ class NPPData:
     ref = self.detail("ppp", geog, years, ages, genders).set_index(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
 
     num = self.detail(variant_numerator, geog, years, ages, genders).set_index(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
-
-    #print(ref.head())
-    #print(num.head())
 
     num.OBS_VALUE = num.OBS_VALUE / ref.OBS_VALUE
     #print(num.query("GENDER==2 and C_AGE==6 and PROJECTED_YEAR_NAME==2018"))
