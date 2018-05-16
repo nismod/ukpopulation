@@ -83,6 +83,7 @@ class SNPPData:
     for year in ex_range:
       data = self.filter([geog_code], [self.max_year()])
       scaling = npp.year_ratio("ppp", _country(geog_code), self.max_year(), year)
+      assert(len(data == len(scaling)))
       data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
       data.PROJECTED_YEAR_NAME = year
       all_years = all_years.append(data, ignore_index=True)
@@ -98,34 +99,28 @@ class SNPPData:
     # invert categories (they're the ones to aggregate, not preserve)
     return data.groupby(utils.check_and_invert(categories))["OBS_VALUE"].sum().reset_index()
 
-  # def create_variant(self, variant_name, npp, geog_code, year_range):
-  #   """
-  #   Apply NPP variant to SNPP: SNPP(v) = SNPP(0) * sum(a,g) [ NPP(v) / NPP(0) ]
-  #   Preserves age-gender structure of SNPP data
-  #   """ 
-  #   #variant_ratio(self, variant_numerator, geog, years, ages=range(0,91), genders=[1,2]): 
-  #   scaling = npp.variant_ratio(variant_name, _country(geog_code), year_range).reset_index().sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
-  #   #scaling.to_csv(variant_name + ".csv", index=False)
-    
-  #   data = self.filter(geog_code, year_range).sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"]).reset_index(drop=True)
-  #   #data.to_csv("data.csv", index=False)
-
-  #   data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
-  #   return data
-
   def create_variant(self, variant_name, npp, geog_code, year_range):
     """
     Apply NPP variant to SNPP: SNPP(v) = SNPP(0) * sum(a,g) [ NPP(v) / NPP(0) ]
     Preserves age-gender structure of SNPP data
-    """    
-    # (in_range, ex_range) = utils.split_range(year_range, self.max_year())
-    data = self.extrapolate(npp, geog_code, year_range).sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"]).reset_index(drop=True)
+    """  
+    # split out any years prior to the NPP data (currently SNPP is 2014 based but NPP is 2016)
+    (pre_range, in_range) = utils.split_range(year_range, npp.min_year() - 1)
+    # for any years prior to NPP we just use the SNPP data as-is (i.e. "ppp")
+    pre_data = self.filter(geog_code, pre_range)
+    if len(pre_data) > 0:
+      print("WARNING: variant {} not applied for years {} that predate the NPP data".format(variant_name, pre_range))
+
+    data = self.extrapolate(npp, geog_code, in_range).sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"]).reset_index(drop=True)
 
     scaling = npp.variant_ratio(variant_name, _country(geog_code), year_range).reset_index().sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
     #scaling.to_csv(variant_name + ".csv", index=False)
 
+    assert(len(data) == len(scaling))
     data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
-    return data
+    
+    # prepend any pre-NPP data
+    return pre_data.append(data)
 
   def __do_england(self):
     print("Collating SNPP data for England...")

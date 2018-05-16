@@ -134,6 +134,7 @@ class NPPData:
     ref = self.detail(variant_name, geog, [ref_year], ages, genders)
     num = self.detail(variant_name, geog, [year], ages, genders)
 
+    assert(len(ref) == len(num))
     num.OBS_VALUE = num.OBS_VALUE / ref.OBS_VALUE
     return num
 
@@ -145,6 +146,7 @@ class NPPData:
 
     num = self.detail(variant_numerator, geog, years, ages, genders).set_index(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
 
+    assert(len(ref) == len(num))
     num.OBS_VALUE = num.OBS_VALUE / ref.OBS_VALUE
     #print(num.query("GENDER==2 and C_AGE==6 and PROJECTED_YEAR_NAME==2018"))
 
