@@ -7,7 +7,7 @@ def readme():
     return f.read()
 
 setup(name='population',
-  version='0.0.1',
+  version='1.0.0',
   description='Download, collate, cache, and query Population projections',
   long_description=readme(),
   url='https://github.com/nismod/population',
