@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/nismod/population.png?branch=master)](https://travis-ci.org/nismod/population) [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+[![Version 1.0.0](https://zenodo.org/badge/doi/10.5281/zenodo.1250366.svg)](https://github.com/nismod/population/releases/tag/1.0.0)
 
 # population: Demographic Projections
 
