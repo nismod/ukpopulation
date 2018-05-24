@@ -27,6 +27,6 @@ UK statistics agencies (ONS, StatsWales, NRScotland and NISRA) produce national 
 
 This python package unifies the retrieval of UK-wide data into a single interface for each dataset (national/subnational). It also provides functionality to extrapolate the shorter-term subnational data using the longer-term national data, whilst preserving the age-gender structure present at the smaller geography. In a similar manner, national projection variants can be applied at subnational scale (again preserving age-gender structure).
 
-This functionality allows researchers to construct plausible projections, both principal and variant, at subnational scale, consistently for anywhere in the UK, and over longer time horizons than the official data permit. 
+This functionality allows researchers and policymakers to construct plausible projections, both principal and variant, at subnational scale, consistently for anywhere in the UK, and over longer time horizons than the official data permit. 
 
 # References
