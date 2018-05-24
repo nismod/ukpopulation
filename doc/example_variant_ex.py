@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
-import population.nppdata as NPPData
-import population.snppdata as SNPPData
-import population.utils as utils
+import ukpopulation.nppdata as NPPData
+import ukpopulation.snppdata as SNPPData
+import ukpopulation.utils as utils
 
 # initialise the population modules
 npp = NPPData.NPPData()

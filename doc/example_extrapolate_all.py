@@ -1,6 +1,6 @@
 import pandas as pd
-import population.nppdata as NPPData
-import population.snppdata as SNPPData
+import ukpopulation.nppdata as NPPData
+import ukpopulation.snppdata as SNPPData
 
 # initialise the population modules
 npp = NPPData.NPPData()
