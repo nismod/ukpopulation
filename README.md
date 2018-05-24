@@ -364,4 +364,5 @@ and
 import population.snppdata as SNPPData
 help(SNPPData)
 ```
-
+# Acknowledgements
+This package was developed as a component of the EPSRC sponsored [MISTRAL](https://www.itrc.org.uk/) programme, part of the Infrastructure Transition Research Consortium.
