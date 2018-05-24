@@ -2,6 +2,20 @@
 Common utility functions for NPP/SNPP
 """
 
+import os 
+from pathlib import Path
+
+def default_cache_dir():
+  """
+  Default cache dir location, ensures the path exists (failing if it cannot create) 
+  This *should* work on all platforms
+  """
+  cache_dir = Path.home() / ".ukpopulation/cache"
+  
+  if not os.path.exists(cache_dir):
+    os.makedirs(cache_dir)
+  return str(cache_dir)
+
 def check_and_invert(categories):
   """
   Takes a list of categories to aggregrate and removes them from all possible categories, 

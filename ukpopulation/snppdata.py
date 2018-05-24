@@ -28,8 +28,9 @@ class SNPPData:
   Wales/Scotland/NI are not the responsiblity of ONS and are made avilable online by the relevant statistical agency
   """  
 
-  def __init__(self, cache_dir="./raw_data"):
-  # England SNPP by gender by SYOA from UKCensusAPI
+  def __init__(self, cache_dir=None):
+    if cache_dir is None:
+      cache_dir = utils.default_cache_dir()
     self.cache_dir = cache_dir
     self.data_api = Api.Nomisweb(self.cache_dir) 
 
