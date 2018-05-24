@@ -181,7 +181,7 @@ If your problem isn't addressed above, please post an issue including as much su
 ### Detailed data
 This example fetches the 2018 projection for Newcastle by gender and age. 
 ```python
->>> import population.snppdata as SNPPData
+>>> import ukpopulation.snppdata as SNPPData
 >>> snpp = SNPPData.SNPPData()
 ```
 ```
@@ -212,7 +212,7 @@ Collating SNPP data for Northern Ireland...
 ### Aggregated data
 This example fetches the total population projections for Newcastle from 2018 to 2039.
 ```python 
->>> import population.snppdata as SNPPData
+>>> import ukpopulation.snppdata as SNPPData
 >>> snpp = SNPPData.SNPPData()
 ```
 ```
@@ -243,7 +243,7 @@ Collating SNPP data for Northern Ireland...
 Here's how to get the total working-age population by country from 2016 to 2050:
 
 ```python
->>> import population.nppdata as NPPData
+>>> import ukpopulation.nppdata as NPPData
 >>> npp = NPPData.NPPData()
 ```
 ```
@@ -281,7 +281,7 @@ NB SNPP data can also be filtered by age and/or gender and/or geography in the s
 First detailed data (by age, gender and country), then aggregated by age and gender.
 
 ```python
->>> import population.nppdata as NPPData
+>>> import ukpopulation.nppdata as NPPData
 >>> npp=NPPData.NPPData()
 Cache directory:  ./raw_data/
 using cached LAD codes: ./raw_data/lad_codes.json
@@ -356,12 +356,12 @@ Here we build on the examples above by not only applying the NPP variant, but ex
 # Code Documentation
 Package documentation can be viewed like so:
 ```python
-import population.nppdata as NPPData
+import ukpopulation.nppdata as NPPData
 help(NPPData)
 ```
 and
 ```python
-import population.snppdata as SNPPData
+import ukpopulation.snppdata as SNPPData
 help(SNPPData)
 ```
 # Acknowledgements

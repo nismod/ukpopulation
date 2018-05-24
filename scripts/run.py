@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import population.nppdata as NPPData
-import population.snppdata as SNPPData
+import ukpopulation.nppdata as NPPData
+import ukpopulation.snppdata as SNPPData
 
 def main():
   npp = NPPData.NPPData("./raw_data")
@@ -32,6 +32,12 @@ def main():
 
   snpp.extrapolate(npp, "E08000021", 2040)
   snpp.extrapolate(npp, "E08000021", 2100)
+
+  # plot population growth 
+  ncle_act = snpp.aggregate("GEOGRAPHY_CODE", "E08000021", range(2016,2040))
+  ncle_ext = snpp.extrapolagg("GEOGRAPHY_CODE", "E08000021", range(2040,2066)))
+  ncle = ncle_act.append(ncle_ext)
+  #matplotlib...
 
 if __name__ == "__main__":
   main()

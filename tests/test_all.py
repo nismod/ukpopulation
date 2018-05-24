@@ -4,9 +4,9 @@ import unittest
 import numpy as np
 
 #import ukcensusapi.Nomisweb as Api
-import population.nppdata as NPPData
-import population.snppdata as SNPPData
-import population.utils as utils
+import ukpopulation.nppdata as NPPData
+import ukpopulation.snppdata as SNPPData
+import ukpopulation.utils as utils
 
 class Test(unittest.TestCase):
 

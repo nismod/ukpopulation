@@ -8,7 +8,7 @@ import pandas as pd
 from openpyxl import load_workbook
 import ukcensusapi.Nomisweb as Api
 from bs4 import BeautifulSoup
-import population.utils as utils
+import ukpopulation.utils as utils
 
 def _read_excel_xml(path, sheet_name):
   file = open(path).read()

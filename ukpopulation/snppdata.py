@@ -6,7 +6,7 @@ import pandas as pd
 import requests
 from openpyxl import load_workbook
 import ukcensusapi.Nomisweb as Api
-import population.utils as utils
+import ukpopulation.utils as utils
 
 def _read_cell_range(worksheet, topleft, bottomright):
   data_rows = []
