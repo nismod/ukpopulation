@@ -142,6 +142,10 @@ class NPPData:
     """
     Ratio to principal projection for selected geog/years/ages/genders 
     """
+    # workaround: this function only works for a single country (which is ok)
+    # so force the arg into an array (to work in detail func). If its already an array (even size 1) it will fail here
+    # Proper fix might be to add geog to the multiindex
+    geog = [geog]
     ref = self.detail("ppp", geog, years, ages, genders).set_index(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
 
     num = self.detail(variant_numerator, geog, years, ages, genders).set_index(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
@@ -160,7 +164,7 @@ class NPPData:
     table_internal = "NM_2009_1" # 2016-based NPP (principal)
     query_params = {
       "gender": "1,2",
-      "c_age": "1...105",
+      "c_age": "1...106",
       "MEASURES": "20100",
       "date": "latest",
       "projected_year": "2016...2116",
@@ -173,7 +177,6 @@ class NPPData:
     # TODO merge 90+ for consistency with SNPP
     pop90plus = ppp[ppp.C_AGE >= 90].groupby(["GENDER", "PROJECTED_YEAR_NAME", "GEOGRAPHY_CODE"])["OBS_VALUE"].sum().reset_index()
     pop90plus["C_AGE"] = 90
-    #print(pop90plus.head())
 
     # remove the aggregated categories from the original and append the aggregate
     ppp = ppp[ppp.C_AGE < 90].append(pop90plus, ignore_index=True)
