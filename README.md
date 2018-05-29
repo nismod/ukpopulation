@@ -1,9 +1,7 @@
-[![Build Status](https://travis-ci.org/nismod/population.png?branch=master)](https://travis-ci.org/nismod/population) [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
-[![Version 1.0.0](https://zenodo.org/badge/doi/10.5281/zenodo.1250366.svg)](https://github.com/nismod/population/releases/tag/1.0.0)
+[![Build Status](https://travis-ci.org/nismod/ukpopulation.png?branch=master)](https://travis-ci.org/nismod/ukpopulation) [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+[![Version 1.0.0](https://zenodo.org/badge/doi/10.5281/zenodo.1250366.svg)](https://github.com/nismod/ukpopulation/releases/tag/1.0.0)
 
 # ukpopulation: UK Demographic Projections
-
-Population and demographics projection module, developed for ITRC/MISTRAL.
 
 The statistical agencies of the United Kingdom, that is: ONS, StatsWales, NR Scotland, and NISRA, all produce population projection data. Although the data are essentially the same, the quantity, format, and availability varies between agencies and datasets. All of the projection data is available by (single year of) age and gender.
 
@@ -68,22 +66,7 @@ The purpose of this package is to provide a unified interface to both SNPP and N
 
 ## Data Processing
 - Note that SNPP data is 2014-based while NPP data is 2016-based.
-- NPP data is broken down by country (England/Wales/Scotland/Northern Ireland), with the following variants available:
-  - hhh: High population, 
-  - hpp: High fertility,
-  - lll: Low population,
-  - lpp: Low fertility,
-  - php: High life expectancy,
-  - pjp: Moderately high life expectancy,
-  - pkp: Moderately low life expectancy,
-  - plp: Low life expectancy,
-  - pph: High migration,
-  - ppl: Low migration,
-  - ppp: Principal,
-  - ppq: 0% future EU migration (non-ONS),
-  - ppr: 50% future EU migration (non-ONS),
-  - pps: 150% future EU migration (non-ONS),
-  - ppz: Zero net migration
+- NPP data is broken down by country (England/Wales/Scotland/Northern Ireland), for all the variant projections indicated in the table above. 
 - Column headings and category values follow the nomisweb/census conventions:
   - `GEOGRAPHY_CODE`: ONS country, LAD, or LAD-equivalent code
   - `GENDER`: 1=Male, 2=Female
