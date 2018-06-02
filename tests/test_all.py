@@ -15,12 +15,12 @@ class Test(unittest.TestCase):
     Check env set up correctly for tests
     (it's too late to override the env in this function unfortunately)
     """
-    if not os.environ["NOMIS_API_KEY"] == "DUMMY":
-      print("Test requires NOMIS_API_KEY=DUMMY in env")
-      sys.exit()
-
     self.npp = NPPData.NPPData("./tests/raw_data")    
     self.snpp = SNPPData.SNPPData("./tests/raw_data")    
+
+    if not self.npp.data_api.key == "DUMMY" or not self.snpp.data_api.key == "DUMMY":
+      print("Test requires NOMIS_API_KEY=DUMMY in env")
+      sys.exit()
 
   def test_utils(self):
     year_range = range(2018,2050)
