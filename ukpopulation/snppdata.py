@@ -123,28 +123,67 @@ class SNPPData:
     # prepend any pre-NPP data
     return pre_data.append(data)
 
+  # nomisweb data is now 2016-based
+  # def __do_england(self):
+  #   print("Collating SNPP data for England...")
+
+  #   # need to do this in 2 batches as entire table has >1000000 rows
+  #   table_internal = "NM_2006_1" # 2014-based SNPP
+  #   query_params = {
+  #     "gender": "1,2",
+  #     "c_age": "101...191",
+  #     "MEASURES": "20100",
+  #     "date": "latest", # 2014-based
+  #     "projected_year": "2014...2027",
+  #     "select": "geography_code,projected_year_name,gender,c_age,obs_value",
+  #     "geography": "1946157057...1946157382"
+  #   }
+  #   snpp_e = self.data_api.get_data(table_internal, query_params)
+
+  #   query_params["projected_year"] = "2028...2039"
+  #   snpp_e = snpp_e.append(self.data_api.get_data(table_internal, query_params))
+  #   # make age actual year
+  #   snpp_e.C_AGE = snpp_e.C_AGE - 101
+
+  #   #assert(len(snpp_e) == 26*2*91*326) # 326 LADs x 91 ages x 2 genders x 26 years
+  #   return snpp_e
   def __do_england(self):
-    print("Collating SNPP data for England...")
+    england_src = "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/localauthoritiesinenglandz1/2014based/snppz1population.zip"
+    england_raw = self.cache_dir + "/snpp_e.csv"
+    england_zip = self.cache_dir + "/snpp_e.zip"
 
-    # need to do this in 2 batches as entire table has >1000000 rows
-    table_internal = "NM_2006_1" # 2014-based SNPP
-    query_params = {
-      "gender": "1,2",
-      "c_age": "101...191",
-      "MEASURES": "20100",
-      "date": "latest", # 2014-based
-      "projected_year": "2014...2027",
-      "select": "geography_code,projected_year_name,gender,c_age,obs_value",
-      "geography": "1946157057...1946157382"
-    }
-    snpp_e = self.data_api.get_data(table_internal, query_params)
+    if os.path.isfile(england_raw): 
+      snpp_e = pd.read_csv(england_raw)
+    else: 
+      response = requests.get(england_src)
+      with open(england_zip, 'wb') as fd:
+        for chunk in response.iter_content(chunk_size=1024):
+          fd.write(chunk)
+        print("Downloaded", england_zip)
 
-    query_params["projected_year"] = "2028...2039"
-    snpp_e = snpp_e.append(self.data_api.get_data(table_internal, query_params))
-    # make age actual year
-    snpp_e.C_AGE = snpp_e.C_AGE - 101
+      z = zipfile.ZipFile(england_zip)
+      #print(z.namelist())  
 
-    #assert(len(snpp_e) == 26*2*91*326) # 326 LADs x 91 ages x 2 genders x 26 years
+      snpp_e = pd.DataFrame()
+      for gender in [1,2]:
+        filename = "2014 SNPP Population "+("males" if gender==1 else "females")+".csv"
+        chunk = pd.read_csv(z.open(filename)
+        ).drop(["AREA_NAME", "COMPONENT", "SEX"], axis=1
+        ).query('AGE_GROUP != "All ages"' 
+        #).AGE_GROUP.replace({"90 and over": "90"}
+        )
+        chunk.AGE_GROUP = chunk.AGE_GROUP.replace({"90 and over": "90"})
+        chunk = chunk.melt(id_vars=["AREA_CODE","AGE_GROUP"])
+        #chunk = chunk[chunk.AGE_GROUP != "all ages"]
+        # chunk = chunk.stack().reset_index() 
+        chunk.columns = ["GEOGRAPHY_CODE", "C_AGE", "PROJECTED_YEAR_NAME", "OBS_VALUE"]
+        chunk["GENDER"] = gender
+        print(chunk.head())
+        snpp_e = snpp_e.append(chunk)
+
+      print(len(snpp_e))
+      #assert(len(snpp_e) == 26*2*91*326) # 326 districts x 91 ages x 2 genders x 26 years
+      snpp_e.to_csv(england_raw, index=False)
     return snpp_e
 
     # Wales

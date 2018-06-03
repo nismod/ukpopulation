@@ -2,8 +2,10 @@
 import ukpopulation.nppdata as NPPData
 import ukpopulation.snppdata as SNPPData
 
+# TODO delete this file its superseded by the doc/example*.py  files
+
 def main():
-  npp = NPPData.NPPData("./raw_data")
+  npp = NPPData.NPPData()
   #print(len(npp.data["ppp"]))
   #print(npp.data["ppp"].head())
 
@@ -20,24 +22,19 @@ def main():
   agg = npp.aggregate("GEOGRAPHY_CODE","lll", NPPData.NPPData.EW, range(2016,2051))
   print(agg)
 
-  snpp = SNPPData.SNPPData("./raw_data")
+  snpp = SNPPData.SNPPData()
   print(len(snpp.data))
   print(snpp.data.head())
 
   e = npp.year_ratio("ppp", ["en"], 2039, 2050)
   print(e)
 
-  v = npp.variant_ratio("hhh", ["en"], range(2016,2039))
-  print(v[v.PROJECTED_YEAR_NAME==2039])
+  v = npp.variant_ratio("hhh", "en", range(2016,2039))
+  print(v.head())
 
-  snpp.extrapolate(npp, "E08000021", 2040)
-  snpp.extrapolate(npp, "E08000021", 2100)
+  print(snpp.extrapolate(npp, "E08000021", 2040))
+  print(snpp.extrapolate(npp, "E08000021", 2100))
 
-  # plot population growth 
-  ncle_act = snpp.aggregate("GEOGRAPHY_CODE", "E08000021", range(2016,2040))
-  ncle_ext = snpp.extrapolagg("GEOGRAPHY_CODE", "E08000021", range(2040,2066)))
-  ncle = ncle_act.append(ncle_ext)
-  #matplotlib...
 
 if __name__ == "__main__":
   main()
