@@ -96,16 +96,7 @@ where the subscripts _V_ and _0_ refer to the variant and the principal projecti
 ## Requirements
 
 ### API Key
-
-This package downloads data from [nomisweb](https://www.nomisweb.co.uk) and requires an API key to do so. You will need to [register](https://www.nomisweb.co.uk/myaccount/userjoin.asp) to obtain one. Once registered, you will find your API key on [this page](https://www.nomisweb.co.uk/myaccount/webservice.asp). You should not divulge this key to others.
-
-The key should be defined in an environment variable, on linux like so:
-
-```bash
-$ export NOMIS_API_KEY=0x0000000000000000000000000000000000000000
-$ echo $NOMIS_API_KEY
-0x0000000000000000000000000000000000000000
-```
+This package uses the [UKCensusAPI](http://github.com/virgesmith/UKCensusAPI) package to obtain some of the projection data. The package requires an API key to function correctly, see [here](https://github.com/virgesmith/UKCensusAPI/blob/master/README.md) for details. 
 
 ### Python
 
@@ -122,10 +113,10 @@ $ pip3 install matplotlib
 
 ## Testing
 
-Requires that `NOMIS_API_KEY` is defined, but set to "DUMMY" so that the cached data filenames match those in the test dataset:
+The test data cache directory contains a file NOMIS_API_KEY which defines a dummy key for testing purposes only. The test suit can be run using:
 
 ```bash
-$ NOMIS_API_KEY=DUMMY ./setup.py test
+$ ./setup.py test
 ```
 
 ## Troubleshooting
