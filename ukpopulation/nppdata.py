@@ -156,6 +156,13 @@ class NPPData:
     # return multiindexed df
     return num
 
+  def force_load_variants(self, variants):
+
+    for variant in variants:
+      if not variant in self.data:
+        self.__load_variant(variant)
+    return 
+
   def __download_ppp(self):
 
     print("Loading NPP principal (ppp) data for England, Wales, Scotland & Nortern Ireland")

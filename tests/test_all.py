@@ -128,5 +128,34 @@ class Test(unittest.TestCase):
     # TODO more testing of results
     self.assertTrue(np.array_equal(base.OBS_VALUE, ppp.OBS_VALUE))
 
+  # test datasets have consistent ranges
+  def test_consistency(self):
+    self.npp.force_load_variants(["hhh", "ppp", "lll"])
+
+    snpp_ages = self.snpp.data.C_AGE.unique()
+    snpp_genders = self.snpp.data.GENDER.unique()
+    for k in self.npp.data:
+      self.assertTrue(np.array_equal(snpp_ages, self.npp.data[k].C_AGE.unique()))
+      self.assertTrue(np.array_equal(snpp_genders, self.npp.data[k].GENDER.unique()))
+
+  # # Try to recreate problems in microsimulation
+  # def test_integration(self):
+
+  #   years = range(self.snpp.min_year(), self.snpp.max_year())
+    
+  #   variant = "hhh"
+  #   region = "E06000001"
+
+  #   for year in years:
+  #     if year <= self.snpp.max_year():
+  #     #age_sex = Utils.create_age_sex_marginal(self.snpp[self.snpp.PROJECTED_YEAR_NAME == year], self.region)
+  #     # print(self.snpp[self.snpp.PROJECTED_YEAR_NAME == year])
+  #     # print(self.snpp_api.create_variant(self.variant, self.npp_api, self.region, year))
+  #       age_sex = self.snpp.create_variant(variant, self.npp, region, year)
+  #       print(len(age_sex))
+  #     else:
+  #       age_sex = self.snpp.extrapolate(self.npp, region, year)
+  #   self.assertTrue(False)
+
 if __name__ == "__main__":
   unittest.main()
