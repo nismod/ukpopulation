@@ -112,6 +112,10 @@ class SNPPData:
     if len(pre_data) > 0:
       print("WARNING: variant {} not applied for years {} that predate the NPP data".format(variant_name, pre_range))
 
+    # return if there's nothing in the NPP range
+    if not in_range:
+      return pre_data
+
     data = self.extrapolate(npp, geog_code, in_range).sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"]).reset_index(drop=True)
 
     scaling = npp.variant_ratio(variant_name, _country(geog_code), year_range).reset_index().sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
@@ -148,6 +152,7 @@ class SNPPData:
   #   #assert(len(snpp_e) == 26*2*91*326) # 326 LADs x 91 ages x 2 genders x 26 years
   #   return snpp_e
   def __do_england(self):
+    print("Collating SNPP data for England...")
     england_src = "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/localauthoritiesinenglandz1/2014based/snppz1population.zip"
     england_raw = self.cache_dir + "/snpp_e.csv"
     england_zip = self.cache_dir + "/snpp_e.zip"
@@ -178,10 +183,8 @@ class SNPPData:
         # chunk = chunk.stack().reset_index() 
         chunk.columns = ["GEOGRAPHY_CODE", "C_AGE", "PROJECTED_YEAR_NAME", "OBS_VALUE"]
         chunk["GENDER"] = gender
-        print(chunk.head())
         snpp_e = snpp_e.append(chunk)
 
-      print(len(snpp_e))
       #assert(len(snpp_e) == 26*2*91*326) # 326 districts x 91 ages x 2 genders x 26 years
       snpp_e.to_csv(england_raw, index=False)
     return snpp_e

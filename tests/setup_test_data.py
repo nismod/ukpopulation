@@ -7,7 +7,7 @@ NOTE: ensure NOMIS_API_KEY=DUMMY in order to match the cached filenames for Engl
 """
 import pandas as pd
 
-real_data_dir = "./raw_data/"
+real_data_dir = "~/.ukpopulation/cache/"
 test_data_dir = "./tests/raw_data/"
 
 def setup_snpp_test_data():
@@ -31,15 +31,15 @@ def setup_snpp_test_data():
 
 def setup_npp_test_data():
   """ 
-  NPP test data is 3 variants, ages up to 45, for years 2016-2035
+  NPP test data is 3 variants, all ages, for years 2016-2035
   """
-  raw_files = ["NM_2009_1_0cc84a8e69bfe5836f02e8b3326ed952.tsv", # ppp  
+  raw_files = ["NM_2009_1_0bcd330bc936cd7902566cf7198d8868.tsv", # ppp  
               "npp_hhh.csv","npp_lll.csv"]
   
   for file in raw_files:
     sep = "\t" if file[-4:] == ".tsv" else ","
     df = pd.read_csv(real_data_dir + file, sep=sep)
-    df = df[(df.PROJECTED_YEAR_NAME < 2036) & (df.C_AGE<46)]
+    df = df[(df.PROJECTED_YEAR_NAME < 2036)]
     df.to_csv(test_data_dir + file, sep=sep, index=False)
 
 

@@ -144,10 +144,7 @@ class NPPData:
     """
     Ratio to principal projection for selected geog/years/ages/genders 
     """
-    # workaround: this function only works for a single country (which is ok)
-    # so force the arg into an array (to work in detail func). If its already an array (even size 1) it will fail here
-    # Proper fix might be to add geog to the multiindex
-    geog = [geog]
+    # this function only works for a single country (which is ok)
     ref = self.detail("ppp", geog, years, ages, genders).set_index(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
 
     num = self.detail(variant_numerator, geog, years, ages, genders).set_index(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])

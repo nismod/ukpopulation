@@ -14,8 +14,8 @@ end_year = snpp.max_year()
 newcastle = snpp.aggregate(["GENDER", "C_AGE"], "E08000021", range(start_year, end_year + 1))
 
 # calculate the the variants
-newcastle_hhh = snpp.create_variant("hhh", npp, "E08000021", range(start_year, end_year + 1))#, ["GENDER", "C_AGE"])
-newcastle_lll = snpp.create_variant("lll", npp, "E08000021", range(start_year, end_year + 1))#, ["GENDER", "C_AGE"])
+newcastle_hhh = snpp.create_variant("hhh", npp, "E08000021", range(start_year, end_year + 1))
+newcastle_lll = snpp.create_variant("lll", npp, "E08000021", range(start_year, end_year + 1))
 
 # aggregate the calculated variants by age and gender
 newcastle_hhh = utils.aggregate(newcastle_hhh, ["GENDER", "C_AGE"])
