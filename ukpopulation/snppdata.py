@@ -121,7 +121,7 @@ class SNPPData:
     scaling = npp.variant_ratio(variant_name, _country(geog_code), year_range).reset_index().sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
     #scaling.to_csv(variant_name + ".csv", index=False)
 
-    print("DF: ", len(data), ":", len(scaling))
+    #print("DF: ", len(data), ":", len(scaling))
     assert(len(data) == len(scaling))
     data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
     
