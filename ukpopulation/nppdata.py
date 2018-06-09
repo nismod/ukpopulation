@@ -31,16 +31,6 @@ class NPPData:
   Nomisweb stores the UK principal variant (only)
   Other variants are avilable online in zipped xml files
   """
-  CODES = {
-    "en": "E92000001",
-    "wa": "W92000004",
-    "sc": "S92000003",
-    "ni": "N92000002"
-  }
-  EW = ["en", "wa"]
-  GB = ["en", "wa", "sc"]
-  UK = ["en", "wa", "sc", "ni"]
-
 
   VARIANTS = {
     "hhh": "High population", 
@@ -112,7 +102,9 @@ class NPPData:
         raise RuntimeError("Invalid variant name / custom variants are not yet implemented")
 
     # apply filters
-    geog_codes = [NPPData.CODES[g] for g in geog]
+    if isinstance(geog, str):
+      geog = [geog]
+    geog_codes = [utils.CODES[g] for g in geog]
     return self.data[variant_name][(self.data[variant_name].GEOGRAPHY_CODE.isin(geog_codes)) & 
                                    (self.data[variant_name].PROJECTED_YEAR_NAME.isin(years)) &
                                    (self.data[variant_name].C_AGE.isin(ages)) &
@@ -194,10 +186,10 @@ class NPPData:
     # [4 country zips] -> [60 xml] -> [60 raw csv] -> [15 variant csv]
 
     datasets = {
-      "en": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z3zippedpopulationprojectionsdatafilesengland/2016based/tablez3opendata16england.zip",
-      "wa": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z4zippedpopulationprojectionsdatafileswales/2016based/tablez4opendata16wales.zip",
-      "sc": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z5zippedpopulationprojectionsdatafilesscotland/2016based/tablez5opendata16scotland.zip",
-      "ni": "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z6zippedpopulationprojectionsdatafilesnorthernireland/2016based/tablez6opendata16northernireland.zip",
+      utils.EN: "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z3zippedpopulationprojectionsdatafilesengland/2016based/tablez3opendata16england.zip",
+      utils.WA: "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z4zippedpopulationprojectionsdatafileswales/2016based/tablez4opendata16wales.zip",
+      utils.SC: "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z5zippedpopulationprojectionsdatafilesscotland/2016based/tablez5opendata16scotland.zip",
+      utils.NI: "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/z6zippedpopulationprojectionsdatafilesnorthernireland/2016based/tablez6opendata16northernireland.zip",
     }
 
     # check for cached data

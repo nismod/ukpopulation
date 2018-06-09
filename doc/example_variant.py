@@ -7,10 +7,11 @@ import ukpopulation.utils as utils
 npp = NPPData.NPPData()
 snpp = SNPPData.SNPPData()
 
-start_year = 2016
-end_year = snpp.max_year()
-
 lad = "E08000021" # Newcastle
+
+start_year = 2016
+end_year = snpp.max_year(lad)
+
 
 # get the total projected population for ppp up to the SNPP horizon (2039)
 ppp = snpp.aggregate(["GENDER", "C_AGE"], lad, range(start_year, end_year + 1))

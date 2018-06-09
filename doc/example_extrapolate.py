@@ -12,7 +12,7 @@ lad = "E08000021" # Newcastle
 # 50 year horizon
 years = range(2016, 2067)
 
-(in_years, ex_years) = utils.split_range(years, snpp.max_year())
+(in_years, ex_years) = utils.split_range(years, snpp.max_year(lad))
 
 # get the total projected population for pop up to the SNPP horizon (2039)
 pop = snpp.aggregate(["GENDER", "C_AGE"], lad, in_years)

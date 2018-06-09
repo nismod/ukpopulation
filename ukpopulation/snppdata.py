@@ -17,10 +17,6 @@ def _read_cell_range(worksheet, topleft, bottomright):
     data_rows.append(data_cols)
   return np.array(data_rows)
 
-def _country(lad_code):
-  lookup={"E": "en", "W": "wa", "S": "sc", "N": "ni"}
-  return [lookup[lad_code[0]]]
-
 class SNPPData:
   """
   Functionality for downloading and collating UK Subnational Population Projection (NPP) data
@@ -34,22 +30,26 @@ class SNPPData:
     self.cache_dir = cache_dir
     self.data_api = Api.Nomisweb(self.cache_dir) 
 
-    self.data = self.__do_england().append(self.__do_wales()).append(self.__do_scotland()).append(self.__do_nireland())
+    self.data = {}
+    self.data[utils.EN] = self.__do_england()
+    self.data[utils.WA] = self.__do_wales()
+    self.data[utils.SC] = self.__do_scotland()
+    self.data[utils.NI] = self.__do_nireland()
 
     # LADs * 26 years * 91 ages * 2 genders
     #assert len(self.data) == (326+22+32+11) * 26 * 91 * 2
 
-  def min_year(self):
+  def min_year(self, code):
     """
     Returns the first year in the projection
     """
-    return min(self.data.PROJECTED_YEAR_NAME.unique())
+    return min(self.data[utils.country(code)].PROJECTED_YEAR_NAME.unique())
 
-  def max_year(self):
+  def max_year(self, code):
     """
     Returns the final year in the projection
     """
-    return max(self.data.PROJECTED_YEAR_NAME.unique())
+    return max(self.data[utils.country(code)].PROJECTED_YEAR_NAME.unique())
 
   def filter(self, geog_codes, years=None, ages=range(0,91), genders=[1,2]):
 
@@ -57,13 +57,16 @@ class SNPPData:
     if isinstance(geog_codes, str):
       geog_codes = [geog_codes]
 
-    years = utils.trim_range(years, self.min_year(), self.max_year())
+    # the assumption is that all geog_codes are in same country
+    country = utils.country(geog_codes[0])
+
+    years = utils.trim_range(years, self.min_year(geog_codes[0]), self.max_year(geog_codes[0]))
 
     # apply filters
-    return self.data[(self.data.GEOGRAPHY_CODE.isin(geog_codes)) & 
-                     (self.data.PROJECTED_YEAR_NAME.isin(years)) &
-                     (self.data.C_AGE.isin(ages)) &
-                     (self.data.GENDER.isin(genders))].reset_index(drop=True)
+    return self.data[country][(self.data[country].GEOGRAPHY_CODE.isin(geog_codes)) & 
+                              (self.data[country].PROJECTED_YEAR_NAME.isin(years)) &
+                              (self.data[country].C_AGE.isin(ages)) &
+                              (self.data[country].GENDER.isin(genders))].reset_index(drop=True)
 
   def aggregate(self, categories, geog_codes, years=None, ages=range(0,91), genders=[1,2]):
 
@@ -77,13 +80,13 @@ class SNPPData:
   # Filtering age and gender is not (currently) supported
   def extrapolate(self, npp, geog_code, year_range):
 
-    (in_range, ex_range) = utils.split_range(year_range, self.max_year())
+    (in_range, ex_range) = utils.split_range(year_range, self.max_year(geog_code))
 
     all_years = self.filter(geog_code, in_range)
 
     for year in ex_range:
-      data = self.filter([geog_code], [self.max_year()])
-      scaling = npp.year_ratio("ppp", _country(geog_code), self.max_year(), year)
+      data = self.filter([geog_code], [self.max_year(geog_code)])
+      scaling = npp.year_ratio("ppp", utils.country(geog_code), self.max_year(geog_code), year)
       assert(len(data == len(scaling)))
       data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
       data.PROJECTED_YEAR_NAME = year
@@ -118,7 +121,7 @@ class SNPPData:
 
     data = self.extrapolate(npp, geog_code, in_range).sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"]).reset_index(drop=True)
 
-    scaling = npp.variant_ratio(variant_name, _country(geog_code), year_range).reset_index().sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
+    scaling = npp.variant_ratio(variant_name, utils.country(geog_code), year_range).reset_index().sort_values(["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
     #scaling.to_csv(variant_name + ".csv", index=False)
 
     #print("DF: ", len(data), ":", len(scaling))

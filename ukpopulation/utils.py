@@ -5,6 +5,32 @@ Common utility functions for NPP/SNPP
 import os 
 from pathlib import Path
 
+# Country enumerations
+EN = "en"
+WA = "wa"
+SC = "sc"
+NI = "ni"
+
+# Aggregations
+EW = [EN, WA]
+GB = [EN, WA, SC]
+UK = [EN, WA, SC, NI]
+
+# ONS country codes
+CODES = {
+  EN: "E92000001",
+  WA: "W92000004",
+  SC: "S92000003",
+  NI: "N92000002"
+}
+
+def country(code):
+  """ 
+  Returns country from ONS LAD code or 2-letter country code (above) - simply looks at first letter, case insensitive
+  """
+  lookup={"E": EN, "W": WA, "S": SC, "N": NI}
+  return lookup[code[0].upper()]
+
 def default_cache_dir():
   """
   Default cache dir location, ensures the path exists (failing if it cannot create) 
