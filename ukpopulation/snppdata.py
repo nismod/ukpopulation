@@ -293,7 +293,7 @@ class SNPPData:
     # Niron 
     # (1 worksheet per LAD equivalent)
     print("Collating SNPP data for Northern Ireland...")
-    ni_src = "https://www.nisra.gov.uk/sites/nisra.gov.uk/files/publications/SNPP14-LGD14-SYA-1439.xlsx" 
+    ni_src = "https://www.nisra.gov.uk/sites/nisra.gov.uk/files/publications/SNPP16_LGD14_SYA_1641.xlsx"
     ni_raw = self.cache_dir + "/snpp_ni.csv"
     if os.path.isfile(ni_raw): 
       snpp_ni = pd.read_csv(ni_raw)
@@ -321,9 +321,11 @@ class SNPPData:
       snpp_ni = pd.DataFrame()
 
       for d in districts:
-        area_code = xls_ni[d]["A2"].value
-        males = _read_cell_range(xls_ni[d], "A3", "AA95")
-        females = _read_cell_range(xls_ni[d], "A98", "AA190")
+        # 1 extra row compared to 2014 data (below was A2)
+        area_code = xls_ni[d]["A3"].value
+        # 2 extra rows compared to 2014 data (below was A3:A95)
+        males = _read_cell_range(xls_ni[d], "A5", "AA97")
+        females = _read_cell_range(xls_ni[d], "A100", "AA192")
         
         dfm = pd.DataFrame(data=males[1:,1:], index=males[1:,0], columns=males[0,1:]).drop(["Age"]).stack().reset_index()
         dfm.columns=["C_AGE", "PROJECTED_YEAR_NAME", "OBS_VALUE"]
