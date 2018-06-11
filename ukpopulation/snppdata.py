@@ -132,8 +132,8 @@ class SNPPData:
     return pre_data.append(data)
 
   def __do_england(self):
-    return self.__do_england_ons()
-    #return self.__do_england_nomisweb()
+    # return self.__do_england_ons() # 2014
+    return self.__do_england_nomisweb() # 2016
 
   # nomisweb data is now 2016-based
   def __do_england_nomisweb(self):
