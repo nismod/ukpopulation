@@ -131,31 +131,37 @@ class SNPPData:
     # prepend any pre-NPP data
     return pre_data.append(data)
 
-  # nomisweb data is now 2016-based
-  # def __do_england(self):
-  #   print("Collating SNPP data for England...")
-
-  #   # need to do this in 2 batches as entire table has >1000000 rows
-  #   table_internal = "NM_2006_1" # 2014-based SNPP
-  #   query_params = {
-  #     "gender": "1,2",
-  #     "c_age": "101...191",
-  #     "MEASURES": "20100",
-  #     "date": "latest", # 2014-based
-  #     "projected_year": "2014...2027",
-  #     "select": "geography_code,projected_year_name,gender,c_age,obs_value",
-  #     "geography": "1946157057...1946157382"
-  #   }
-  #   snpp_e = self.data_api.get_data(table_internal, query_params)
-
-  #   query_params["projected_year"] = "2028...2039"
-  #   snpp_e = snpp_e.append(self.data_api.get_data(table_internal, query_params))
-  #   # make age actual year
-  #   snpp_e.C_AGE = snpp_e.C_AGE - 101
-
-  #   #assert(len(snpp_e) == 26*2*91*326) # 326 LADs x 91 ages x 2 genders x 26 years
-  #   return snpp_e
   def __do_england(self):
+    return self.__do_england_ons()
+    #return self.__do_england_nomisweb()
+
+  # nomisweb data is now 2016-based
+  def __do_england_nomisweb(self):
+    print("Collating SNPP data for England...")
+
+    # need to do this in 2 batches as entire table has >1000000 rows
+    table_internal = "NM_2006_1" # SNPP
+    query_params = {
+      "gender": "1,2",
+      "c_age": "101...191",
+      "MEASURES": "20100",
+      "date": "latest", # 2016-based
+      "projected_year": "2016...2029",
+      "select": "geography_code,projected_year_name,gender,c_age,obs_value",
+      "geography": "1946157057...1946157382"
+    }
+    snpp_e = self.data_api.get_data(table_internal, query_params)
+
+    query_params["projected_year"] = "2030...2041"
+    snpp_e = snpp_e.append(self.data_api.get_data(table_internal, query_params))
+    # make age actual year
+    snpp_e.C_AGE = snpp_e.C_AGE - 101
+
+    #snpp_e[(snpp_e.GEOGRAPHY_CODE=="E08000021") & (snpp_e.PROJECTED_YEAR_NAME==2039)].to_csv("snpp_ncle_2016.csv")
+    #assert(len(snpp_e) == 26*2*91*326) # 326 LADs x 91 ages x 2 genders x 26 years
+    return snpp_e
+
+  def __do_england_ons(self):
     print("Collating SNPP data for England...")
     england_src = "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/localauthoritiesinenglandz1/2014based/snppz1population.zip"
     england_raw = self.cache_dir + "/snpp_e.csv"
@@ -191,6 +197,8 @@ class SNPPData:
 
       #assert(len(snpp_e) == 26*2*91*326) # 326 districts x 91 ages x 2 genders x 26 years
       snpp_e.to_csv(england_raw, index=False)
+
+    #snpp_e[(snpp_e.GEOGRAPHY_CODE=="E08000021") & (snpp_e.PROJECTED_YEAR_NAME==2039)].to_csv("snpp_ncle_2014.csv")
     return snpp_e
 
     # Wales
