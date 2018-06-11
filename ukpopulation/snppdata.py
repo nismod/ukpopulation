@@ -252,7 +252,7 @@ class SNPPData:
 
     scotland_raw = self.cache_dir + "/snpp_s.csv"
 
-    scotland_src = "https://www.nrscotland.gov.uk/files//statistics/population-projections/snpp-2014/detailed/pop-proj-scot-areas-14-det-tab-ca-year.zip"
+    scotland_src = "https://www.nrscotland.gov.uk/files//statistics/population-projections/sub-national-pp-16/detailed/CA%201.zip"
     scotland_zip = self.cache_dir + "/snpp_s.zip"
 
     if os.path.isfile(scotland_raw): 
@@ -268,9 +268,9 @@ class SNPPData:
       #print(z.namelist())  
 
       snpp_s = pd.DataFrame()
-      for year in range(2014,2040):
+      for year in range(2016,2042):
         for gender in [1,2]:
-          filename = "Population-"+str(year)+("-Male" if gender==1 else "-Female")+".csv"
+          filename = "CA 1/Population-"+str(year)+("-Male" if gender==1 else "-Female")+".csv"
           chunk = pd.read_csv(z.open(filename)
           ).drop(["Area", "All Ages"], axis=1
           ).drop(0 
