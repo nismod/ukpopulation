@@ -10,14 +10,15 @@ snpp = SNPPData.SNPPData()
 # start with an empty data frame
 result = pd.DataFrame()
 
-country = utils.EN
+country = utils.WA
+horizon = 2050
 
 # get the first year where extrapolation is necessary, extrapolate to 2050
-ex_years = range(snpp.max_year(country) + 1, 2051)
+ex_years = range(snpp.max_year(country) + 1, horizon + 1)
 
 
-# loop over all the UK LAD (or LAD-equivalents)
-for lad in snpp.data[country].GEOGRAPHY_CODE.unique()[:5]:
+# loop over all the Welsh LADs 
+for lad in snpp.data[country].GEOGRAPHY_CODE.unique():
   print(lad)
 
   # extrapolate and aggregate
@@ -26,5 +27,5 @@ for lad in snpp.data[country].GEOGRAPHY_CODE.unique()[:5]:
   result = result.append(lad, ignore_index=True)
 
 # write out results
-result.to_csv("snpp_extrap_2050.csv", index=False)
+result.to_csv("snpp_extrap_{}_{}.csv".format(country, horizon), index=False)
 

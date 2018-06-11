@@ -297,12 +297,25 @@ Construct aggregate SNPP data for Newcastle from 2018-2065:
 
 ### Bulk Calculation
 
-In this example we extraplolate and aggregrate the SNPP for every LAD (or equivalent) in the UK:
+In this example we extraplolate and aggregrate the SNPP for every LAD in Wales:
 - for each area, 
   - extrapolate from 2039 to 2050 using the 2039 age-gender structure.
   - aggregate the extrapolated data by age and gender.
   - append to full dataset.
-- save UK-wide dataset as csv.
+- save Wales dataset as csv:
+
+| GEOGRAPHY_CODE | PROJECTED_YEAR_NAME | OBS_VALUE |
+| -------------- | ------------------- | --------- |
+| W06000011 | 2040 | 262903.24103359133 |
+| W06000011 | 2041 | 262933.2340468692 |
+| W06000011 | 2042 | 263162.3661643687 |
+| W06000011 | 2043 | 263332.96819104964 |
+| W06000011 | 2044 | 263593.29826455784 |
+| W06000011 | 2045 | 263923.03553008236 |
+| W06000011 | 2046 | 264243.6253810904 |
+| W06000011 | 2047 | 264168.2113917932 |
+| W06000011 | 2048 | 264211.4576059673 |
+| ...       | ...  | ...               |
 
 [Source Code](doc/example_extrapolate_all.py)
 
