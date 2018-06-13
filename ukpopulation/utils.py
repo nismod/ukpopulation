@@ -61,6 +61,9 @@ def check_and_invert(categories):
 
   return inverted
 
+def filter_by_age(data, age_range):
+  return data[data.C_AGE.isin(age_range)]
+
 def aggregate(detail, categories):
   """
   Aggregate OBS_VALUE over categories
