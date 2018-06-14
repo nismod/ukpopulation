@@ -3,13 +3,22 @@
 
 # ukpopulation: UK Demographic Projections
 
-The statistical agencies of the United Kingdom, that is: ONS, StatsWales, NR Scotland, and NISRA, all produce population projection data. Although the data are essentially the same, the quantity, format, and availability varies between agencies and datasets. All of the projection data is available by (single year of) age and gender.
+The statistical agencies of the United Kingdom, that is: [ONS](https://www.ons.gov.uk/), [StatsWales](https://statswales.gov.wales/), [NR Scotland](https://www.nrscotland.gov.uk/), and [NISRA](https://www.nisra.gov.uk/), all produce annual population estimates and projection data. Although the data are essentially the same, the quantity, format, and availability varies between agencies and datasets. All of the projection data is available by (single year of) age and gender.
 
 National population projections (NPP) are the responsibility of ONS who provide the data for each country within the UK, including 15 variants covering a number of possible future scenarios. The current data is based on 2016 population estimates and project a century to 2116.
 
-Subnational population projections (SNPP) are the responsiblity of each country's agencies (ONS for England), are based on 2014 population estimates and project 25 years to 2039.
+Subnational population projections (SNPP) are the responsiblity of each country's agencies (ONS for England), and project 25 years from a base year that depends on the country in question:
 
-## Coverage
+Country          | Latest SNPP year range (as of June 2018) |
+-----------------|------------------------------------------|
+England          | 2016-2041                                |
+Wales            | 2014-2039                                |
+Scotland         | 2016-2041                                |
+Northern Ireland | 2016-2041                                |
+
+Mid-year population estimates (MYE) are available for the entire UK by local authority, single year of age and gender, from 1991 to 2016 inclusive.
+
+## Projection Coverage
 
 The countries within the UK produce their own SNPP data, and also produce some (patchy) variant projections. The ONS currently regard these (the England ones at least) as ["experimental"](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationprojections/articles/subnationalpopulationprojectionsresearchreportonvariantprojections/2014basedprojections). 
 
@@ -42,7 +51,7 @@ Long term balanced net migration | ppb  |   |   | x |   |   |
 
 [Nomisweb](www.nomisweb.co.uk) provides an API which allows relatively easy programmatical access the to data, and by far the preferred source of data. Currently not all the data is available from this source but [this may change](https://www.nomisweb.co.uk/forum/posts.aspx?tID=565&fID=2).
 
-Nomisweb currently hosts the ONS principal NPP data for the UK, and the SNPP data for England.  
+Nomisweb currently hosts the ONS principal NPP data for the UK, the SNPP data for England, and all of the MYE data.
 
 All other data: ONS NPP variants, SNPP data for Wales, Scotland and Northern Ireland are available in different formats from the appropriate agency's website.
 
@@ -58,11 +67,11 @@ The purpose of this package is to provide a unified interface to both SNPP and N
 
 # Methodology and Detail
 ## Data Sources
-- [Nomisweb](www.nomisweb.co.uk): UK NPP by country/SYoA/gender, England SNPP by LAD/SYoA/gender
-- [ONS](https://www.ons.gov.uk): UK NPP variants by country/SYoA/gender
-- [Stats Wales](http://open.statswales.gov.wales): Wales SNPP by LAD/SYoA/gender
-- [National Records of Scotland](https://www.nrscotland.gov.uk): Scotland SNPP by LAD equivalent/SYoA/gender
-- [Northern Ireland Statistics and Research Agency](https://www.nisra.gov.uk): Northern Ireland SNPP by LAD equivalent/SYoA/gender
+- [Nomisweb](www.nomisweb.co.uk): UK NPP by country/age/gender, England SNPP by LAD/age/gender, UK MYE by LAD/age/gender.
+- [ONS](https://www.ons.gov.uk): UK NPP variants by country/age/gender.
+- [Stats Wales](http://open.statswales.gov.wales): Wales SNPP by LAD/age/gender.
+- [National Records of Scotland](https://www.nrscotland.gov.uk): Scotland SNPP by LAD equivalent/age/gender.
+- [Northern Ireland Statistics and Research Agency](https://www.nisra.gov.uk): Northern Ireland SNPP by LAD equivalent/age/gender.
 
 ## Data Processing
 - Note that SNPP data is 2014-based while NPP data is 2016-based.
@@ -281,13 +290,14 @@ Using cached data: ./raw_data/NM_2009_1_444caf1f672f0646722e389963289973.tsv
 >>>
 ```
 
-## Extrapolate SNPP using NPP data
+## Extrapolate MYE using SNPP and NPP data
 
 ### Single Area
 
-Construct aggregate SNPP data for Newcastle from 2018-2065:
-- use the SNPP data up to 2039, aggregated by age and gender. 
-- extrapolate the NPP data whilst preserving Newcastle's (2039) age-gender structure.
+Construct aggregate data for Exeter from 2011-2065:
+- use MYE data up to 2016, aggregated by age and gender.
+- then use SNPP data up to 2041, aggregated by age and gender. 
+- extrapolate using NPP data and Exeter's (2041) age-gender structure.
 - aggregrate the extrapolated data by age and gender
 - plot the data. 
 
@@ -343,13 +353,12 @@ Here we build on the examples above by not only applying the NPP variant, but ex
 # Code Documentation
 Package documentation can be viewed like so:
 ```python
+import ukpopulation.myedata as MYEData
+help(MYEData)
 import ukpopulation.nppdata as NPPData
 help(NPPData)
-```
-and
-```python
 import ukpopulation.snppdata as SNPPData
 help(SNPPData)
 ```
 # Acknowledgements
-This package was developed as a component of the EPSRC sponsored [MISTRAL](https://www.itrc.org.uk/) programme, part of the Infrastructure Transition Research Consortium.
+This package was developed as a component of the EPSRC-funded [MISTRAL](https://www.itrc.org.uk/) programme, part of the Infrastructure Transitions Research Consortium.

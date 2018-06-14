@@ -4,6 +4,7 @@ import unittest
 import numpy as np
 
 #import ukcensusapi.Nomisweb as Api
+import ukpopulation.myedata as MYEData
 import ukpopulation.nppdata as NPPData
 import ukpopulation.snppdata as SNPPData
 import ukpopulation.utils as utils
@@ -15,6 +16,7 @@ class Test(unittest.TestCase):
     Check env set up correctly for tests
     (it's too late to override the env in this function unfortunately)
     """
+    self.mye = MYEData.MYEData("./tests/raw_data")    
     self.npp = NPPData.NPPData("./tests/raw_data")    
     self.snpp = SNPPData.SNPPData("./tests/raw_data")    
 
@@ -30,8 +32,23 @@ class Test(unittest.TestCase):
     self.assertEqual(min(ex_range), 2028)
     self.assertEqual(max(ex_range), max(year_range))
 
+  def test_mye(self):
+    self.assertEqual(self.mye.min_year(), 1991)
+    self.assertEqual(self.mye.max_year(), 2016) # for test data, real data is 2039
+
+    year = 2011
+    self.assertEqual(self.mye.aggregate(year, "E09000001", ["GENDER", "C_AGE"]).OBS_VALUE.sum(), 7412)
+    self.assertEqual(self.mye.filter(year, "E09000001").OBS_VALUE.sum(), 7412)
+
+    self.assertEqual(self.mye.aggregate(year, "E09000001", ["GENDER", "C_AGE"], genders=1).OBS_VALUE.sum(), 4133)
+    self.assertEqual(self.mye.filter(year, "E09000001", genders=1).OBS_VALUE.sum(), 4133)
+
+    self.assertEqual(self.mye.aggregate(year, "E09000001", ["GENDER", "C_AGE"], ages=range(16,75)).OBS_VALUE.sum(), 6333)
+    self.assertEqual(self.mye.filter(year, "E09000001", ages=range(16,75)).OBS_VALUE.sum(), 6333)
+
   def test_snpp(self):
 
+    # NB this is the test data (real data is 2016-2041)
     self.assertEqual(self.snpp.min_year(utils.EN), 2014)
     self.assertEqual(self.snpp.max_year(utils.EN), 2027) # for test data, real data is 2039
 
