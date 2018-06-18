@@ -10,12 +10,12 @@ authors:
    orcid: 0000-0002-9951-6642
    affiliation: 1
  - name: Tom Russell
-   orcid: TODO Tom...
+   orcid: 0000-0002-0081-400X
    affiliation: 2
 affiliations:
  - name: School of Geography and Leeds Institute for Data Analytics, University of Leeds
    index: 1
- - name: TODO Tom..., University of Oxford
+ - name: Environmental Change Institute, School of Geography and the Environment, University of Oxford
    index: 2
 date: 31 May 2018
 bibliography: paper.bib
@@ -23,10 +23,10 @@ bibliography: paper.bib
 
 # Summary
 
-UK statistics agencies (ONS, StatsWales, NRScotland and NISRA) produce mid-year population estimates, and national and subnational population projections, by single year of age, gender, and by either country (for national projections), or local authority district or equivalent. The availability, the publication dates and time horizon differ between datasets, and the actual data are published online in different places and in different formats, depending on the originating agency. There are a number of projection variants available at national scale, but coverage of variants at subnational scale is patchy at best.
+UK statistics agencies (ONS, StatsWales, NRScotland and NISRA) produce mid-year population estimates, and national and subnational population projections, by single year of age, gender, and by either country (for national projections), or local authority district or equivalent local area. The availability, the publication dates and time horizon differ between datasets, and the actual data are published online in different places and in different formats, depending on the originating agency. There are a number of projection variants available at national scale, but coverage of variants at subnational scale is patchy at best.
 
-This python package unifies the retrieval of UK-wide data into single consistent interfaces for each of the three datasets (national/subnational/mid-year estimate). It also provides some functionality to extrapolate the shorter-term subnational data using the longer-term national data, whilst preserving the age-gender structure present at the smaller geography. In a similar manner, national projection variants can be applied at subnational scale (again preserving age-gender structure).
+This python package unifies the retrieval of UK-wide data into consistent interfaces for each of the three datasets (national/subnational/mid-year estimate). It also provides some functionality to extrapolate the shorter-term subnational data using the longer-term national data, whilst preserving the age-gender structure present at the smaller geography. In a similar manner, national projection variants can be applied at subnational scale (again preserving age-gender structure).
 
-This functionality allows researchers and policymakers to examine population growth trajectories and construct plausible projections, both principal and variant, at subnational scale, consistently for anywhere in the UK, and over longer time horizons than the official data permit. 
+This functionality allows researchers and policymakers to examine population growth trajectories and construct plausible projections, both principal and variant, at subnational scale, consistently for anywhere in the UK, and over longer time horizons than the official data permit.
 
 # References
