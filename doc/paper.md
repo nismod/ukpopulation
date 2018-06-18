@@ -10,12 +10,12 @@ authors:
    orcid: 0000-0002-9951-6642
    affiliation: 1
  - name: Tom Russell
-   orcid: TODO Tom...
+   orcid: 0000-0002-0081-400X
    affiliation: 2
 affiliations:
  - name: School of Geography and Leeds Institute for Data Analytics, University of Leeds
    index: 1
- - name: TODO Tom..., University of Oxford
+ - name: Environmental Change Institute, School of Geography and the Environment, University of Oxford
    index: 2
 date: 31 May 2018
 bibliography: paper.bib
