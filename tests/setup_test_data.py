@@ -10,7 +10,7 @@ import pandas as pd
 real_data_dir = "~/.ukpopulation/cache/"
 test_data_dir = "./tests/raw_data/"
 
-def setup_snpp_test_data():
+def setup_snpp_data():
   """
   SNPP test data is 3 LADs per country for years 2014-2027
   """
@@ -29,8 +29,8 @@ def setup_snpp_test_data():
   # NB the file NM_2006_1_80dd181418e34b263810a07ede7655a6.tsv also needs to be in the test data folder,
   # containing column headings only. (This will prevent the data being re-downloaded)
 
-def setup_npp_test_data():
-  """ 
+def setup_npp_data():
+  """
   NPP test data is 3 variants, all ages, for years 2016-2035
   """
   raw_files = ["NM_2009_1_0bcd330bc936cd7902566cf7198d8868.tsv", # ppp  
@@ -43,5 +43,5 @@ def setup_npp_test_data():
     df.to_csv(test_data_dir + file, sep=sep, index=False)
 
 
-
-setup_npp_test_data()
+if __name__ == '__main__':
+  setup_npp_data()
