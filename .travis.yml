@@ -17,9 +17,9 @@ script:
 
 warnings_are_errors: false
 
-matrix:
-  allow_failures:
-    - python: "3.7-dev"
+# matrix:
+#   allow_failures:
+#     - python: "3.7-dev"
 
 notifications:
   email:
