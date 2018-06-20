@@ -17,7 +17,7 @@ setup(name='ukpopulation',
   packages=['ukpopulation'],
   zip_safe=False,
   install_requires=['distutils_pytest', 'ukcensusapi'],
-  dependency_links=['git+git://github.com/virgesmith/UKCensusAPI.git@master#egg=ukcensusapi-1.0.0'],
+  dependency_links=['git+https://github.com/virgesmith/UKCensusAPI.git@master#egg=ukcensusapi-1.0.0'],
   test_suite='nose.collector',
   tests_require=['nose'],
   python_requires='>=3'

@@ -112,12 +112,13 @@ This package uses the [UKCensusAPI](http://github.com/virgesmith/UKCensusAPI) pa
 Requires Python 3.5 or higher. Dependencies *should* resolve automatically, but if not see [troubleshooting](#troubleshooting) 
 
 ```bash
-$ pip3 install git+https://github.com/nismod/ukpopulation.git
+$ pip install --process-dependency-links git+https://github.com/nismod/ukpopulation.git
 ```
+It appears that the `--process-dependency-links` flag is necessary for successful installation because the UKCensusAPI dependency is (currently) only installable from git. 
 
 Some of the examples (see below) plot graphs and have a dependency on matplotlib, which can be installed with
 ```bash
-$ pip3 install matplotlib
+$ pip install matplotlib
 ```
 
 ## Testing
@@ -130,14 +131,31 @@ $ ./setup.py test
 
 ## Troubleshooting
 
-If installation has missing dependencies, try:
+Ensure you are using the correct version (>=3) of pip:
+
+```bash
+$ pip --version
+pip 9.0.1 from /usr/lib/python3/dist-packages (python 3.6)
+```
+
+If not replace `pip` with `pip3` or `python3 -m pip`
+
+To clone the repo and install locally (if you intend to contribute, or if all other installation attempts fail):
+
+```bash
+$ git clone https://github.com/nismod/ukpopulation
+$ ./setup.py install
+```
+
+If the installation has missing dependencies, try:
 ```bash
 $ pip install -r requirements.txt
 $ ./setup.py install
 ```
+
 The UKCensusAPI dependency *should* be resolved automatically, but if not you can force installation using
 ```bash
-pip3 install git+https://github.com/virgesmith/UKCensusAPI.git
+pip install git+https://github.com/virgesmith/UKCensusAPI.git
 ```
 
 If (with python 3.5?) you encounter 
@@ -146,7 +164,7 @@ AttributeError: module 'html5lib.treebuilders' has no attribute '_base'
 ```
 then
 ```bash
-$ pip3 install html5lib=0.9999999
+$ pip install html5lib=0.9999999
 ```
 should fix it. But better solution is to upgrade to python3.6
 
