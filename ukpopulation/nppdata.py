@@ -157,7 +157,7 @@ class NPPData:
 
   def __download_ppp(self):
 
-    print("Loading NPP principal (ppp) data for England, Wales, Scotland & Nortern Ireland")
+    print("Loading NPP principal (ppp) data for England, Wales, Scotland & Northern Ireland")
 
     table_internal = "NM_2009_1" # 2016-based NPP (principal)
     query_params = {

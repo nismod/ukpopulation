@@ -7,7 +7,7 @@ The statistical agencies of the United Kingdom, that is: [ONS](https://www.ons.g
 
 National population projections (NPP) are the responsibility of ONS who provide the data for each country within the UK, including 15 variants covering a number of possible future scenarios. The current data is based on 2016 population estimates and project a century to 2116.
 
-Subnational population projections (SNPP) are the responsiblity of each country's agencies (ONS for England), and project 25 years from a base year that depends on the country in question:
+Subnational population projections (SNPP) are the responsibility of each country's agencies (ONS for England), and project 25 years from a base year that depends on the country in question:
 
 Country          | Latest SNPP year range (as of June 2018) |
 -----------------|------------------------------------------|
@@ -49,7 +49,7 @@ Long term balanced net migration | ppb  |   |   | x |   |   |
 
 ## Accessibility
 
-[Nomisweb](www.nomisweb.co.uk) provides an API which allows relatively easy programmatical access the to data, and by far the preferred source of data. Currently not all the data is available from this source but [this may change](https://www.nomisweb.co.uk/forum/posts.aspx?tID=565&fID=2).
+[Nomisweb](www.nomisweb.co.uk) provides an API which allows relatively easy programmatic access the to data, and by far the preferred source of data. Currently not all the data is available from this source but [this may change](https://www.nomisweb.co.uk/forum/posts.aspx?tID=565&fID=2).
 
 Nomisweb currently hosts the ONS principal NPP data for the UK, the SNPP data for England, and all of the MYE data.
 
@@ -58,7 +58,7 @@ All other data: ONS NPP variants, SNPP data for Wales, Scotland and Northern Ire
 # Rationale
 
 The purpose of this package is to provide a unified interface to both SNPP and NPP data, including variants:
-- encapsulating the downloading, processing and cacheing of the NPP and SNPP data from the various sources.
+- encapsulating the downloading, processing and caching of the NPP and SNPP data from the various sources.
 - consistently differentiating by age (single year, up to 90) and gender over the various datasets.
 - providing a unified format for all the data.
 - providing a method of synthesising SNPP variant projections using SNPP principal and NPP principal/variant projections
@@ -232,7 +232,7 @@ Here's how to get the total working-age population by country from 2016 to 2050:
 ```
 Cache directory:  ./raw_data/
 using cached LAD codes: ./raw_data/lad_codes.json
-Loading NPP principal (ppp) data for England, Wales, Scotland & Nortern Ireland
+Loading NPP principal (ppp) data for England, Wales, Scotland & Northern Ireland
 ./raw_data/NM_2009_1_metadata.json found, using cached metadata...
 Using cached data: ./raw_data/NM_2009_1_444caf1f672f0646722e389963289973.tsv
 ```
@@ -268,7 +268,7 @@ First detailed data (by age, gender and country), then aggregated by age and gen
 >>> npp=NPPData.NPPData()
 Cache directory:  ./raw_data/
 using cached LAD codes: ./raw_data/lad_codes.json
-Loading NPP principal (ppp) data for England, Wales, Scotland & Nortern Ireland
+Loading NPP principal (ppp) data for England, Wales, Scotland & Northern Ireland
 ./raw_data/NM_2009_1_metadata.json found, using cached metadata...
 Using cached data: ./raw_data/NM_2009_1_444caf1f672f0646722e389963289973.tsv
 >>> high_growth = npp.detail("hhh", NPPData.NPPData.EW)
@@ -307,10 +307,10 @@ Construct aggregate data for Exeter from 2011-2065:
 
 ### Bulk Calculation
 
-In this example we extraplolate and aggregrate the SNPP for every LAD in Wales:
+In this example we extrapolate and aggregrate the SNPP for every LAD in Wales:
 - for each area, 
   - extrapolate from 2039 to 2050 using the 2039 age-gender structure.
-  - aggregate the extrapolated data by age and gender.
+  - aggregate the extrapolated datma by age and gender.
   - append to full dataset.
 - save Wales dataset as csv:
 
