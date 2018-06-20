@@ -112,7 +112,7 @@ This package uses the [UKCensusAPI](http://github.com/virgesmith/UKCensusAPI) pa
 Requires Python 3.5 or higher. Dependencies *should* resolve automatically, but if not see [troubleshooting](#troubleshooting) 
 
 ```bash
-$ pip3 install git+https://github.com/nismod/population.git
+$ pip3 install git+https://github.com/nismod/ukpopulation.git
 ```
 
 Some of the examples (see below) plot graphs and have a dependency on matplotlib, which can be installed with
