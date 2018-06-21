@@ -36,11 +36,11 @@ def default_cache_dir():
   Default cache dir location, ensures the path exists (failing if it cannot create) 
   This *should* work on all platforms
   """
-  cache_dir = Path.home() / ".ukpopulation/cache"
+  cache_dir = str(Path.home() / ".ukpopulation/cache")
   
   if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
-  return str(cache_dir)
+  return cache_dir
 
 def check_and_invert(categories):
   """
