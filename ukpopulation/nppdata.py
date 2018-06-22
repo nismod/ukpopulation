@@ -253,7 +253,7 @@ class NPPData:
         df = df[~df.C_AGE.isin(a)].append(dfagg, ignore_index=True)
 
         # add the country code
-        df["GEOGRAPHY_CODE"] = NPPData.CODES[country]
+        df["GEOGRAPHY_CODE"] = utils.CODES[country]
 
         #df.to_csv(vcsv, index=None)
         self.data[variant_name] = self.data[variant_name].append(df, ignore_index=True)
