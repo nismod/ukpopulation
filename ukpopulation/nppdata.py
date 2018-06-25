@@ -219,7 +219,7 @@ class NPPData:
         if not os.path.isfile(self.cache_dir + "/" + vxml):
           z.extract(vxml, path=self.cache_dir)
         start = time.time()
-        vdata = np.array(_read_excel_xml(self.cache_dir + "/" + vxml, "Population"))
+        vdata = np.array(_read_excel_xml(str(self.cache_dir + "/" + vxml), "Population"))
         print("read xml in " + str(time.time() - start))
         df = pd.DataFrame(data=vdata[1:,0:], columns=vdata[0,0:])
         df = df.set_index(["Sex", "Age"]).stack().reset_index()
