@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/nismod/ukpopulation.png?branch=master)](https://travis-ci.org/nismod/ukpopulation) [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+[![status](http://joss.theoj.org/papers/269be2c1044e902e2cf7716bc9f0f7c0/status.svg)](http://joss.theoj.org/papers/269be2c1044e902e2cf7716bc9f0f7c0)
 [![Version 1.0.0](https://zenodo.org/badge/doi/10.5281/zenodo.1250366.svg)](https://github.com/nismod/ukpopulation/releases/tag/1.0.0)
 
 # ukpopulation: UK Demographic Projections
