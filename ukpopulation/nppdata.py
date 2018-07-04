@@ -11,17 +11,20 @@ from bs4 import BeautifulSoup
 import ukpopulation.utils as utils
 
 def _read_excel_xml(path, sheet_name):
-  file = open(path).read()
-  soup = BeautifulSoup(file,'xml')
+  file = open(path, encoding="utf8")
+  soup = BeautifulSoup(file, 'xml')
   worksheet = []
-  for sheet in soup.findAll('Worksheet'): 
-    if sheet["ss:Name"] == sheet_name:
+  for sheet in soup.find_all('Worksheet'):
+    # workaround for an intermittent issue where the "ss:" prefix disappears from the attribute keys
+    # Probably related to this xml namespace issue: 
+    # https://stackoverflow.com/questions/37195992/beautifulsoup4-removes-namespace-definitions-from-schema-in-wsdl
+    if sheet.get("ss:Name") == sheet_name or sheet.get("Name") == sheet_name:
       for row in sheet.findAll('Row'):
         row_as_list = []
         for cell in row.findAll('Cell'):
           data = cell.find('Data')
           if data:
-              row_as_list.append(data.text)
+            row_as_list.append(data.text)
         worksheet.append(row_as_list)
   return worksheet
 
