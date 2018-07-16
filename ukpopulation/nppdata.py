@@ -180,7 +180,7 @@ class NPPData:
     pop90plus["C_AGE"] = 90
 
     # remove the aggregated categories from the original and append the aggregate
-    ppp = ppp[ppp.C_AGE < 90].append(pop90plus, ignore_index=True)
+    ppp = ppp[ppp.C_AGE < 90].append(pop90plus, ignore_index=True, sort=False)
 
     return ppp
   

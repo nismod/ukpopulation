@@ -4,4 +4,4 @@ requests
 openpyxl
 beautifulsoup4
 lxml
-git+https://github.com/virgesmith/UKCensusAPI@master#egg=ukcensusapi-1.0.0
+ukcensusapi

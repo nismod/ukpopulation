@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/nismod/ukpopulation.png?branch=master)](https://travis-ci.org/nismod/ukpopulation) [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
 [![status](http://joss.theoj.org/papers/269be2c1044e902e2cf7716bc9f0f7c0/status.svg)](http://joss.theoj.org/papers/269be2c1044e902e2cf7716bc9f0f7c0)
 [![Version 1.0.0](https://zenodo.org/badge/doi/10.5281/zenodo.1250366.svg)](https://github.com/nismod/ukpopulation/releases/tag/1.0.0)
+[![PyPI version](https://badge.fury.io/py/ukpopulation.svg)](https://badge.fury.io/py/ukpopulation)
 
 # ukpopulation: UK Demographic Projections
 
@@ -112,19 +113,20 @@ This package uses the [UKCensusAPI](http://github.com/virgesmith/UKCensusAPI) pa
 
 Requires Python 3.5 or higher. Dependencies *should* resolve automatically, but if not see [troubleshooting](#troubleshooting) 
 
+Install from git repo:
+
 ```bash
-$ pip install --process-dependency-links git+https://github.com/nismod/ukpopulation.git
+$ python3 -m pip install git+https://github.com/nismod/ukpopulation.git
 ```
-It appears that the `--process-dependency-links` flag is necessary for successful installation because the UKCensusAPI dependency is (currently) only installable from git. 
 
 Some of the examples (see below) plot graphs and have a dependency on matplotlib, which can be installed with
 ```bash
-$ pip install matplotlib
+$ python3 -m pip install matplotlib
 ```
 
 ## Testing
 
-The test data cache directory contains a file NOMIS_API_KEY which defines a dummy key for testing purposes only. The test suit can be run using:
+First Clone the repo or a fork of it. The test data cache directory contains a file NOMIS_API_KEY which defines a dummy key for testing purposes only. The test suit can be run from the (project root dir) using:
 
 ```bash
 $ ./setup.py test
