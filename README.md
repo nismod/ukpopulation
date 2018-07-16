@@ -88,7 +88,11 @@ The purpose of this package is to provide a unified interface to both SNPP and N
 
 # Extrapolation 
 
-The extrapolation methodology is explained by the following equation for the aggregate SNPP _S(g,y)_ for a given geography and year.
+The SNPP data can be extrapolated using the longer-term NPP data. This is done independently for each age and gender in order to try to capture the age-gender structure of the original population - any aggregation is done on the extrapolated age-gender specific values. This means that the trends shown by SNPP geographies with different age-gender structures will differ.
+
+If, conversely, the extrapolation was done on the aggregated populations for each SNPP geography, then each SNPP geography would have an identical trend (that of the NPP geography).
+
+This methodology can be more formally explained by the following equation for the aggregate SNPP _S(g,y)_ for a given geography and year:
 
 ![eq1](doc/img/Extrapolate_eqn.gif)
 
@@ -96,7 +100,7 @@ where _N_ is the NPP, _a_ is age, _s_ is gender, _y bar_ is a reference year (ty
 
 # Projection of Variants
 
-Similarly the methodology for synthesising SNPP variants from SNPP and NPP data is:
+The extrapolation methodology above can equally be applied to synthesising SNPP variants from SNPP principal and NPP variant data. The equivalent expression to the above is:
 
 ![eq2](doc/img/Variant_eqn.gif)
 
@@ -109,11 +113,15 @@ where the subscripts _V_ and _0_ refer to the variant and the principal projecti
 ### API Key
 This package uses the [UKCensusAPI](http://github.com/virgesmith/UKCensusAPI) package to obtain some of the projection data. The package requires an API key to function correctly, see [here](https://github.com/virgesmith/UKCensusAPI/blob/master/README.md) for details. 
 
-### Python
+### Package
 
 Requires Python 3.5 or higher. Dependencies *should* resolve automatically, but if not see [troubleshooting](#troubleshooting) 
 
-Install from git repo:
+Normal installation, from PyPI:
+```bash
+$ python3 -m pip install ukpopulation
+```
+Install from git repo if there are any specific pre-release features you'd like to test:
 
 ```bash
 $ python3 -m pip install git+https://github.com/nismod/ukpopulation.git
@@ -124,9 +132,16 @@ Some of the examples (see below) plot graphs and have a dependency on matplotlib
 $ python3 -m pip install matplotlib
 ```
 
-## Testing
+## Development version
 
-First Clone the repo or a fork of it. The test data cache directory contains a file NOMIS_API_KEY which defines a dummy key for testing purposes only. The test suit can be run from the (project root dir) using:
+To clone the repo and install locally:
+
+```bash
+$ git clone https://github.com/nismod/ukpopulation
+$ ./setup.py install
+```
+
+(substituting the URL if a fork has been taken). The test data cache directory contains a file NOMIS_API_KEY which defines a dummy key for testing purposes only. The test suit can be run from the (project root dir) using:
 
 ```bash
 $ ./setup.py test
@@ -143,22 +158,10 @@ pip 9.0.1 from /usr/lib/python3/dist-packages (python 3.6)
 
 If not replace `pip` with `pip3` or `python3 -m pip`
 
-To clone the repo and install locally (if you intend to contribute, or if all other installation attempts fail):
-
-```bash
-$ git clone https://github.com/nismod/ukpopulation
-$ ./setup.py install
-```
-
 If the installation has missing dependencies, try:
 ```bash
 $ pip install -r requirements.txt
 $ ./setup.py install
-```
-
-The UKCensusAPI dependency *should* be resolved automatically, but if not you can force installation using
-```bash
-pip install git+https://github.com/virgesmith/UKCensusAPI.git
 ```
 
 If (with python 3.5?) you encounter 
