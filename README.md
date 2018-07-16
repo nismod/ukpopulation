@@ -76,8 +76,8 @@ The purpose of this package is to provide a unified interface to both SNPP and N
 - [Northern Ireland Statistics and Research Agency](https://www.nisra.gov.uk): Northern Ireland SNPP by LAD equivalent/age/gender.
 
 ## Data Processing
-- Note that the SNPP for each country, and the NPP data may not have the same reference year. (See table 1).
-- NPP data is broken down by country (England/Wales/Scotland/Northern Ireland), for all the variant projections indicated in the table above. 
+- Note that the SNPP for each country, and the NPP data may not have the same reference year. (See table above).
+- NPP data is broken down by country (England/Wales/Scotland/Northern Ireland), for all the variant projections indicated in the second table above. 
 - Column headings and category values follow the nomisweb/census conventions:
   - `GEOGRAPHY_CODE`: ONS country, LAD, or LAD-equivalent code
   - `GENDER`: 1=Male, 2=Female
