@@ -76,7 +76,7 @@ The purpose of this package is to provide a unified interface to both SNPP and N
 - [Northern Ireland Statistics and Research Agency](https://www.nisra.gov.uk): Northern Ireland SNPP by LAD equivalent/age/gender.
 
 ## Data Processing
-- Note that SNPP data is 2014-based while NPP data is 2016-based.
+- Note that the SNPP for each country, and the NPP data may not have the same reference year. (See table 1).
 - NPP data is broken down by country (England/Wales/Scotland/Northern Ireland), for all the variant projections indicated in the table above. 
 - Column headings and category values follow the nomisweb/census conventions:
   - `GEOGRAPHY_CODE`: ONS country, LAD, or LAD-equivalent code
@@ -88,9 +88,9 @@ The purpose of this package is to provide a unified interface to both SNPP and N
 
 # Extrapolation 
 
-The SNPP data can be extrapolated using the longer-term NPP data. This is done independently for each age and gender in order to try to capture the age-gender structure of the original population - any aggregation is done on the extrapolated age-gender specific values. This means that the trends shown by SNPP geographies with different age-gender structures will differ.
+The SNPP data can be extrapolated using the longer-term NPP data. This is done independently for each age and gender in order to try to capture the age-gender structure of the original population. Aggregation only takes place  on the extrapolated age-gender specific values. This means that the trends shown by SNPP geographies with different age-gender structures will differ.
 
-If, conversely, the extrapolation was done on the aggregated populations for each SNPP geography, then each SNPP geography would have an identical trend (that of the NPP geography).
+If, conversely, the extrapolation was done on the aggregated populations for each SNPP geography, then each SNPP geography would have an identical trend, which would be identical to that of the NPP data.
 
 This methodology can be more formally explained by the following equation for the aggregate SNPP _S(g,y)_ for a given geography and year:
 
