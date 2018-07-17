@@ -2,6 +2,7 @@
 [![status](http://joss.theoj.org/papers/269be2c1044e902e2cf7716bc9f0f7c0/status.svg)](http://joss.theoj.org/papers/269be2c1044e902e2cf7716bc9f0f7c0)
 [![Version 1.0.0](https://zenodo.org/badge/doi/10.5281/zenodo.1250366.svg)](https://github.com/nismod/ukpopulation/releases/tag/1.0.0)
 [![PyPI version](https://badge.fury.io/py/ukpopulation.svg)](https://badge.fury.io/py/ukpopulation)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/ukpopulation/badges/version.svg)](https://anaconda.org/conda-forge/ukpopulation)
 
 # ukpopulation: UK Demographic Projections
 
@@ -51,7 +52,7 @@ Long term balanced net migration | ppb  |   |   | x |   |   |
 
 ## Accessibility
 
-[Nomisweb](www.nomisweb.co.uk) provides an API which allows relatively easy programmatic access the to data, and by far the preferred source of data. Currently not all the data is available from this source but [this may change](https://www.nomisweb.co.uk/forum/posts.aspx?tID=565&fID=2).
+[Nomisweb](https://www.nomisweb.co.uk) provides an API which allows relatively easy programmatic access the to data, and by far the preferred source of data. Currently not all the data is available from this source but [this may change](https://www.nomisweb.co.uk/forum/posts.aspx?tID=565&fID=2).
 
 Nomisweb currently hosts the ONS principal NPP data for the UK, the SNPP data for England, and all of the MYE data.
 
@@ -69,7 +70,7 @@ The purpose of this package is to provide a unified interface to both SNPP and N
 
 # Methodology and Detail
 ## Data Sources
-- [Nomisweb](www.nomisweb.co.uk): UK NPP by country/age/gender, England SNPP by LAD/age/gender, UK MYE by LAD/age/gender.
+- [Nomisweb](https://www.nomisweb.co.uk): UK NPP by country/age/gender, England SNPP by LAD/age/gender, UK MYE by LAD/age/gender.
 - [ONS](https://www.ons.gov.uk): UK NPP variants by country/age/gender.
 - [Stats Wales](http://open.statswales.gov.wales): Wales SNPP by LAD/age/gender.
 - [National Records of Scotland](https://www.nrscotland.gov.uk): Scotland SNPP by LAD equivalent/age/gender.
@@ -117,22 +118,24 @@ This package uses the [UKCensusAPI](http://github.com/virgesmith/UKCensusAPI) pa
 
 Requires Python 3.5 or higher. Dependencies *should* resolve automatically, but if not see [troubleshooting](#troubleshooting) 
 
-Normal installation, from PyPI:
+#### PyPI
+
 ```bash
 $ python3 -m pip install ukpopulation
 ```
-Install from git repo if there are any specific pre-release features you'd like to test:
 
+#### Conda
 ```bash
-$ python3 -m pip install git+https://github.com/nismod/ukpopulation.git
+$ conda install ukpopulation
+```
+This assumes you have added the conda-forge channel, which can be done with
+```bash
+$ conda config --add channels conda-forge
 ```
 
-Some of the examples (see below) plot graphs and have a dependency on matplotlib, which can be installed with
-```bash
-$ python3 -m pip install matplotlib
-```
+Some of the examples (see below) plot graphs and have a dependency on `matplotlib`, which can be installed with either pip or conda as appropriate.
 
-## Development version
+### Development version
 
 To clone the repo and install locally:
 
@@ -141,7 +144,7 @@ $ git clone https://github.com/nismod/ukpopulation
 $ ./setup.py install
 ```
 
-(substituting the URL if a fork has been taken). The test data cache directory contains a file NOMIS_API_KEY which defines a dummy key for testing purposes only. The test suit can be run from the (project root dir) using:
+(substituting the URL if a fork has been taken). The test data cache directory contains a file `NOMIS_API_KEY` which defines a dummy key for testing purposes only. The test suite can be run from the (project root dir) using:
 
 ```bash
 $ ./setup.py test
