@@ -387,5 +387,14 @@ help(NPPData)
 import ukpopulation.snppdata as SNPPData
 help(SNPPData)
 ```
+
+# Contributions
+
+Contributions to this package are welcomed via the usual pull request mechanism.
+
+# Support
+
+If you encounter a bug, feel the documentation is incorrect or incomplete, or want to suggest new features, please post an issue in the [issues](https://github.com/nismod/ukpopulation/issues) tab. 
+
 # Acknowledgements
 This package was developed as a component of the EPSRC-funded [MISTRAL](https://www.itrc.org.uk/) programme, part of the Infrastructure Transitions Research Consortium.
