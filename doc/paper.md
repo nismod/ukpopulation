@@ -31,7 +31,7 @@ The datasets are published online in different places and in different formats, 
 
 Population projection variants (e.g. high fertility) are extremely useful for scenario analyses and a number of population projection variants are available at national scale. However, the availability of variants at subnational scale is patchy at best.
 
-This python package aims to unify the retrieval of UK-wide data, providing consistent interfaces for each of the three (MYE, SNPP, NPP) datasets. For efficiency all data is cached locally.
+This python package [@smith_ukpopulation:_2018] aims to unify the retrieval of UK-wide data, providing consistent interfaces for each of the three (MYE, SNPP, NPP) datasets. For efficiency all data is cached locally.
 
 The package includes functionality to filter data by geography (e.g. for analysis of a single local authority), and/or by age and by gender, e.g. for analysis of working-age population. 
 
