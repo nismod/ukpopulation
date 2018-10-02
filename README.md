@@ -2,7 +2,7 @@
 [![status](http://joss.theoj.org/papers/269be2c1044e902e2cf7716bc9f0f7c0/status.svg)](http://joss.theoj.org/papers/269be2c1044e902e2cf7716bc9f0f7c0)
 [![DOI](https://zenodo.org/badge/131988266.svg)](https://zenodo.org/badge/latestdoi/131988266)
 [![PyPI version](https://badge.fury.io/py/ukpopulation.svg)](https://badge.fury.io/py/ukpopulation)
-[![Anaconda-Server Badge](https://anaconda.org/conda-forge/ukpopulation/badges/version.svg)](https://anaconda.org/conda-forge/ukpopulation/badges/version.svg)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/ukpopulation/badges/version.svg)](https://anaconda.org/conda-forge/ukpopulation)
 
 # ukpopulation: UK Demographic Projections
 
