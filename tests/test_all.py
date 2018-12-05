@@ -37,14 +37,14 @@ class Test(unittest.TestCase):
     self.assertEqual(self.mye.max_year(), 2016) # for test data, real data is 2039
 
     year = 2011
-    self.assertEqual(self.mye.aggregate(year, "E09000001", ["GENDER", "C_AGE"]).OBS_VALUE.sum(), 7412)
-    self.assertEqual(self.mye.filter(year, "E09000001").OBS_VALUE.sum(), 7412)
+    self.assertEqual(self.mye.aggregate(["GENDER", "C_AGE"], "E09000001", year).OBS_VALUE.sum(), 7412)
+    self.assertEqual(self.mye.filter("E09000001", year).OBS_VALUE.sum(), 7412)
 
-    self.assertEqual(self.mye.aggregate(year, "E09000001", ["GENDER", "C_AGE"], genders=1).OBS_VALUE.sum(), 4133)
-    self.assertEqual(self.mye.filter(year, "E09000001", genders=1).OBS_VALUE.sum(), 4133)
+    self.assertEqual(self.mye.aggregate(["GENDER", "C_AGE"], "E09000001", year, genders=1).OBS_VALUE.sum(), 4133)
+    self.assertEqual(self.mye.filter("E09000001", year, genders=1).OBS_VALUE.sum(), 4133)
 
-    self.assertEqual(self.mye.aggregate(year, "E09000001", ["GENDER", "C_AGE"], ages=range(16,75)).OBS_VALUE.sum(), 6333)
-    self.assertEqual(self.mye.filter(year, "E09000001", ages=range(16,75)).OBS_VALUE.sum(), 6333)
+    self.assertEqual(self.mye.aggregate(["GENDER", "C_AGE"], "E09000001", year, ages=range(16,75)).OBS_VALUE.sum(), 6333)
+    self.assertEqual(self.mye.filter("E09000001", year, ages=range(16,75)).OBS_VALUE.sum(), 6333)
 
   def test_snpp(self):
 

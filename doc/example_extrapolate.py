@@ -17,7 +17,7 @@ years = range(2011, 2067)
 (mye_years, proj_years) = utils.split_range(years, mye.max_year())
 (snpp_years, npp_years) = utils.split_range(proj_years, snpp.max_year(lad))
 
-pop_mye = mye.aggregate(mye_years, lad, ["GENDER", "C_AGE"])
+pop_mye = mye.aggregate(["GENDER", "C_AGE"], lad, mye_years)
 # get the total projected population for pop up to the SNPP horizon (2039)
 pop = snpp.aggregate(["GENDER", "C_AGE"], lad, snpp_years)
 # extrapolate for another ~25 years

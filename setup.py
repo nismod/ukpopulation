@@ -8,7 +8,7 @@ def readme():
 
 setuptools.setup(
   name='ukpopulation',
-  version='1.0.3',
+  version='1.1.0',
   description='Download, cache, collate, filter and extrapolate UK Population estimates and projections',
   long_description=readme(),
   long_description_content_type="text/markdown",

@@ -40,15 +40,13 @@ class MYEData:
 
   # TODO functionality for easy aggregration to E/W/EW/S/GB/NI/UK
 
-  def filter(self, years, geogs, ages=range(0,91), genders=[1,2]):
+  def filter(self, geog_codes, years=None, ages=range(0,91), genders=[1,2]):
     """
     Get MYE detailed data for a given year
     """
     # ensure array inputs
-    if isinstance(years, int):
-      years = [years]
-    if isinstance(geogs, str):
-      geogs = [geogs]
+    if isinstance(geog_codes, str):
+      geog_codes = [geog_codes]
     if isinstance(ages, int):
       ages = [ages]
     if isinstance(genders, int):
@@ -56,13 +54,15 @@ class MYEData:
 
     result = pd.DataFrame()
 
+    years = utils.trim_range(years, self.min_year(), self.max_year())
+
     for year in years:
 
       # ensure the data is loaded
       self.__fetch_data(year)
 
       ## ensure we return a copy!
-      part = self.data[year][(self.data[year].GEOGRAPHY_CODE.isin(geogs)) &
+      part = self.data[year][(self.data[year].GEOGRAPHY_CODE.isin(geog_codes)) &
                              (self.data[year].C_AGE.isin(ages)) &
                              (self.data[year].GENDER.isin(genders))].copy()
       part["PROJECTED_YEAR_NAME"] = year
@@ -70,9 +70,9 @@ class MYEData:
 
     return result.reset_index(drop=True)
 
-  def aggregate(self, years, geog_codes, categories, ages=range(0,91), genders=[1,2]):
+  def aggregate(self, categories, geog_codes, years=None, ages=range(0,91), genders=[1,2]):
 
-    data = self.filter(years, geog_codes, ages, genders)
+    data = self.filter(geog_codes, years, ages, genders)
 
     # invert categories (they're the ones to aggregate, not preserve)
     return data.groupby(utils.check_and_invert(categories))["OBS_VALUE"].sum().reset_index()
