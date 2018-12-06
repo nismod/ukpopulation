@@ -32,6 +32,19 @@ class Test(unittest.TestCase):
     self.assertEqual(min(ex_range), 2028)
     self.assertEqual(max(ex_range), max(year_range))
 
+    codes = "E09000001"
+    self.assertTrue(utils.country(codes) == ["en"])
+    codes = ['E06000002','E09000001']
+    self.assertTrue(utils.country(codes) == ["en"])
+    codes = ['E06000002','N09000001','S12000033','W06000011']
+    self.assertTrue(utils.country(codes) == ['en', 'ni', 'sc', 'wa'])
+    codes = ['E06000001','E06000002','N09000001','S12000033','W06000011']
+    self.assertTrue(utils.country(codes) == ['en', 'ni', 'sc', 'wa'])
+    codes = ['E06000001','W06000011','X06000002','Y09000001','Z12000033']
+    self.assertTrue(utils.country(codes) == ["en", "wa"])
+    codes = 'A06000001'
+    self.assertTrue(utils.country(codes) == [])
+
   def test_mye(self):
     self.assertEqual(self.mye.min_year(), 1991)
     self.assertEqual(self.mye.max_year(), 2016) # for test data, real data is 2039
@@ -70,6 +83,12 @@ class Test(unittest.TestCase):
     agg = self.snpp.aggregate(["GENDER", "C_AGE"], ["S12000033","S12000041"], [2016])
     self.assertEqual(len(agg), 2)
     self.assertEqual(agg.OBS_VALUE.sum(), 349517) # remember this is population under 46
+
+    # get from multiple countries at once
+    codes = ['E06000001','N09000002','S12000033','W06000011']
+    data = self.snpp.filter(codes, 2018)
+    self.assertEqual(len(data), 728) # 91(ages) * 2(genders) * 4(LADs) * 1(years)
+    self.assertEqual(sorted(data.GEOGRAPHY_CODE.unique()), codes) 
 
   def test_snpp_errors(self):
     # invalid variant code

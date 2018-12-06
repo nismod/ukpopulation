@@ -24,12 +24,18 @@ CODES = {
   NI: "N92000002"
 }
 
-def country(code):
+def country(codes):
   """ 
   Returns country from ONS LAD code or 2-letter country code (above) - simply looks at first letter, case insensitive
   """
+  if isinstance(codes, str):
+    codes=[codes]
   lookup={"E": EN, "W": WA, "S": SC, "N": NI}
-  return lookup[code[0].upper()]
+  #return lookup[code[0].upper()]
+  raw = set([code[0] in lookup and lookup[code[0]] for code in codes])
+  raw.discard(False)
+  return sorted(list(raw))
+  #set([code[0] in lookup and lookup[code[0]].upper() for code in codes]).discard(False))
 
 def default_cache_dir():
   """

@@ -41,15 +41,21 @@ class SNPPData:
 
   def min_year(self, code):
     """
-    Returns the first year in the projection
+    Returns the first year in the projection, assumes a single LAD or country code
     """
-    return min(self.data[utils.country(code)].PROJECTED_YEAR_NAME.unique())
+    # convert to country if necessary
+    if "0" in code:
+      code = utils.country(code)[0]
+    return min(self.data[code].PROJECTED_YEAR_NAME.unique())
 
   def max_year(self, code):
     """
-    Returns the final year in the projection
+    Returns the final year in the projection, assumes a single LAD or country code
     """
-    return max(self.data[utils.country(code)].PROJECTED_YEAR_NAME.unique())
+    # convert to country if necessary
+    if "0" in code:
+      code = utils.country(code)[0]
+    return max(self.data[code].PROJECTED_YEAR_NAME.unique())
 
   def filter(self, geog_codes, years=None, ages=range(0,91), genders=[1,2]):
 
@@ -58,15 +64,21 @@ class SNPPData:
       geog_codes = [geog_codes]
 
     # the assumption is that all geog_codes are in same country
-    country = utils.country(geog_codes[0])
+    countries = utils.country(geog_codes)
 
-    years = utils.trim_range(years, self.min_year(geog_codes[0]), self.max_year(geog_codes[0]))
+    years = utils.trim_range(years, self.min_year(countries[0]), self.max_year(countries[0]))
 
-    # apply filters
-    return self.data[country][(self.data[country].GEOGRAPHY_CODE.isin(geog_codes)) & 
-                              (self.data[country].PROJECTED_YEAR_NAME.isin(years)) &
-                              (self.data[country].C_AGE.isin(ages)) &
-                              (self.data[country].GENDER.isin(genders))].reset_index(drop=True)
+    retval = pd.DataFrame() #{"GEOGRAPHY_CODE": [], "PROJECTED_YEAR_NAME": [], "C_AGE": [], "GENDER":[], "OBS_VALUE": []})
+    # loop over datasets as needed
+    for country in countries:
+      # apply filters
+      retval = retval.append(self.data[country][(self.data[country].GEOGRAPHY_CODE.isin(geog_codes)) & 
+                                               (self.data[country].PROJECTED_YEAR_NAME.isin(years)) &
+                                               (self.data[country].C_AGE.isin(ages)) &
+                                               (self.data[country].GENDER.isin(genders))] \
+                            ,ignore_index=True, sort=False)
+
+    return retval
 
   def aggregate(self, categories, geog_codes, years=None, ages=range(0,91), genders=[1,2]):
 
