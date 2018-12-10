@@ -32,6 +32,14 @@ class Test(unittest.TestCase):
     self.assertEqual(min(ex_range), 2028)
     self.assertEqual(max(ex_range), max(year_range))
 
+    self.assertEqual(utils.trim_range(2011, 1991, 2016), [2011])
+    self.assertEqual(utils.trim_range(2011.0, 1991, 2016), [2011])
+    self.assertEqual(utils.trim_range([2011], 1991, 2016), [2011])
+    self.assertEqual(utils.trim_range([2011.0], 1991, 2016), [2011])
+    self.assertEqual(utils.trim_range(np.array([1995,2005,2019]), 2001, 2011), [2005])
+    self.assertEqual(utils.trim_range([1969,2111], 1991, 2016), [])
+    self.assertEqual(utils.trim_range(range(1969,2111), 2011, 2016), list(range(2011,2017)))
+
     codes = "E09000001"
     self.assertTrue(utils.country(codes) == ["en"])
     codes = ['E06000002','E09000001']

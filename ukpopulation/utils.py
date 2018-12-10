@@ -3,6 +3,7 @@ Common utility functions for NPP/SNPP
 """
 
 import os 
+import numpy as np
 from pathlib import Path
 
 # Country enumerations
@@ -81,7 +82,7 @@ def split_range(full_range, cutoff):
   Split a range of values into those within (<=) cutoff and those without (>)
   Returns a tuple containing 2 lists (which can be empty)
   """
-  if isinstance(full_range, int) or isinstance(full_range, float):
+  if np.isscalar(full_range):
     full_range = [full_range]
 
   return ([x for x in full_range if x <= cutoff], [x for x in full_range if x > cutoff])
@@ -94,7 +95,7 @@ def trim_range(input_range, minval, maxval):
   if input_range is None:
     return range(minval, maxval + 1)
   
-  if isinstance(input_range, int) or isinstance(input_range, float):
+  if np.isscalar(input_range):
     input_range = [input_range]
 
   return [x for x in input_range if x >= minval and x <= maxval]
