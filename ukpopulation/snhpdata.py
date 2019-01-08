@@ -54,7 +54,7 @@ class SNHPData:
       chunk = pd.read_csv(z.open(filename, "r"), encoding="latin1", skiprows=3) \
         .drop(["Unnamed: 1", "Unnamed: 28", "Unnamed: 29", "Unnamed: 30"], axis=1) \
         .replace(",", "", regex=True) 
-      lad = chunk[chunk["Unnamed: 0"] == "All households"].drop("Unnamed: 0", axis=1)
+      lad = chunk[chunk["Unnamed: 0"] == "All households"].drop("Unnamed: 0", axis=1).astype(int)
       lad.insert(0, "GEOGRAPHY_CODE", lookup[lookup.LAD_NAME == council_area].LAD.values[0])
       snhp_s = snhp_s.append(lad, ignore_index=True)
 
