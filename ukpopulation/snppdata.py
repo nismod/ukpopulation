@@ -52,9 +52,9 @@ class SNPPData:
     if isinstance(geog_codes, str):
       geog_codes = [geog_codes]
 
-    # the assumption is that all geog_codes are in same country
     countries = utils.country(geog_codes)
 
+    # TODO fix incorrect assumption is that all countries have the same year range 
     years = utils.trim_range(years, self.min_year(countries[0]), self.max_year(countries[0]))
 
     retval = pd.DataFrame() #{"GEOGRAPHY_CODE": [], "PROJECTED_YEAR_NAME": [], "C_AGE": [], "GENDER":[], "OBS_VALUE": []})

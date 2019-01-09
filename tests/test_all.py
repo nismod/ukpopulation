@@ -7,6 +7,7 @@ import numpy as np
 import ukpopulation.myedata as MYEData
 import ukpopulation.nppdata as NPPData
 import ukpopulation.snppdata as SNPPData
+import ukpopulation.snhpdata as SNHPData
 import ukpopulation.utils as utils
 
 class Test(unittest.TestCase):
@@ -19,6 +20,7 @@ class Test(unittest.TestCase):
     self.mye = MYEData.MYEData("./tests/raw_data")    
     self.npp = NPPData.NPPData("./tests/raw_data")    
     self.snpp = SNPPData.SNPPData("./tests/raw_data")    
+    self.snhp = SNHPData.SNHPData("./tests/raw_data")    
 
     if not self.npp.data_api.key == "DUMMY" or not self.snpp.data_api.key == "DUMMY":
       print("Test requires NOMIS_API_KEY=DUMMY in env")
@@ -181,6 +183,34 @@ class Test(unittest.TestCase):
     for k in self.npp.data:
       self.assertTrue(np.array_equal(snpp_ages, self.npp.data[k].C_AGE.unique()))
       self.assertTrue(np.array_equal(snpp_genders, self.npp.data[k].GENDER.unique()))
+
+  def test_snhp_errors(self):
+    # invalid variant code
+    self.assertRaises(IndexError, self.snhp.aggregate, "Q01234567", [2016])
+
+
+  def test_snhp(self):
+    self.assertEqual(self.snhp.min_year(utils.EN), 2011)    
+    self.assertEqual(self.snhp.max_year(utils.EN), 2041)    
+    self.assertEqual(self.snhp.min_year(utils.WA), 2014)    
+    self.assertEqual(self.snhp.max_year(utils.WA), 2039)    
+    self.assertEqual(self.snhp.min_year(utils.SC), 2016)    
+    self.assertEqual(self.snhp.max_year(utils.SC), 2041)    
+    self.assertEqual(self.snhp.min_year(utils.NI), 2016)    
+    self.assertEqual(self.snhp.max_year(utils.NI), 2041)    
+
+    data=self.snhp.aggregate(["E06000001", "W06000023", "S12000033", "N09000001"], [2016])
+    self.assertEqual(len(data), 4)
+    print(data)
+    self.assertEqual(data.PROJECTED_YEAR_NAME.unique(), 2016)
+    self.assertEqual(data.iloc[0].GEOGRAPHY_CODE, "E06000001")
+    self.assertAlmostEqual(data.iloc[0].OBS_VALUE, 41220.456)
+    self.assertEqual(data.iloc[1].GEOGRAPHY_CODE, "N09000001")
+    self.assertAlmostEqual(data.iloc[1].OBS_VALUE, 55155.0)
+    self.assertEqual(data.iloc[2].GEOGRAPHY_CODE, "S12000033")
+    self.assertAlmostEqual(data.iloc[2].OBS_VALUE, 106748.0)
+    self.assertEqual(data.iloc[3].GEOGRAPHY_CODE, "W06000023")
+    self.assertAlmostEqual(data.iloc[3].OBS_VALUE, 59255.35, delta=0.001)
 
   # # Try to recreate problems in microsimulation
   # def test_integration(self):

@@ -1,0 +1,392 @@
+GEOGRAPHY_CODE,HOUSEHOLD_TYPE,PROJECTED_YEAR_NAME,OBS_VALUE
+N09000001,One adult households,2016,14734
+N09000001,Two adults without children,2016,15774
+N09000001,Other households without children,2016,7763
+N09000001,One adult households with children,2016,3546
+N09000001,Other households with children,2016,13338
+N09000001,One adult households,2017,14865
+N09000001,Two adults without children,2017,15938
+N09000001,Other households without children,2017,7807
+N09000001,One adult households with children,2017,3555
+N09000001,Other households with children,2017,13355
+N09000001,One adult households,2018,14949
+N09000001,Two adults without children,2018,16047
+N09000001,Other households without children,2018,7790
+N09000001,One adult households with children,2018,3563
+N09000001,Other households with children,2018,13394
+N09000001,One adult households,2019,15064
+N09000001,Two adults without children,2019,16149
+N09000001,Other households without children,2019,7764
+N09000001,One adult households with children,2019,3573
+N09000001,Other households with children,2019,13432
+N09000001,One adult households,2020,15209
+N09000001,Two adults without children,2020,16265
+N09000001,Other households without children,2020,7778
+N09000001,One adult households with children,2020,3571
+N09000001,Other households with children,2020,13427
+N09000001,One adult households,2021,15387
+N09000001,Two adults without children,2021,16406
+N09000001,Other households without children,2021,7794
+N09000001,One adult households with children,2021,3563
+N09000001,Other households with children,2021,13403
+N09000001,One adult households,2022,15578
+N09000001,Two adults without children,2022,16552
+N09000001,Other households without children,2022,7833
+N09000001,One adult households with children,2022,3547
+N09000001,Other households with children,2022,13353
+N09000001,One adult households,2023,15767
+N09000001,Two adults without children,2023,16737
+N09000001,Other households without children,2023,7891
+N09000001,One adult households with children,2023,3524
+N09000001,Other households with children,2023,13267
+N09000001,One adult households,2024,15983
+N09000001,Two adults without children,2024,16973
+N09000001,Other households without children,2024,7992
+N09000001,One adult households with children,2024,3484
+N09000001,Other households with children,2024,13115
+N09000001,One adult households,2025,16197
+N09000001,Two adults without children,2025,17198
+N09000001,Other households without children,2025,8108
+N09000001,One adult households with children,2025,3442
+N09000001,Other households with children,2025,12959
+N09000001,One adult households,2026,16390
+N09000001,Two adults without children,2026,17392
+N09000001,Other households without children,2026,8195
+N09000001,One adult households with children,2026,3408
+N09000001,Other households with children,2026,12827
+N09000001,One adult households,2027,16557
+N09000001,Two adults without children,2027,17589
+N09000001,Other households without children,2027,8265
+N09000001,One adult households with children,2027,3377
+N09000001,Other households with children,2027,12703
+N09000001,One adult households,2028,16770
+N09000001,Two adults without children,2028,17778
+N09000001,Other households without children,2028,8349
+N09000001,One adult households with children,2028,3341
+N09000001,Other households with children,2028,12554
+N09000001,One adult households,2029,16933
+N09000001,Two adults without children,2029,17963
+N09000001,Other households without children,2029,8406
+N09000001,One adult households with children,2029,3309
+N09000001,Other households with children,2029,12435
+N09000001,One adult households,2030,17046
+N09000001,Two adults without children,2030,18116
+N09000001,Other households without children,2030,8436
+N09000001,One adult households with children,2030,3289
+N09000001,Other households with children,2030,12354
+N09000001,One adult households,2031,17159
+N09000001,Two adults without children,2031,18257
+N09000001,Other households without children,2031,8477
+N09000001,One adult households with children,2031,3265
+N09000001,Other households with children,2031,12262
+N09000001,One adult households,2032,17292
+N09000001,Two adults without children,2032,18404
+N09000001,Other households without children,2032,8517
+N09000001,One adult households with children,2032,3239
+N09000001,Other households with children,2032,12163
+N09000001,One adult households,2033,17413
+N09000001,Two adults without children,2033,18512
+N09000001,Other households without children,2033,8524
+N09000001,One adult households with children,2033,3224
+N09000001,Other households with children,2033,12108
+N09000001,One adult households,2034,17557
+N09000001,Two adults without children,2034,18619
+N09000001,Other households without children,2034,8547
+N09000001,One adult households with children,2034,3205
+N09000001,Other households with children,2034,12032
+N09000001,One adult households,2035,17697
+N09000001,Two adults without children,2035,18706
+N09000001,Other households without children,2035,8560
+N09000001,One adult households with children,2035,3190
+N09000001,Other households with children,2035,11971
+N09000001,One adult households,2036,17834
+N09000001,Two adults without children,2036,18776
+N09000001,Other households without children,2036,8563
+N09000001,One adult households with children,2036,3178
+N09000001,Other households with children,2036,11921
+N09000001,One adult households,2037,17948
+N09000001,Two adults without children,2037,18859
+N09000001,Other households without children,2037,8559
+N09000001,One adult households with children,2037,3169
+N09000001,Other households with children,2037,11882
+N09000001,One adult households,2038,18029
+N09000001,Two adults without children,2038,18942
+N09000001,Other households without children,2038,8540
+N09000001,One adult households with children,2038,3162
+N09000001,Other households with children,2038,11853
+N09000001,One adult households,2039,18156
+N09000001,Two adults without children,2039,18996
+N09000001,Other households without children,2039,8513
+N09000001,One adult households with children,2039,3157
+N09000001,Other households with children,2039,11833
+N09000001,One adult households,2040,18282
+N09000001,Two adults without children,2040,19042
+N09000001,Other households without children,2040,8479
+N09000001,One adult households with children,2040,3155
+N09000001,Other households with children,2040,11823
+N09000001,One adult households,2041,18360
+N09000001,Two adults without children,2041,19098
+N09000001,Other households without children,2041,8444
+N09000001,One adult households with children,2041,3155
+N09000001,Other households with children,2041,11816
+N09000002,One adult households,2016,20049
+N09000002,Two adults without children,2016,21241
+N09000002,Other households without children,2016,12267
+N09000002,One adult households with children,2016,4785
+N09000002,Other households with children,2016,20906
+N09000002,One adult households,2017,20171
+N09000002,Two adults without children,2017,21515
+N09000002,Other households without children,2017,12283
+N09000002,One adult households with children,2017,4842
+N09000002,Other households with children,2017,21162
+N09000002,One adult households,2018,20324
+N09000002,Two adults without children,2018,21779
+N09000002,Other households without children,2018,12310
+N09000002,One adult households with children,2018,4893
+N09000002,Other households with children,2018,21406
+N09000002,One adult households,2019,20479
+N09000002,Two adults without children,2019,22049
+N09000002,Other households without children,2019,12313
+N09000002,One adult households with children,2019,4949
+N09000002,Other households with children,2019,21654
+N09000002,One adult households,2020,20668
+N09000002,Two adults without children,2020,22373
+N09000002,Other households without children,2020,12368
+N09000002,One adult households with children,2020,4984
+N09000002,Other households with children,2020,21823
+N09000002,One adult households,2021,20885
+N09000002,Two adults without children,2021,22700
+N09000002,Other households without children,2021,12447
+N09000002,One adult households with children,2021,5013
+N09000002,Other households with children,2021,21963
+N09000002,One adult households,2022,21167
+N09000002,Two adults without children,2022,23069
+N09000002,Other households without children,2022,12577
+N09000002,One adult households with children,2022,5023
+N09000002,Other households with children,2022,22022
+N09000002,One adult households,2023,21468
+N09000002,Two adults without children,2023,23498
+N09000002,Other households without children,2023,12742
+N09000002,One adult households with children,2023,5020
+N09000002,Other households with children,2023,22015
+N09000002,One adult households,2024,21735
+N09000002,Two adults without children,2024,23965
+N09000002,Other households without children,2024,12946
+N09000002,One adult households with children,2024,5011
+N09000002,Other households with children,2024,21968
+N09000002,One adult households,2025,22017
+N09000002,Two adults without children,2025,24423
+N09000002,Other households without children,2025,13170
+N09000002,One adult households with children,2025,4996
+N09000002,Other households with children,2025,21899
+N09000002,One adult households,2026,22251
+N09000002,Two adults without children,2026,24867
+N09000002,Other households without children,2026,13369
+N09000002,One adult households with children,2026,4987
+N09000002,Other households with children,2026,21856
+N09000002,One adult households,2027,22491
+N09000002,Two adults without children,2027,25366
+N09000002,Other households without children,2027,13599
+N09000002,One adult households with children,2027,4968
+N09000002,Other households with children,2027,21759
+N09000002,One adult households,2028,22708
+N09000002,Two adults without children,2028,25871
+N09000002,Other households without children,2028,13827
+N09000002,One adult households with children,2028,4946
+N09000002,Other households with children,2028,21651
+N09000002,One adult households,2029,22901
+N09000002,Two adults without children,2029,26361
+N09000002,Other households without children,2029,14038
+N09000002,One adult households with children,2029,4928
+N09000002,Other households with children,2029,21564
+N09000002,One adult households,2030,23028
+N09000002,Two adults without children,2030,26819
+N09000002,Other households without children,2030,14212
+N09000002,One adult households with children,2030,4921
+N09000002,Other households with children,2030,21522
+N09000002,One adult households,2031,23181
+N09000002,Two adults without children,2031,27242
+N09000002,Other households without children,2031,14389
+N09000002,One adult households with children,2031,4913
+N09000002,Other households with children,2031,21488
+N09000002,One adult households,2032,23301
+N09000002,Two adults without children,2032,27695
+N09000002,Other households without children,2032,14586
+N09000002,One adult households with children,2032,4901
+N09000002,Other households with children,2032,21425
+N09000002,One adult households,2033,23427
+N09000002,Two adults without children,2033,28089
+N09000002,Other households without children,2033,14721
+N09000002,One adult households with children,2033,4903
+N09000002,Other households with children,2033,21431
+N09000002,One adult households,2034,23559
+N09000002,Two adults without children,2034,28487
+N09000002,Other households without children,2034,14860
+N09000002,One adult households with children,2034,4906
+N09000002,Other households with children,2034,21430
+N09000002,One adult households,2035,23695
+N09000002,Two adults without children,2035,28855
+N09000002,Other households without children,2035,14985
+N09000002,One adult households with children,2035,4912
+N09000002,Other households with children,2035,21451
+N09000002,One adult households,2036,23810
+N09000002,Two adults without children,2036,29211
+N09000002,Other households without children,2036,15089
+N09000002,One adult households with children,2036,4925
+N09000002,Other households with children,2036,21496
+N09000002,One adult households,2037,23915
+N09000002,Two adults without children,2037,29561
+N09000002,Other households without children,2037,15171
+N09000002,One adult households with children,2037,4944
+N09000002,Other households with children,2037,21566
+N09000002,One adult households,2038,24025
+N09000002,Two adults without children,2038,29906
+N09000002,Other households without children,2038,15235
+N09000002,One adult households with children,2038,4966
+N09000002,Other households with children,2038,21650
+N09000002,One adult households,2039,24164
+N09000002,Two adults without children,2039,30219
+N09000002,Other households without children,2039,15293
+N09000002,One adult households with children,2039,4993
+N09000002,Other households with children,2039,21752
+N09000002,One adult households,2040,24301
+N09000002,Two adults without children,2040,30502
+N09000002,Other households without children,2040,15339
+N09000002,One adult households with children,2040,5022
+N09000002,Other households with children,2040,21870
+N09000002,One adult households,2041,24415
+N09000002,Two adults without children,2041,30790
+N09000002,Other households without children,2041,15364
+N09000002,One adult households with children,2041,5056
+N09000002,Other households with children,2041,22008
+N09000003,One adult households,2016,48562
+N09000003,Two adults without children,2016,36638
+N09000003,Other households without children,2016,19386
+N09000003,One adult households with children,2016,12403
+N09000003,Other households with children,2016,26507
+N09000003,One adult households,2017,48581
+N09000003,Two adults without children,2017,36766
+N09000003,Other households without children,2017,19166
+N09000003,One adult households with children,2017,12448
+N09000003,Other households with children,2017,26597
+N09000003,One adult households,2018,48386
+N09000003,Two adults without children,2018,36699
+N09000003,Other households without children,2018,19019
+N09000003,One adult households with children,2018,12586
+N09000003,Other households with children,2018,26903
+N09000003,One adult households,2019,48241
+N09000003,Two adults without children,2019,36699
+N09000003,Other households without children,2019,18915
+N09000003,One adult households with children,2019,12692
+N09000003,Other households with children,2019,27142
+N09000003,One adult households,2020,48230
+N09000003,Two adults without children,2020,36779
+N09000003,Other households without children,2020,18860
+N09000003,One adult households with children,2020,12763
+N09000003,Other households with children,2020,27289
+N09000003,One adult households,2021,48228
+N09000003,Two adults without children,2021,36872
+N09000003,Other households without children,2021,18750
+N09000003,One adult households with children,2021,12841
+N09000003,Other households with children,2021,27475
+N09000003,One adult households,2022,48358
+N09000003,Two adults without children,2022,37000
+N09000003,Other households without children,2022,18700
+N09000003,One adult households with children,2022,12887
+N09000003,Other households with children,2022,27579
+N09000003,One adult households,2023,48459
+N09000003,Two adults without children,2023,37216
+N09000003,Other households without children,2023,18792
+N09000003,One adult households with children,2023,12876
+N09000003,Other households with children,2023,27553
+N09000003,One adult households,2024,48626
+N09000003,Two adults without children,2024,37581
+N09000003,Other households without children,2024,18989
+N09000003,One adult households with children,2024,12805
+N09000003,Other households with children,2024,27408
+N09000003,One adult households,2025,48829
+N09000003,Two adults without children,2025,37899
+N09000003,Other households without children,2025,19201
+N09000003,One adult households with children,2025,12728
+N09000003,Other households with children,2025,27234
+N09000003,One adult households,2026,49027
+N09000003,Two adults without children,2026,38201
+N09000003,Other households without children,2026,19400
+N09000003,One adult households with children,2026,12655
+N09000003,Other households with children,2026,27073
+N09000003,One adult households,2027,49247
+N09000003,Two adults without children,2027,38536
+N09000003,Other households without children,2027,19624
+N09000003,One adult households with children,2027,12562
+N09000003,Other households with children,2027,26861
+N09000003,One adult households,2028,49484
+N09000003,Two adults without children,2028,38905
+N09000003,Other households without children,2028,19915
+N09000003,One adult households with children,2028,12435
+N09000003,Other households with children,2028,26583
+N09000003,One adult households,2029,49697
+N09000003,Two adults without children,2029,39232
+N09000003,Other households without children,2029,20104
+N09000003,One adult households with children,2029,12346
+N09000003,Other households with children,2029,26379
+N09000003,One adult households,2030,49884
+N09000003,Two adults without children,2030,39523
+N09000003,Other households without children,2030,20279
+N09000003,One adult households with children,2030,12269
+N09000003,Other households with children,2030,26202
+N09000003,One adult households,2031,50099
+N09000003,Two adults without children,2031,39789
+N09000003,Other households without children,2031,20425
+N09000003,One adult households with children,2031,12200
+N09000003,Other households with children,2031,26044
+N09000003,One adult households,2032,50371
+N09000003,Two adults without children,2032,40045
+N09000003,Other households without children,2032,20558
+N09000003,One adult households with children,2032,12130
+N09000003,Other households with children,2032,25893
+N09000003,One adult households,2033,50597
+N09000003,Two adults without children,2033,40296
+N09000003,Other households without children,2033,20613
+N09000003,One adult households with children,2033,12087
+N09000003,Other households with children,2033,25806
+N09000003,One adult households,2034,50875
+N09000003,Two adults without children,2034,40563
+N09000003,Other households without children,2034,20712
+N09000003,One adult households with children,2034,12029
+N09000003,Other households with children,2034,25666
+N09000003,One adult households,2035,51059
+N09000003,Two adults without children,2035,40804
+N09000003,Other households without children,2035,20808
+N09000003,One adult households with children,2035,11990
+N09000003,Other households with children,2035,25560
+N09000003,One adult households,2036,51239
+N09000003,Two adults without children,2036,41011
+N09000003,Other households without children,2036,20881
+N09000003,One adult households with children,2036,11956
+N09000003,Other households with children,2036,25486
+N09000003,One adult households,2037,51460
+N09000003,Two adults without children,2037,41195
+N09000003,Other households without children,2037,20906
+N09000003,One adult households with children,2037,11936
+N09000003,Other households with children,2037,25439
+N09000003,One adult households,2038,51620
+N09000003,Two adults without children,2038,41373
+N09000003,Other households without children,2038,20917
+N09000003,One adult households with children,2038,11927
+N09000003,Other households with children,2038,25411
+N09000003,One adult households,2039,51769
+N09000003,Two adults without children,2039,41527
+N09000003,Other households without children,2039,20900
+N09000003,One adult households with children,2039,11931
+N09000003,Other households with children,2039,25412
+N09000003,One adult households,2040,51931
+N09000003,Two adults without children,2040,41663
+N09000003,Other households without children,2040,20869
+N09000003,One adult households with children,2040,11943
+N09000003,Other households with children,2040,25432
+N09000003,One adult households,2041,52076
+N09000003,Two adults without children,2041,41773
+N09000003,Other households without children,2041,20833
+N09000003,One adult households with children,2041,11963
+N09000003,Other households with children,2041,25463
+
