@@ -99,3 +99,13 @@ def trim_range(input_range, minval, maxval):
     input_range = [input_range]
 
   return [x for x in input_range if x >= minval and x <= maxval]
+
+def read_cell_range(worksheet, topleft, bottomright):
+  data_rows = []
+  for row in worksheet[topleft:bottomright]:
+    data_cols = []
+    for cell in row:
+      data_cols.append(cell.value)
+    data_rows.append(data_cols)
+  return np.array(data_rows)
+

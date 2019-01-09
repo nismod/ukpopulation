@@ -8,15 +8,6 @@ from openpyxl import load_workbook
 import ukcensusapi.Nomisweb as Api
 import ukpopulation.utils as utils
 
-def _read_cell_range(worksheet, topleft, bottomright):
-  data_rows = []
-  for row in worksheet[topleft:bottomright]:
-    data_cols = []
-    for cell in row:
-      data_cols.append(cell.value)
-    data_rows.append(data_cols)
-  return np.array(data_rows)
-
 class SNPPData:
   """
   Functionality for downloading and collating UK Subnational Population Projection (NPP) data
@@ -24,9 +15,7 @@ class SNPPData:
   Wales/Scotland/NI are not the responsiblity of ONS and are made avilable online by the relevant statistical agency
   """  
 
-  def __init__(self, cache_dir=None):
-    if cache_dir is None:
-      cache_dir = utils.default_cache_dir()
+  def __init__(self, cache_dir=utils.default_cache_dir()):
     self.cache_dir = cache_dir
     self.data_api = Api.Nomisweb(self.cache_dir) 
 
@@ -203,11 +192,10 @@ class SNPPData:
       snpp_e = pd.DataFrame()
       for gender in [1,2]:
         filename = "2014 SNPP Population "+("males" if gender==1 else "females")+".csv"
-        chunk = pd.read_csv(z.open(filename)
-        ).drop(["AREA_NAME", "COMPONENT", "SEX"], axis=1
-        ).query('AGE_GROUP != "All ages"' 
-        #).AGE_GROUP.replace({"90 and over": "90"}
-        )
+        chunk = pd.read_csv(z.open(filename)) \
+          .drop(["AREA_NAME", "COMPONENT", "SEX"], axis=1) \
+          .query('AGE_GROUP != "All ages"')
+        #.AGE_GROUP.replace({"90 and over": "90"}
         chunk.AGE_GROUP = chunk.AGE_GROUP.replace({"90 and over": "90"})
         chunk = chunk.melt(id_vars=["AREA_CODE","AGE_GROUP"])
         #chunk = chunk[chunk.AGE_GROUP != "all ages"]
@@ -345,8 +333,8 @@ class SNPPData:
         # 1 extra row compared to 2014 data (below was A2)
         area_code = xls_ni[d]["A3"].value
         # 2 extra rows compared to 2014 data (below was A3:A95)
-        males = _read_cell_range(xls_ni[d], "A5", "AA97")
-        females = _read_cell_range(xls_ni[d], "A100", "AA192")
+        males = utils.read_cell_range(xls_ni[d], "A5", "AA97")
+        females = utils.read_cell_range(xls_ni[d], "A100", "AA192")
         
         dfm = pd.DataFrame(data=males[1:,1:], index=males[1:,0], columns=males[0,1:]).drop(["Age"]).stack().reset_index()
         dfm.columns=["C_AGE", "PROJECTED_YEAR_NAME", "OBS_VALUE"]

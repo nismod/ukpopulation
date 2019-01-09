@@ -5,25 +5,66 @@ import os.path
 import zipfile
 import pandas as pd
 import requests
+import tempfile
+from openpyxl import load_workbook
 import ukpopulation.utils as utils
+import pyexcel
 
 class SNHPData:
   """
   Functionality for downloading and collating UK Subnational Household Projection (SNHP) data
   """  
 
-  def __init__(self, cache_dir=None):
-    if cache_dir is None:
-      cache_dir = utils.default_cache_dir()
+  def __init__(self, cache_dir=utils.default_cache_dir()):
     self.cache_dir = cache_dir
-    #self.data_api = Api.Nomisweb(self.cache_dir) 
 
     self.data = {}
-    #self.data[utils.EN] = self.__do_england()
+    self.data[utils.EN] = self.__do_england()
     self.data[utils.WA] = self.__do_wales()
     self.data[utils.SC] = self.__do_scotland()
-    #self.data[utils.NI] = self.__do_nireland()
+    self.data[utils.NI] = self.__do_nireland()
 
+  def __do_england(self):
+    print("Collating SNHP data for England...")
+    england_src = "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/householdprojectionsforenglanddetaileddataformodellingandanalysis/2016based/detailedtablesstage1and2.zip"
+    england_raw = os.path.join(self.cache_dir, os.path.basename(england_src))
+    england_processed = self.cache_dir + "/snhp_e.csv"
+
+    if os.path.isfile(england_processed): 
+      snhp_e = pd.read_csv(england_processed)
+    else: 
+      response = requests.get(england_src)
+      with open(england_raw, 'wb') as fd:
+        for chunk in response.iter_content(chunk_size=1024):
+          fd.write(chunk)
+        print("Downloaded", england_raw)
+
+      # this doesnt work if you directly supply the file in the zip to load_workbook
+      # workaround is to extract the file to a tmp dir and load from there
+      z = zipfile.ZipFile(england_raw)
+      tmpdir = tempfile.TemporaryDirectory().name
+      #print(tmpdir)
+      z.extract("s2 Households.xlsx", tmpdir)
+      sheet = load_workbook(os.path.join(tmpdir, "s2 Households.xlsx"), read_only=True)["Households"]
+
+      raw = utils.read_cell_range(sheet,"A7", "AS32263")
+      snhp_e = pd.DataFrame(raw[1:,:], columns=raw[0,:])
+
+      # remove years before 2011 census and switch years from columns to rows
+      snhp_e = snhp_e.drop([str(y) for y in range(2001,2011)], axis=1) \
+        .melt(id_vars=["CODE", "AREA", "AGE GROUP", "HOUSEHOLD TYPE"]).drop("AREA", axis=1)
+      # ensure count is numeric
+      snhp_e.value = snhp_e.value.astype(float)
+      # remove age categories and standardise column names
+      snhp_e = snhp_e.groupby(["CODE", "HOUSEHOLD TYPE", "variable"]).sum().reset_index() \
+        .rename({"CODE": "GEOGRAPHY_CODE", 
+                "HOUSEHOLD TYPE": "HOUSEHOLD_TYPE", 
+                "variable": "PROJECTED_YEAR_NAME", 
+                "value": "OBS_VALUE"}, axis=1)
+
+      snhp_e.to_csv(england_processed, index=False)
+
+    return snhp_e
 
   def __do_wales(self):
     print("Collating SNHP data for Wales...")
@@ -64,8 +105,6 @@ class SNHPData:
 
     return snpp_w
 
-
-
   def __do_scotland(self):
     print("Collating SNHP data for Scotland...")
 
@@ -92,14 +131,16 @@ class SNHPData:
       elif council_area == "Scotland":
         continue
 
-      chunk = pd.read_csv(z.open(filename, "r"), encoding="latin1", skiprows=3, skipfooter=) \
+      chunk = pd.read_csv(z.open(filename, "r"), encoding="latin1", skiprows=3) \
         .dropna(how="all") \
         .drop(["Unnamed: 28", "Unnamed: 29", "Unnamed: 30"], axis=1) \
         .replace(",", "", regex=True) 
       #print(chunk)
       chunk = chunk[chunk["Unnamed: 1"] != "All ages"].drop("Unnamed: 1", axis=1)
       chunk.fillna(method='ffill', inplace=True)
-      chunk = chunk[chunk["Unnamed: 0"].isin(["1 adult: male", "1 adult: female", "1 adult, 1+ children", "2 adults", "2+ adults, 1+ children", "3+ adults", "All households"])]
+      chunk["Unnamed: 0"] = chunk["Unnamed: 0"].str.strip()
+      # NOTE: commas have been removed from ALL cells, so "1 adult, 1+ children" is now "1 adult 1+ children"
+      chunk = chunk[chunk["Unnamed: 0"].isin(["1 adult: male", "1 adult: female", "1 adult 1+ children", "2 adults", "2+ adults 1+ children", "3+ adults", "All households"])]
       chunk = pd.melt(chunk, id_vars="Unnamed: 0")
       chunk.value = chunk.value.astype(int)
       chunk = chunk.groupby(["Unnamed: 0", "variable"]).sum().reset_index().rename({"Unnamed: 0": "HOUSEHOLD_TYPE", "variable": "PROJECTED_YEAR_NAME", "value": "OBS_VALUE"}, axis=1)
@@ -108,5 +149,40 @@ class SNHPData:
 
     return snhp_s
 
+  def __do_nireland(self):
+    # 1 worksheet per LAD equivalent
+    print("Collating SNHP data for Northern Ireland...")
+    ni_src = "https://www.nisra.gov.uk/sites/nisra.gov.uk/files/publications/HHP16_LGD2014.xls"
+    ni_processed = os.path.join(self.cache_dir, "snhp_ni.csv")
+    if os.path.isfile(ni_processed): 
+      snhp_ni = pd.read_csv(ni_processed)
+    else:
+      ni_raw = os.path.join(self.cache_dir, os.path.basename(ni_src))
+      response = requests.get(ni_src)
+      with open(ni_raw, 'wb') as fd:
+        for chunk in response.iter_content(chunk_size=1024):
+          fd.write(chunk)
+
+      districts = ["N090000{:02d}".format(i) for i in range(1,12)]
+
+      # convert to temp xlsx
+      tmp_xlsx_file = tempfile.NamedTemporaryFile(suffix=".xlsx").name
+      #print(tmp_xlsx_file)
+      pyexcel.save_book_as(file_name=ni_raw, dest_file_name=tmp_xlsx_file)
+      xlsx_ni = load_workbook(tmp_xlsx_file, read_only=True)
+
+      snhp_ni = pd.DataFrame()
+
+      for d in districts:
+        raw = utils.read_cell_range(xlsx_ni[d], "A10", "AA16")
+        data = pd.DataFrame(raw[1:,:], columns=raw[0,:]).melt(id_vars="Household Type*") \
+          .rename({"Household Type*": "HOUSEHOLD_TYPE", "variable": "PROJECTED_YEAR_NAME", "value": "OBS_VALUE"}, axis=1)
+
+        data.insert(0, "GEOGRAPHY_CODE", d)
+        snhp_ni = snhp_ni.append(data, ignore_index=True)
+        
+      snhp_ni.to_csv(ni_processed, index=False)
+
+    return snhp_ni
 
     
