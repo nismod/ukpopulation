@@ -6,6 +6,12 @@
 
 # ukpopulation: UK Demographic Projections
 
+> ## Latest news: upcoming 1.1 release
+> - adds UK household projections
+> - fixes some bugs/issues
+> ### Household Projections
+> Version 1.1 adds functionality is aggregates household projection data for the UK at LAD (or equivalent level). Each country's statistical agency provides a disaggregation by household type, but as there is little or no consistency between them, no attempt has (yet) been made to provide a UK-wide unified disaggregation. The year ranges mirror the year ranges for the SNPP for each country (see below). Extrapolation, or application of a national projection variant to the data is not provided at this stage.
+
 The statistical agencies of the United Kingdom, that is: [ONS](https://www.ons.gov.uk/), [StatsWales](https://statswales.gov.wales/), [NR Scotland](https://www.nrscotland.gov.uk/), and [NISRA](https://www.nisra.gov.uk/), all produce annual population estimates and projection data. Although the data are essentially the same, the quantity, format, and availability varies between agencies and datasets. All of the projection data is available by (single year of) age and gender.
 
 National population projections (NPP) are the responsibility of ONS who provide the data for each country within the UK, including 15 variants covering a number of possible future scenarios. The current data is based on 2016 population estimates and project a century to 2116.

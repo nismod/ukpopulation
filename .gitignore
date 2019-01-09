@@ -341,3 +341,4 @@ ModelManifest.xml
 raw_data/*
 data/*
 
+.coveragerc
