@@ -141,7 +141,7 @@ class SNPPData:
 
     return result
 
-  def custom_variant(self, filename, checks=True):
+  def custom_variant(self, filename, checks=True, integerise=False):
     """
     Given a file containing a dataframe of the format:
       GEOGRAPHY_CODE,PEOPLE,PEOPLE_<suffix>,YEAR,net_delta
@@ -158,7 +158,7 @@ class SNPPData:
     The PEOPLE_<suffix> column should match the official variant 
     """
     # TODO remove temporary rename when possible
-    custom = pd.read_csv(filename).rename({"YEAR": "PROJECTED_YEAR_NAME"}, axis=1)#.set_index(["GEOGRAPHY_CODE", "YEAR"])
+    custom = pd.read_csv(filename) #.rename({"YEAR": "PROJECTED_YEAR_NAME"}, axis=1)#.set_index(["GEOGRAPHY_CODE", "YEAR"])
     print(custom.head())
 
     # TODO get base variant and call create_variant is not ppp
@@ -174,8 +174,11 @@ class SNPPData:
     base = self.filter(geogs, years)
 
     # TODO check - groupby base and check sums 
+    check = base.groupby(["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME"]).sum()
+    print(check.head())
 
-    base = base.merge(custom[["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME", "SCALING"]], how="left")#, left_on=["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME"], right_on=["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME"])
+    base = base.merge(custom[["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME", "SCALING"]], how="left")
+    base.OBS_VALUE = base.OBS_VALUE * base.SCALING
     print(base.head())
 
     # for geog in geogs:
