@@ -141,6 +141,51 @@ class SNPPData:
 
     return result
 
+  def custom_variant(self, filename, checks=True):
+    """
+    Given a file containing a dataframe of the format:
+      GEOGRAPHY_CODE,PEOPLE,PEOPLE_<suffix>,YEAR,net_delta
+      E06000001,93019.0,93019.0,2016,0.0
+      E06000002,140639.0,140639.0,2016,0.0
+      E06000003,136005.0,136005.0,2016,0.0
+      E06000004,196487.0,196487.0,2016,0.0
+      E06000005,106347.0,106347.0,2016,0.0
+      E06000006,127595.0,127595.0,2016,0.0
+      E06000007,209704.0,209704.0,2016,0.0
+      ...
+    generate a full SNPP dataset for the supplied geographies and years, disaggregated proportionately by age and gender.
+    The base variant is selected from the PEOPLE_<suffix> column name, e.g. PEOPLE_ppp would use the principal projection.
+    The PEOPLE_<suffix> column should match the official variant 
+    """
+    # TODO remove temporary rename when possible
+    custom = pd.read_csv(filename).rename({"YEAR": "PROJECTED_YEAR_NAME"}, axis=1)#.set_index(["GEOGRAPHY_CODE", "YEAR"])
+    print(custom.head())
+
+    # TODO get base variant and call create_variant is not ppp
+    base = "ppp"
+    base_column = "PEOPLE_" + base
+
+    custom["SCALING"] = custom.PEOPLE / custom.PEOPLE_ppp
+    #geogs = custom.index.levels[0].values
+    #years = custom.index.levels[1].values
+    geogs = custom.GEOGRAPHY_CODE.unique()
+    years = custom.PROJECTED_YEAR_NAME.unique()
+
+    base = self.filter(geogs, years)
+
+    # TODO check - groupby base and check sums 
+
+    base = base.merge(custom[["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME", "SCALING"]], how="left")#, left_on=["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME"], right_on=["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME"])
+    print(base.head())
+
+    # for geog in geogs:
+    #   for year in years:
+    #     # check base total is correct
+    #     print(geog, year)
+    #     delta = custom.loc[(geog, year)].PEOPLE / custom.loc[(geog, year)][base_column]
+    #     base.loc[(base.GEOGRAPHY_CODE==geog) & (base.PROJECTED_YEAR_NAME==year)].OBS_VALUE = \
+    #       base[(base.GEOGRAPHY_CODE==geog) & (base.PROJECTED_YEAR_NAME==year)].OBS_VALUE * delta 
+
   def __do_england(self):
     # return self.__do_england_ons() # 2014
     return self.__do_england_nomisweb() # 2016
