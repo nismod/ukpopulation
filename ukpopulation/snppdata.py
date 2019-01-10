@@ -157,37 +157,41 @@ class SNPPData:
     The base variant is selected from the PEOPLE_<suffix> column name, e.g. PEOPLE_ppp would use the principal projection.
     The PEOPLE_<suffix> column should match the official variant 
     """
-    # TODO remove temporary rename when possible
-    custom = pd.read_csv(filename) #.rename({"YEAR": "PROJECTED_YEAR_NAME"}, axis=1)#.set_index(["GEOGRAPHY_CODE", "YEAR"])
-    print(custom.head())
+    custom = pd.read_csv(filename)
 
-    # TODO get base variant and call create_variant is not ppp
-    base = "ppp"
-    base_column = "PEOPLE_" + base
+    # TODO get base variant and call create_variant if not ppp
+    base_scenario = "ppp"
+    base_column = "PEOPLE_" + base_scenario
 
-    custom["SCALING"] = custom.PEOPLE / custom.PEOPLE_ppp
+    custom["SCALING"] = custom.PEOPLE / custom[base_column]
     #geogs = custom.index.levels[0].values
     #years = custom.index.levels[1].values
     geogs = custom.GEOGRAPHY_CODE.unique()
     years = custom.PROJECTED_YEAR_NAME.unique()
 
-    base = self.filter(geogs, years)
+    base_dataset = self.filter(geogs, years)
 
-    # TODO check - groupby base and check sums 
-    check = base.groupby(["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME"]).sum()
-    print(check.head())
+    # TODO check - groupby base and check sums - fix? ignore? out-of-date MYE vs SNPP numbers
+    check_dataset = self.aggregate(["GENDER", "C_AGE"], geogs, years)
+    check_dataset = check_dataset.merge(custom[["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME", base_column]])
+    # print(check_dataset[base_column] - check_dataset.OBS_VALUE)
+    # print(check_dataset.head())
+    # print(custom.head())
 
-    base = base.merge(custom[["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME", "SCALING"]], how="left")
-    base.OBS_VALUE = base.OBS_VALUE * base.SCALING
-    print(base.head())
+    base_dataset = base_dataset.merge(custom[["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME", "SCALING"]], how="left")
+    base_dataset.OBS_VALUE = base_dataset.OBS_VALUE * base_dataset.SCALING
+    base_dataset.rename({"SCALING": "SCALING_" + base_scenario}, axis=1, inplace=True)
 
-    # for geog in geogs:
-    #   for year in years:
-    #     # check base total is correct
-    #     print(geog, year)
-    #     delta = custom.loc[(geog, year)].PEOPLE / custom.loc[(geog, year)][base_column]
-    #     base.loc[(base.GEOGRAPHY_CODE==geog) & (base.PROJECTED_YEAR_NAME==year)].OBS_VALUE = \
-    #       base[(base.GEOGRAPHY_CODE==geog) & (base.PROJECTED_YEAR_NAME==year)].OBS_VALUE * delta 
+    if integerise:
+      raise NotImplementedError("TODO Integerisation")
+      # TODO
+      # sum pop for each year and round to nearest
+      # adjust pop for rounded total
+      # calc fractional parts
+      # calc n = total - sum(integer parts) 
+      # increment integer parts for n largest fractional parts 
+
+    return base_dataset
 
   def __do_england(self):
     # return self.__do_england_ons() # 2014
