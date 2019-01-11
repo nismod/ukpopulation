@@ -6,7 +6,7 @@
 
 # ukpopulation: UK Demographic Projections
 
-> ## Latest news: upcoming 1.1 release
+> ## Latest news: 1.1 release
 > - adds UK household projections
 > - initial support for custom SNPP variants
 > - better consistency across the MYE/NPP/SNPP APIs (breaks backwards compatibility)

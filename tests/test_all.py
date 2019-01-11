@@ -20,7 +20,10 @@ class Test(unittest.TestCase):
     self.mye = MYEData.MYEData("./tests/raw_data")    
     self.npp = NPPData.NPPData("./tests/raw_data")    
     self.snpp = SNPPData.SNPPData("./tests/raw_data")    
-    self.snhp = SNHPData.SNHPData("./tests/raw_data")    
+    self.snhp = SNHPData.SNHPData("./tests/raw_data")
+
+    # fix issue with test dataset
+    self.snpp.data[utils.EN].PROJECTED_YEAR_NAME = self.snpp.data[utils.EN].PROJECTED_YEAR_NAME.astype(int)
 
     if not self.npp.data_api.key == "DUMMY" or not self.snpp.data_api.key == "DUMMY":
       print("Test requires NOMIS_API_KEY=DUMMY in env")
@@ -54,6 +57,23 @@ class Test(unittest.TestCase):
     self.assertTrue(utils.country(codes) == ["en", "wa"])
     codes = 'A06000001'
     self.assertTrue(utils.country(codes) == [])
+
+    # naively, each element would be rounded down, making the total 10
+    fractional = np.array([0.1, 0.2, 0.3, 0.4]) * 11
+    integral = utils.integerise(fractional)
+    self.assertTrue(np.array_equal(integral, [1, 2, 3, 5]))
+
+    # 1.51 is NOT increased because 4.5 has a larger fractional part when total is rescaled to 17 from 16.91
+    fractional = np.array([1.1, 3.9, 4.5, 5.9, 1.51])
+    integral = utils.integerise(fractional)
+    self.assertTrue(np.array_equal(integral, [1, 4, 5, 6, 1]))
+
+    # another example that preserves sum
+    fractional = np.array([1.01] * 100)
+    integral = utils.integerise(fractional)
+    self.assertTrue(sum(integral) == 1.01 * 100)
+    self.assertTrue(np.array_equal(np.unique(integral), [1, 2]))
+
 
   def test_mye(self):
     self.assertEqual(self.mye.min_year(), 1991)
@@ -173,6 +193,13 @@ class Test(unittest.TestCase):
 
     # TODO more testing of results
     self.assertTrue(np.array_equal(base.OBS_VALUE, ppp.OBS_VALUE))
+
+  def test_snpp_custom_variant(self):
+    custom = self.snpp.custom_variant("./tests/raw_data/test_scenario.csv")
+
+    self.assertTrue(np.array_equal(custom.GEOGRAPHY_CODE.unique(), ['E06000005', 'E06000047', 'E06000001', 'S12000033', 'S12000034', 'S12000041', 'W06000011', 'W06000016', 'W06000018']))
+    self.assertTrue(np.array_equal(custom.PROJECTED_YEAR_NAME.unique(), [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027]))
+    self.assertTrue(len(custom), 9 * 12 * 2 * 91) # 9 geogs, 12 years, 2 genders, 91 ages = 19656
 
   # test datasets have consistent ranges
   def test_consistency(self):

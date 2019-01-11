@@ -23,6 +23,8 @@ setuptools.setup(
                     "beautifulsoup4",
                     "lxml",
                     "pyexcel",
+                    "pyexcel-xls",
+                    "pyexcel-xlsx",
                     "ukcensusapi"],
   classifiers=(
     "Programming Language :: Python :: 3",
