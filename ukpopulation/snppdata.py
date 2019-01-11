@@ -183,13 +183,7 @@ class SNPPData:
     base_dataset.rename({"SCALING": "SCALING_" + base_scenario}, axis=1, inplace=True)
 
     if integerise:
-      raise NotImplementedError("TODO Integerisation")
-      # TODO
-      # sum pop for each year and round to nearest
-      # adjust pop for rounded total
-      # calc fractional parts
-      # calc n = total - sum(integer parts) 
-      # increment integer parts for n largest fractional parts 
+      base_dataset.OBS_VALUE = utils.integerise(base_dataset.OBS_VALUE)
 
     return base_dataset
 

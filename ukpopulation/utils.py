@@ -109,3 +109,22 @@ def read_cell_range(worksheet, topleft, bottomright):
     data_rows.append(data_cols)
   return np.array(data_rows)
 
+def integerise(series):
+  """
+  This duplicates functionality that exists in humanleague, rather than intorducing a package dependency solely for this function
+  """
+  sumf = sum(series)
+  sumi = round(sumf)
+  # rescale series to nearest-integer sum
+  series = series * sumi / sumf
+  # get integer and fractional parts
+  seriesi = np.floor(series)
+  seriesf = series - seriesi
+  # shortfall is integer sum less sum of integer values
+  shortfall = int(sumi - sum(seriesi))
+  # select the n largest fractional parts where n=shortfall 
+  idx = np.argpartition(seriesf, -shortfall)[-shortfall:]
+  #increment the values at these indices
+  inc = np.zeros(len(series))
+  np.put(inc, idx, 1)
+  return seriesi + inc

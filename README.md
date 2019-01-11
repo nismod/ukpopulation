@@ -9,14 +9,23 @@
 > ## Latest news: upcoming 1.1 release
 > - adds UK household projections
 > - initial support for custom SNPP variants
+> - better consistency across the MYE/NPP/SNPP APIs (breaks backwards compatibility)
 > - fixes some bugs/issues
 > ### Household Projections
 > Version 1.1 adds functionality is aggregates household projection data for the UK at LAD (or equivalent level). Each country's statistical agency provides a disaggregation by household type, but as there is little or no consistency between them, no attempt has (yet) been made to provide a UK-wide unified disaggregation. The year ranges mirror the year ranges for the SNPP for each country (see below). Extrapolation, or application of a national projection variant to the data is not provided at this stage.
 > ### Custom SNPP Variants
-> Given externally-generated data describing variations to an official projection variant, by geography (LAD) and year, this new functionality  generates a full SNPP dataset, disaggregated proportionately by age and gender.
+> Given externally-generated data describing variations to an official projection variant, by geography (LAD) and year, this new functionality generates a full SNPP dataset, disaggregated proportionately by age and gender. The custom variant can optionally be forced to nearest-integer values, preserving the original (rounded) total.
+> ### API consistency
+> The public methods of the `MYEData`, `SNPPData`, `NPPData` and `SNHPData` classes now consistently order arguments: firstly `categories` (where appropriate) then `geogs`, then `years`.
 
+The statistical agencies of the United Kingdom, that is: [ONS](https://www.ons.gov.uk/), [StatsWales](https://statswales.gov.wales/), [NR Scotland](https://www.nrscotland.gov.uk/), and [NISRA](https://www.nisra.gov.uk/), all produce annual population estimates and projection data. Although the data are essentially the same, the quantity, format, and availability varies between agencies and datasets. All of the population projection data is available by (single year of) age and gender. Household projection data is more varied, with each country/agency producing inconsistent disaggregations of households in terms of HRP age and/or household type. For now, this package does not disaggregate by age and leaves the household type disaggregations as-is, which are:
 
-The statistical agencies of the United Kingdom, that is: [ONS](https://www.ons.gov.uk/), [StatsWales](https://statswales.gov.wales/), [NR Scotland](https://www.nrscotland.gov.uk/), and [NISRA](https://www.nisra.gov.uk/), all produce annual population estimates and projection data. Although the data are essentially the same, the quantity, format, and availability varies between agencies and datasets. All of the projection data is available by (single year of) age and gender.
+Lowest common denominator | England (ONS)                                       | Wales (StatsWales) | Scotland (NRScotland) | N.Ireland (NISRA)  |
+--------------------------|-----------------------------------------------------|--------------------|-----------------------|--------------------|
+Single person             | 'One person households: Female'<br>'One person households: Male' |'1 person'|'1 adult: female'<br>'1 adult: male'|'One adult households'|
+Adults and children       | 'Households with one dependent child'<br>'Households with three or more dependent children'<br>'Households with two dependent children' | '2 person (1 adult, 1 child)'<br>'3 person (2 adults, 1 child)'<br>'3 person (1 adult, 2 children)'<br>'4 person (2+ adults, 1+ children)'<br>'4 person (1 adult, 3 children)'<br>'5+ person (2+ adults, 1+ children)'<br>'5+ person (1 adult, 4+ children)'| '1 adult 1+ children'<br>'2+ adults 1+ children'| 'One adult households with children'<br>'Other households with children'|
+Adults only               | 'Other households with two or more adults'| '2 person (No children)'<br>'3 person (No children)'<br>'4 person (No children)'<br>'5+ person (No children)'| '2 adults'<br>'3+ adults'| 'Two adults without children'<br>'Other households without children'
+
 
 National population projections (NPP) are the responsibility of ONS who provide the data for each country within the UK, including 15 variants covering a number of possible future scenarios. The current data is based on 2016 population estimates and project a century to 2116.
 
