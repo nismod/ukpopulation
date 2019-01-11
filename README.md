@@ -3,6 +3,8 @@
 [![DOI](https://zenodo.org/badge/131988266.svg)](https://zenodo.org/badge/latestdoi/131988266)
 [![PyPI version](https://badge.fury.io/py/ukpopulation.svg)](https://badge.fury.io/py/ukpopulation)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/ukpopulation/badges/version.svg)](https://anaconda.org/conda-forge/ukpopulation)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/ukpopulation/badges/downloads.svg)](https://anaconda.org/conda-forge/ukpopulation)
+
 
 # ukpopulation: UK Demographic Projections
 
