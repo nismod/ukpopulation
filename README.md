@@ -397,6 +397,14 @@ Here we build on the examples above by not only applying the NPP variant, but ex
 
 ![Newcastle Population Projection Variants](doc/img/Newcastle_var_ex.png)
 
+## Comparing household and population projections for a single LAD
+
+In this example we simply plot the aggregate household projections for Newcastle against the (principal) population projection. You can see that population growth starts to tail off more than the household growth. This suggests a decrease in household size. Further inspection of the data should confirm this.
+
+[Source Code](doc/example_household.py)
+
+![Newcastle Population Projection Variants](doc/img/Newcastle_hh.png)
+
 
 # Code Documentation
 Package documentation can be viewed like so:
