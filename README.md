@@ -3,10 +3,12 @@
 [![DOI](https://zenodo.org/badge/131988266.svg)](https://zenodo.org/badge/latestdoi/131988266)
 [![PyPI version](https://badge.fury.io/py/ukpopulation.svg)](https://badge.fury.io/py/ukpopulation)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/ukpopulation/badges/version.svg)](https://anaconda.org/conda-forge/ukpopulation)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/ukpopulation/badges/downloads.svg)](https://anaconda.org/conda-forge/ukpopulation)
+
 
 # ukpopulation: UK Demographic Projections
 
-> ## Latest news: upcoming 1.1 release
+> ## Latest news: 1.1 release
 > - adds UK household projections
 > - initial support for custom SNPP variants
 > - better consistency across the MYE/NPP/SNPP APIs (breaks backwards compatibility)
