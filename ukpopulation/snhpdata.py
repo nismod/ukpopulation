@@ -40,7 +40,7 @@ class SNHPData:
     # convert to country if necessary
     if "0" in code:
       code = utils.country(code)[0]
-    return min(self.data[code].PROJECTED_YEAR_NAME.unique())
+    return min(self.data[code].PROJECTED_YEAR_NAME.unique().astype(int))
 
   def max_year(self, code):
     """
@@ -49,7 +49,7 @@ class SNHPData:
     # convert to country if necessary
     if "0" in code:
       code = utils.country(code)[0]
-    return max(self.data[code].PROJECTED_YEAR_NAME.unique())
+    return max(self.data[code].PROJECTED_YEAR_NAME.unique().astype(int))
 
   def filter(self, categories, geog_codes, years=None):
     # see unified...
@@ -96,8 +96,8 @@ class SNHPData:
       z = zipfile.ZipFile(england_raw)
       tmpdir = tempfile.TemporaryDirectory().name
       #print(tmpdir)
-      z.extract("s2 Households.xlsx", tmpdir)
-      sheet = load_workbook(os.path.join(tmpdir, "s2 Households.xlsx"), read_only=True)["Households"]
+      z.extract("detailedtablesstage1and2/s2 Households.xlsx", tmpdir)
+      sheet = load_workbook(os.path.join(tmpdir, "detailedtablesstage1and2/s2 Households.xlsx"), read_only=True)["Households"]
 
       raw = utils.read_cell_range(sheet,"A7", "AS32263")
       snhp_e = pd.DataFrame(raw[1:,:], columns=raw[0,:])
