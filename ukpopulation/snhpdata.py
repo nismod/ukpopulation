@@ -122,9 +122,7 @@ class SNHPData:
     print("Collating SNHP data for Wales...")
 
     wales_raw = self.cache_dir + "/snhp_w.csv"
-    if os.path.isfile(wales_raw): 
-      snhp_w = pd.read_csv(wales_raw)
-    else:
+    if not os.path.isfile(wales_raw): 
       fields = ['Area_AltCode1','Year_Code','Data','Area_Hierarchy','Variant_Code','Householdtype_ItemName_ENG']
       # StatsWales is an OData endpoint, so select fields of interest
       url = "http://open.statswales.gov.wales/dataset/hous0115?$select={}".format(",".join(fields))
@@ -157,6 +155,8 @@ class SNHPData:
       snhp_w = snhp_w[~snhp_w.HOUSEHOLD_TYPE.isin(["Households", "Projected Private Household Population", "Average Household Size"])]
       snhp_w.to_csv(wales_raw, index=False)
 
+    # this avoids any issues with the index (which was dropped on save)
+    snhp_w = pd.read_csv(wales_raw)
     return snhp_w
 
   def __do_scotland(self):
