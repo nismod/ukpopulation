@@ -175,16 +175,45 @@ class SNHPData:
           fd.write(chunk)
         print("Downloaded", scotland_raw)
 
-      lookup = pd.read_csv("../microsimulation/persistent_data/gb_geog_lookup.csv.gz")
+        lookup = {"Aberdeen City": "S12000033",
+                  "Aberdeenshire": "S12000034",
+                          "Angus": "S12000041",
+                "Argyll and Bute": "S12000035",
+              "Scottish Borders": "S12000026",
+              "Clackmannanshire": "S12000005",
+            "West Dunbartonshire": "S12000039",
+          "Dumfries and Galloway": "S12000006",
+                    "Dundee City": "S12000042",
+                  "East Ayrshire": "S12000008",
+            "East Dunbartonshire": "S12000045",
+                  "East Lothian": "S12000010",
+              "East Renfrewshire": "S12000011",
+              "City of Edinburgh": "S12000036",
+                        "Falkirk": "S12000014",
+                          "Fife": "S12000015",
+                  "Glasgow City": "S12000046",
+                      "Highland": "S12000017",
+                    "Inverclyde": "S12000018",
+                    "Midlothian": "S12000019",
+                          "Moray": "S12000020",
+                "North Ayrshire": "S12000021",
+              "North Lanarkshire": "S12000044",
+                "Orkney Islands": "S12000023",
+              "Perth and Kinross": "S12000024",
+                  "Renfrewshire": "S12000038",
+              "Shetland Islands": "S12000027",
+                "South Ayrshire": "S12000028",
+              "South Lanarkshire": "S12000029",
+                      "Stirling": "S12000030",
+                  "West Lothian": "S12000040",
+            "Na h-Eileanan Siar": "S12000013"}
+
       z = zipfile.ZipFile(scotland_raw)
 
       snhp_s = pd.DataFrame()
       for filename in z.namelist():
         council_area = filename[36:-4].strip()
-        #print(">%s<" % council_area)
-        if council_area == "Na h-Eileanan Siar":
-          council_area = "Comhairle nan Eilean Siar"
-        elif council_area == "Scotland":
+        if council_area == "Scotland":
           continue
 
         chunk = pd.read_csv(z.open(filename, "r"), encoding="latin1", skiprows=3) \
@@ -201,7 +230,7 @@ class SNHPData:
         chunk = pd.melt(chunk, id_vars="Unnamed: 0")
         chunk.value = chunk.value.astype(int)
         chunk = chunk.groupby(["Unnamed: 0", "variable"]).sum().reset_index().rename({"Unnamed: 0": "HOUSEHOLD_TYPE", "variable": "PROJECTED_YEAR_NAME", "value": "OBS_VALUE"}, axis=1)
-        chunk.insert(0, "GEOGRAPHY_CODE", lookup[lookup.LAD_NAME == council_area].LAD.values[0])
+        chunk.insert(0, "GEOGRAPHY_CODE", lookup[council_area])
         snhp_s = snhp_s.append(chunk, ignore_index=True)
       snhp_s.to_csv(scotland_processed, index=False)
 
