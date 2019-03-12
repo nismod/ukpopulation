@@ -342,3 +342,5 @@ raw_data/*
 data/*
 
 .coveragerc
+
+.venv/

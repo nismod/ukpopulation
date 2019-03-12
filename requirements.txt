@@ -1,7 +1,7 @@
 numpy
 pandas
 requests
-openpyxl
+openpyxl<2.6.0
 beautifulsoup4
 lxml
 pyexcel
