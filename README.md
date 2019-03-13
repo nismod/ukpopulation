@@ -415,6 +415,8 @@ import ukpopulation.nppdata as NPPData
 help(NPPData)
 import ukpopulation.snppdata as SNPPData
 help(SNPPData)
+import ukpopulation.snhpdata as SNHPData
+help(SNHPData)
 ```
 
 # Contributions
