@@ -126,10 +126,11 @@ class Test(unittest.TestCase):
     # invalid column name 
     self.assertRaises(ValueError, self.snpp.aggregate, ["INVALID_CAT"], ["E06000001","S12000041"], [2016])
     self.assertRaises(ValueError, self.snpp.aggregate, ["GENDER", "PROJECTED_YEAR_NAME"], ["E06000001","S12000041"], [2016])
-    #invalid year? for now return empty
-    self.assertEqual(len(self.snpp.filter(["E06000001","S12000041"], [2040])), 0)
-    #self.assert
+    #invalid year
+    self.assertRaises(ValueError, self.snpp.filter, ["E06000001","S12000041"], [2040])
 
+    # check we get an error if an invalid LAD code is used
+    self.assertRaises(ValueError, self.snpp.aggregate, ["GENDER", "C_AGE"], "E07000097", 2030)
   def test_npp(self):
 
     self.assertEqual(self.npp.min_year(), 2016)

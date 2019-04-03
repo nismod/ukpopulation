@@ -62,10 +62,15 @@ class SNPPData:
     for country in countries:
       # apply filters
       retval = retval.append(self.data[country][(self.data[country].GEOGRAPHY_CODE.isin(geog_codes)) & 
-                                               (self.data[country].PROJECTED_YEAR_NAME.isin(years)) &
-                                               (self.data[country].C_AGE.isin(ages)) &
-                                               (self.data[country].GENDER.isin(genders))] \
-                            ,ignore_index=True, sort=False)
+                                                (self.data[country].PROJECTED_YEAR_NAME.isin(years)) &
+                                                (self.data[country].C_AGE.isin(ages)) &
+                                                (self.data[country].GENDER.isin(genders))],ignore_index=True, sort=False)
+
+    # check for any codes requested that werent present (this check is far easier to to on the result)
+    invalid_codes = np.setdiff1d(geog_codes, retval.GEOGRAPHY_CODE.unique())
+    if len(invalid_codes) > 0:
+      raise ValueError("Filter for LAD code(s): %s for years %s returned no data (check also age/gender filters)" 
+        % (str(invalid_codes), str(years)))
 
     return retval
 
@@ -88,7 +93,7 @@ class SNPPData:
     for year in ex_range:
       data = self.filter([geog_code], [self.max_year(geog_code)])
       scaling = npp.year_ratio("ppp", utils.country(geog_code), self.max_year(geog_code), year)
-      assert(len(data == len(scaling)))
+      assert(len(data) == len(scaling))
       data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
       data.PROJECTED_YEAR_NAME = year
       all_years = all_years.append(data, ignore_index=True)
