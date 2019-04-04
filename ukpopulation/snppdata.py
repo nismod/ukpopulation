@@ -99,7 +99,6 @@ class SNPPData:
       last_year = self.filter(geog_codes[country], max_year)
 
       (in_range, ex_range) = utils.split_range(year_range, max_year)
-      print(max_year, in_range, ex_range)
       # years that dont need to be extrapolated 
       all_years = self.filter(geog_codes[country], in_range) if in_range else pd.DataFrame()
 
