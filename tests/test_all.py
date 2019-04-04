@@ -181,6 +181,12 @@ class Test(unittest.TestCase):
     extagg = self.snpp.extrapolagg(["GENDER", "C_AGE"], self.npp, "E06000001", years)
     self.assertTrue(ext.equals(extagg))
 
+    # test works for multiple LADs
+    extagg = self.snpp.extrapolagg(["GENDER", "C_AGE"], self.npp, ["E06000001","S12000041"], years)
+    self.assertTrue(np.array_equal(extagg.PROJECTED_YEAR_NAME.unique(), years))
+    self.assertTrue(np.array_equal(extagg.GEOGRAPHY_CODE.unique(), ["E06000001","S12000041"]))
+
+  
   def test_snpp_variant(self):
     # test variant projection 
     years = range(self.snpp.min_year(utils.EN) , self.snpp.min_year(utils.EN) + 3)

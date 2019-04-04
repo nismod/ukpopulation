@@ -100,11 +100,15 @@ class SNPPData:
 
     return all_years
 
-  def extrapolagg(self, categories, npp, geog_code, year_range):
+  def extrapolagg(self, categories, npp, geog_codes, year_range):
     """
     Extrapolate and then aggregate
     """
-    data = self.extrapolate(npp, geog_code, year_range)
+    if isinstance(geog_codes, str):
+      geog_codes = [geog_codes]
+    data = pd.DataFrame()
+    for geog_code in geog_codes:
+      data = data.append(self.extrapolate(npp, geog_code, year_range), sort=False)
 
     # invert categories (they're the ones to aggregate, not preserve)
     return data.groupby(utils.check_and_invert(categories))["OBS_VALUE"].sum().reset_index()
