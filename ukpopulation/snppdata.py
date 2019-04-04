@@ -81,8 +81,7 @@ class SNPPData:
     # invert categories (they're the ones to aggregate, not preserve)
     return data.groupby(utils.check_and_invert(categories))["OBS_VALUE"].sum().reset_index()
 
-  # For now one LAD at a time (due to multiple countries)
-  # For now allow extrapolation of years already in data
+  # year_range can include year that dont need to be extrapolated
   # Filtering age and gender is not (currently) supported
   def extrapolate(self, npp, geog_codes, year_range):
 
@@ -94,24 +93,24 @@ class SNPPData:
     all_codes_all_years = pd.DataFrame()
 
     for country in geog_codes:
-
       if not geog_codes[country]: continue
 
-      (in_range, ex_range) = utils.split_range(year_range, self.max_year(country))
-
-      all_years = self.filter(geog_codes[country], in_range)
       max_year = self.max_year(country)
+      last_year = self.filter(geog_codes[country], max_year)
+
+      (in_range, ex_range) = utils.split_range(year_range, max_year)
+      print(max_year, in_range, ex_range)
+      # years that dont need to be extrapolated 
+      all_years = self.filter(geog_codes[country], in_range) if in_range else pd.DataFrame()
 
       for year in ex_range:
-        print(year)
-        data = all_years[all_years.PROJECTED_YEAR_NAME == max_year].copy()
+        data = last_year.copy()
         scaling = npp.year_ratio("ppp", country, max_year, year)
         data = data.merge(scaling[["GENDER", "C_AGE", "OBS_VALUE"]], on=["GENDER", "C_AGE"])
         data["OBS_VALUE"] = data.OBS_VALUE_x * data.OBS_VALUE_y
         data.PROJECTED_YEAR_NAME = year
         all_years = all_years.append(data.drop(["OBS_VALUE_x", "OBS_VALUE_y"], axis=1), ignore_index=True, sort=False)
 
-      print(all_years.head())
       all_codes_all_years = all_codes_all_years.append(all_years, ignore_index=True, sort=False)
       
     return all_codes_all_years
