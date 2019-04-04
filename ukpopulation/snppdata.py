@@ -84,31 +84,43 @@ class SNPPData:
   # For now one LAD at a time (due to multiple countries)
   # For now allow extrapolation of years already in data
   # Filtering age and gender is not (currently) supported
-  def extrapolate(self, npp, geog_code, year_range):
+  def extrapolate(self, npp, geog_codes, year_range):
 
-    (in_range, ex_range) = utils.split_range(year_range, self.max_year(geog_code))
+    if isinstance(geog_codes, str):
+      geog_codes = [geog_codes]
 
-    all_years = self.filter(geog_code, in_range)
+    geog_codes = utils.split_by_country(geog_codes)
 
-    for year in ex_range:
-      data = self.filter([geog_code], [self.max_year(geog_code)])
-      scaling = npp.year_ratio("ppp", utils.country(geog_code), self.max_year(geog_code), year)
-      assert(len(data) == len(scaling))
-      data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
-      data.PROJECTED_YEAR_NAME = year
-      all_years = all_years.append(data, ignore_index=True)
+    all_codes_all_years = pd.DataFrame()
 
-    return all_years
+    for country in geog_codes:
+
+      if not geog_codes[country]: continue
+
+      (in_range, ex_range) = utils.split_range(year_range, self.max_year(country))
+
+      all_years = self.filter(geog_codes[country], in_range)
+      max_year = self.max_year(country)
+
+      for year in ex_range:
+        print(year)
+        data = all_years[all_years.PROJECTED_YEAR_NAME == max_year].copy()
+        scaling = npp.year_ratio("ppp", country, max_year, year)
+        data = data.merge(scaling[["GENDER", "C_AGE", "OBS_VALUE"]], on=["GENDER", "C_AGE"])
+        data["OBS_VALUE"] = data.OBS_VALUE_x * data.OBS_VALUE_y
+        data.PROJECTED_YEAR_NAME = year
+        all_years = all_years.append(data.drop(["OBS_VALUE_x", "OBS_VALUE_y"], axis=1), ignore_index=True, sort=False)
+
+      print(all_years.head())
+      all_codes_all_years = all_codes_all_years.append(all_years, ignore_index=True, sort=False)
+      
+    return all_codes_all_years
 
   def extrapolagg(self, categories, npp, geog_codes, year_range):
     """
     Extrapolate and then aggregate
     """
-    if isinstance(geog_codes, str):
-      geog_codes = [geog_codes]
-    data = pd.DataFrame()
-    for geog_code in geog_codes:
-      data = data.append(self.extrapolate(npp, geog_code, year_range), sort=False)
+    data = self.extrapolate(npp, geog_codes, year_range)
 
     # invert categories (they're the ones to aggregate, not preserve)
     return data.groupby(utils.check_and_invert(categories))["OBS_VALUE"].sum().reset_index()

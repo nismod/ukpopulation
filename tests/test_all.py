@@ -58,6 +58,13 @@ class Test(unittest.TestCase):
     codes = 'A06000001'
     self.assertTrue(utils.country(codes) == [])
 
+    codes = ['E06000001','E06000002','N09000001','S12000033','W06000011']
+    split = utils.split_by_country(codes)
+    self.assertTrue(split[utils.EN] == ['E06000001','E06000002'])
+    self.assertTrue(split[utils.WA] == ['W06000011'])
+    self.assertTrue(split[utils.SC] == ['S12000033'])
+    self.assertTrue(split[utils.NI] == ['N09000001'])
+
     # naively, each element would be rounded down, making the total 10
     fractional = np.array([0.1, 0.2, 0.3, 0.4]) * 11
     integral = utils.integerise(fractional)
@@ -182,9 +189,10 @@ class Test(unittest.TestCase):
     self.assertTrue(ext.equals(extagg))
 
     # test works for multiple LADs
-    extagg = self.snpp.extrapolagg(["GENDER", "C_AGE"], self.npp, ["E06000001","S12000041"], years)
+    extagg = self.snpp.extrapolagg(["GENDER", "C_AGE"], self.npp, ["E06000001", "E06000005", "E06000047", "S12000033", "S12000041"], years)
+    extagg.to_csv("./extagg.csv")
     self.assertTrue(np.array_equal(extagg.PROJECTED_YEAR_NAME.unique(), years))
-    self.assertTrue(np.array_equal(extagg.GEOGRAPHY_CODE.unique(), ["E06000001","S12000041"]))
+    self.assertTrue(np.array_equal(extagg.GEOGRAPHY_CODE.unique(), ["E06000001", "E06000005", "E06000047", "S12000033", "S12000041"]))
 
   
   def test_snpp_variant(self):

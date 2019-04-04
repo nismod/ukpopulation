@@ -38,6 +38,15 @@ def country(codes):
   return sorted(list(raw))
   #set([code[0] in lookup and lookup[code[0]].upper() for code in codes]).discard(False))
 
+def split_by_country(codes):
+  """
+  Splits a single array of LAD codes into separate arrays for each country 
+  """
+  return { EN: [code for code in codes if code.startswith("E")],
+           WA: [code for code in codes if code.startswith("W")],
+           SC: [code for code in codes if code.startswith("S")],
+           NI: [code for code in codes if code.startswith("N")] }
+
 def default_cache_dir():
   """
   Default cache dir location, ensures the path exists (failing if it cannot create) 
