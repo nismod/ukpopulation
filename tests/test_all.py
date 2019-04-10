@@ -102,6 +102,20 @@ class Test(unittest.TestCase):
     self.assertEqual(self.snpp.min_year(utils.EN), 2014)
     self.assertEqual(self.snpp.max_year(utils.EN), 2027) # for test data, real data is 2039
 
+    # test all_lads functionality
+    self.assertTrue(np.array_equal(self.snpp.all_lads(utils.EN), ['E06000005', 'E06000047', 'E06000001']))
+    self.assertTrue(np.array_equal(self.snpp.all_lads(utils.WA), ['W06000011', 'W06000016', 'W06000018']))
+    self.assertTrue(np.array_equal(self.snpp.all_lads(utils.SC), ['S12000033', 'S12000034', 'S12000041']))
+    self.assertTrue(np.array_equal(self.snpp.all_lads(utils.NI), ['N09000001', 'N09000011', 'N09000002']))
+    self.assertTrue(np.array_equal(self.snpp.all_lads(utils.EW), 
+      ['E06000005', 'E06000047', 'E06000001', 'W06000011', 'W06000016', 'W06000018']))
+    self.assertTrue(np.array_equal(self.snpp.all_lads(utils.GB), 
+      ['E06000005', 'E06000047', 'E06000001', 'W06000011', 'W06000016', 'W06000018', 'S12000033', 'S12000034', 'S12000041']))
+    self.assertTrue(np.array_equal(self.snpp.all_lads(utils.UK), 
+      ['E06000005', 'E06000047', 'E06000001', 'W06000011', 'W06000016', 'W06000018', 'S12000033', 'S12000034', 'S12000041', 'N09000001', 'N09000011', 'N09000002']))
+    # North Korean projections are unavailable
+    self.assertTrue(np.array_equal(self.snpp.all_lads("DPRK"), []))
+
     # 3 LADs * 91 ages * 2 genders * 14 years
     self.assertEqual(len(self.snpp.data[utils.EN]), 3 * 91 * 2 * 14)    
 

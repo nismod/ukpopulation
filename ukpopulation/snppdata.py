@@ -46,6 +46,22 @@ class SNPPData:
       code = utils.country(code)[0]
     return max(self.data[code].PROJECTED_YEAR_NAME.unique())
 
+  def all_lads(self, countries):
+    """ 
+    Returns all the LAD codes in the country or countries specfied 
+    Supports EN WA SC NI EW GB UK
+    """
+    if isinstance(countries, str):
+      countries = [countries]
+    lads = []
+    for country in countries:
+      if country in self.data:
+        lads.extend(self.data[country].GEOGRAPHY_CODE.unique())
+      else:
+      # warn if missing or invalid
+        print("WARNING: no LAD codes for country %s", country)
+    return lads
+
   def filter(self, geog_codes, years=None, ages=range(0,91), genders=[1,2]):
 
     # convert geog_codes and years to arrays if single values supplied (for isin)
