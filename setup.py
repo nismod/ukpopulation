@@ -12,7 +12,7 @@ def read_reqs():
 
 setuptools.setup(
   name='ukpopulation',
-  version="1.1.4",
+  version="1.2.0",
   description='Download, cache, collate, filter, manipulate and extrapolate UK population and household estimates/projections',
   long_description=readme(),
   long_description_content_type="text/markdown",

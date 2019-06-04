@@ -2,13 +2,17 @@ import sys
 import os
 import unittest
 import numpy as np
+import pandas as pd
 
 #import ukcensusapi.Nomisweb as Api
 import ukpopulation.myedata as MYEData
 import ukpopulation.nppdata as NPPData
 import ukpopulation.snppdata as SNPPData
+import ukpopulation.customsnppdata as CustomSNPPData
 import ukpopulation.snhpdata as SNHPData
 import ukpopulation.utils as utils
+
+TEST_DATA_DIR = "./tests/raw_data"
 
 class Test(unittest.TestCase):
 
@@ -17,10 +21,10 @@ class Test(unittest.TestCase):
     Check env set up correctly for tests
     (it's too late to override the env in this function unfortunately)
     """
-    self.mye = MYEData.MYEData("./tests/raw_data")    
-    self.npp = NPPData.NPPData("./tests/raw_data")    
-    self.snpp = SNPPData.SNPPData("./tests/raw_data")    
-    self.snhp = SNHPData.SNHPData("./tests/raw_data")
+    self.mye = MYEData.MYEData(TEST_DATA_DIR)    
+    self.npp = NPPData.NPPData(TEST_DATA_DIR)    
+    self.snpp = SNPPData.SNPPData(TEST_DATA_DIR)    
+    self.snhp = SNHPData.SNHPData(TEST_DATA_DIR)
 
     # fix issue with test dataset
     self.snpp.data[utils.EN].PROJECTED_YEAR_NAME = self.snpp.data[utils.EN].PROJECTED_YEAR_NAME.astype(int)
@@ -227,12 +231,13 @@ class Test(unittest.TestCase):
     # TODO more testing of results
     self.assertTrue(np.array_equal(base.OBS_VALUE, ppp.OBS_VALUE))
 
-  def test_snpp_custom_variant(self):
-    custom = self.snpp.custom_variant("./tests/raw_data/test_scenario.csv")
+  def test_snpp_custom_projection(self):
+    customdata = pd.read_csv(os.path.join(TEST_DATA_DIR, "custom_snpp.csv"))
+    CustomSNPPData.register_custom_projection("test_custom_snpp", customdata, TEST_DATA_DIR)
 
-    self.assertTrue(np.array_equal(custom.GEOGRAPHY_CODE.unique(), ['E06000005', 'E06000047', 'E06000001', 'S12000033', 'S12000034', 'S12000041', 'W06000011', 'W06000016', 'W06000018']))
-    self.assertTrue(np.array_equal(custom.PROJECTED_YEAR_NAME.unique(), [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027]))
-    self.assertTrue(len(custom), 9 * 12 * 2 * 91) # 9 geogs, 12 years, 2 genders, 91 ages = 19656
+    custom = CustomSNPPData.CustomSNPPData("test_custom_snpp", TEST_DATA_DIR)
+    geogs = np.array(['E06000001', 'E06000005', 'E06000047', 'S12000033', 'S12000034', 'S12000041', 'W06000011', 'W06000016', 'W06000018'])
+    self.assertTrue(np.array_equal(sorted(custom.data.GEOGRAPHY_CODE.unique()), geogs))
 
   # test datasets have consistent ranges
   def test_consistency(self):

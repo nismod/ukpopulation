@@ -1,66 +1,74 @@
 import os.path
-import json
-import zipfile
 import numpy as np
 import pandas as pd
-import requests
-from openpyxl import load_workbook
-import ukcensusapi.Nomisweb as Api
 import ukpopulation.utils as utils
 
-class SNPPData:
+def _custom_snpp_filename(name, cache_dir):
+  return os.path.join(cache_dir, "ukpopulation_custom_snpp_%s.csv" % name)
+
+# save a custom projection in the cache dir
+def register_custom_projection(name, data, cache_dir=utils.default_cache_dir()):
+  # check data is compatible
+  required_colnames = ["GEOGRAPHY_CODE", "OBS_VALUE", "GENDER","C_AGE","PROJECTED_YEAR_NAME"]
+  for col in required_colnames:
+    if not col in data.columns.values:
+      raise ValueError("Custom SNPP dataset must contain a %s column" % col)
+
+  if not (data.GENDER.unique() == [1, 2]).all():
+    raise ValueError("GENDER column must only contain 1 (male) and 2 (female)")
+
+  if min(data.C_AGE.unique()) != 0 or max(data.C_AGE.unique()) != 90:
+    raise ValueError("C_AGE column must range from 0 to 90")
+
+  filename = _custom_snpp_filename(name, cache_dir)
+
+  print("Writing custom SNPP %s to %s" % (name, filename))
+  data.to_csv(filename, index=False)
+
+class CustomSNPPData:
   """
-  Functionality for downloading and collating UK Subnational Population Projection (NPP) data
-  Nomisweb stores the England data (only)
-  Wales/Scotland/NI are not the responsiblity of ONS and are made avilable online by the relevant statistical agency
-  """  
-
-  def __init__(self, cache_dir=utils.default_cache_dir()):
+  Functionality for cacheing and accessing custom Subnational Population Projection (NPP) data
+  """
+  def __init__(self, name, cache_dir=utils.default_cache_dir()):
+    self.name = name
     self.cache_dir = cache_dir
-    self.data_api = Api.Nomisweb(self.cache_dir) 
 
-    self.data = {}
-    self.data[utils.EN] = self.__do_england()
-    self.data[utils.WA] = self.__do_wales()
-    self.data[utils.SC] = self.__do_scotland()
-    self.data[utils.NI] = self.__do_nireland()
+    filename = _custom_snpp_filename(name, self.cache_dir)
+    self.data = pd.read_csv(filename)
+    # self.data[utils.EN] = self.__do_england()
+    # self.data[utils.WA] = self.__do_wales()
+    # self.data[utils.SC] = self.__do_scotland()
+    # self.data[utils.NI] = self.__do_nireland()
 
-    # LADs * 26 years * 91 ages * 2 genders
-    #assert len(self.data) == (326+22+32+11) * 26 * 91 * 2
-
-  def min_year(self, code):
+  def min_year(self):
     """
-    Returns the first year in the projection, assumes a single LAD or country code
+    Returns the first year in the projection
     """
     # convert to country if necessary
-    if "0" in code:
-      code = utils.country(code)[0]
-    return min(self.data[code].PROJECTED_YEAR_NAME.unique())
+    return min(self.data.PROJECTED_YEAR_NAME.unique())
 
-  def max_year(self, code):
+  def max_year(self):
     """
-    Returns the final year in the projection, assumes a single LAD or country code
+    Returns the final year in the projection
     """
-    # convert to country if necessary
-    if "0" in code:
-      code = utils.country(code)[0]
-    return max(self.data[code].PROJECTED_YEAR_NAME.unique())
+    return max(self.data.PROJECTED_YEAR_NAME.unique())
 
   def all_lads(self, countries):
-    """ 
-    Returns all the LAD codes in the country or countries specfied 
-    Supports EN WA SC NI EW GB UK
-    """
-    if isinstance(countries, str):
-      countries = [countries]
-    lads = []
-    for country in countries:
-      if country in self.data:
-        lads.extend(self.data[country].GEOGRAPHY_CODE.unique())
-      else:
-      # warn if missing or invalid
-        print("WARNING: no LAD codes for country %s", country)
-    return lads
+    return self.data.GEOGRAPHY_CODE.unique()
+    # """ 
+    # Returns all the LAD codes in the country or countries specfied 
+    # Supports EN WA SC NI EW GB UK
+    # """
+    # if isinstance(countries, str):
+    #   countries = [countries]
+    # lads = []
+    # for country in countries:
+    #   if country in self.data:
+    #     lads.extend(self.data[country].GEOGRAPHY_CODE.unique())
+    #   else:
+    #   # warn if missing or invalid
+    #     print("WARNING: no LAD codes for country %s", country)
+    # return lads
 
   def filter(self, geog_codes, years=None, ages=range(0,91), genders=[1,2]):
 
@@ -68,25 +76,17 @@ class SNPPData:
     if isinstance(geog_codes, str):
       geog_codes = [geog_codes]
 
-    countries = utils.country(geog_codes)
-
-    # TODO fix incorrect assumption is that all countries have the same year range 
-    years = utils.trim_range(years, self.min_year(countries[0]), self.max_year(countries[0]))
-
-    retval = pd.DataFrame() #{"GEOGRAPHY_CODE": [], "PROJECTED_YEAR_NAME": [], "C_AGE": [], "GENDER":[], "OBS_VALUE": []})
-    # loop over datasets as needed
-    for country in countries:
-      # apply filters
-      retval = retval.append(self.data[country][(self.data[country].GEOGRAPHY_CODE.isin(geog_codes)) & 
-                                                (self.data[country].PROJECTED_YEAR_NAME.isin(years)) &
-                                                (self.data[country].C_AGE.isin(ages)) &
-                                                (self.data[country].GENDER.isin(genders))],ignore_index=True, sort=False)
-
-    # check for any codes requested that werent present (this check is far easier to to on the result)
-    invalid_codes = np.setdiff1d(geog_codes, retval.GEOGRAPHY_CODE.unique())
+    # check for any codes requested that werent present
+    invalid_codes = np.setdiff1d(geog_codes, self.data.GEOGRAPHY_CODE.unique())
     if len(invalid_codes) > 0:
       raise ValueError("Filter for LAD code(s): %s for years %s returned no data (check also age/gender filters)" 
         % (str(invalid_codes), str(years)))
+
+    # apply filters
+    retval = self.data[(self.data.GEOGRAPHY_CODE.isin(geog_codes)) & 
+                       (self.data.PROJECTED_YEAR_NAME.isin(years)) &
+                       (self.data.C_AGE.isin(ages)) &
+                       (self.data.GENDER.isin(genders))]
 
     return retval
 
@@ -176,6 +176,51 @@ class SNPPData:
 
     return result
 
+  # def custom_variant(self, filename, checks=True, integerise=False):
+  #   """
+  #   Given a file containing a dataframe of the format:
+  #     GEOGRAPHY_CODE,PEOPLE,PEOPLE_<suffix>,YEAR,net_delta
+  #     E06000001,93019.0,93019.0,2016,0.0
+  #     E06000002,140639.0,140639.0,2016,0.0
+  #     E06000003,136005.0,136005.0,2016,0.0
+  #     E06000004,196487.0,196487.0,2016,0.0
+  #     E06000005,106347.0,106347.0,2016,0.0
+  #     E06000006,127595.0,127595.0,2016,0.0
+  #     E06000007,209704.0,209704.0,2016,0.0
+  #     ...
+  #   generate a full SNPP dataset for the supplied geographies and years, disaggregated proportionately by age and gender.
+  #   The base variant is selected from the PEOPLE_<suffix> column name, e.g. PEOPLE_ppp would use the principal projection.
+  #   The PEOPLE_<suffix> column should match the official variant 
+  #   """
+  #   custom = pd.read_csv(filename)
+
+  #   # TODO get base variant and call create_variant if not ppp
+  #   base_scenario = "ppp"
+  #   base_column = "PEOPLE_" + base_scenario
+
+  #   custom["SCALING"] = custom.PEOPLE / custom[base_column]
+  #   #geogs = custom.index.levels[0].values
+  #   #years = custom.index.levels[1].values
+  #   geogs = custom.GEOGRAPHY_CODE.unique()
+  #   years = custom.PROJECTED_YEAR_NAME.unique()
+
+  #   base_dataset = self.filter(geogs, years)
+
+  #   # TODO check - groupby base and check sums - fix? ignore? out-of-date MYE vs SNPP numbers
+  #   check_dataset = self.aggregate(["GENDER", "C_AGE"], geogs, years)
+  #   check_dataset = check_dataset.merge(custom[["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME", base_column]])
+  #   # print(check_dataset[base_column] - check_dataset.OBS_VALUE)
+  #   # print(check_dataset.head())
+  #   # print(custom.head())
+
+  #   base_dataset = base_dataset.merge(custom[["GEOGRAPHY_CODE", "PROJECTED_YEAR_NAME", "SCALING"]], how="left")
+  #   base_dataset.OBS_VALUE = base_dataset.OBS_VALUE * base_dataset.SCALING
+  #   base_dataset.rename({"SCALING": "SCALING_" + base_scenario}, axis=1, inplace=True)
+
+  #   if integerise:
+  #     base_dataset.OBS_VALUE = utils.integerise(base_dataset.OBS_VALUE)
+
+  #   return base_dataset
 
   def __do_england(self):
     # return self.__do_england_ons() # 2014
