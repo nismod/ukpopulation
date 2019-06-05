@@ -42,10 +42,6 @@ class CustomSNPPData:
 
     filename = _custom_snpp_filename(name, self.cache_dir)
     self.data = pd.read_csv(filename)
-    # self.data[utils.EN] = self.__do_england()
-    # self.data[utils.WA] = self.__do_wales()
-    # self.data[utils.SC] = self.__do_scotland()
-    # self.data[utils.NI] = self.__do_nireland()
 
   def min_year(self):
     """
@@ -69,6 +65,8 @@ class CustomSNPPData:
     if isinstance(geog_codes, str):
       geog_codes = [geog_codes]
 
+    if years is None:
+      years=range(self.min_year(), self.max_year()+1)
     if isinstance(years, int):
       years = [years]
 
