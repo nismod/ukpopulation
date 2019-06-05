@@ -343,7 +343,7 @@ data/*
 
 .coveragerc
 
-.venv/
+.venv*/
 
 # generated dynamically by the tests
 tests/raw_data/ukpopulation_custom_snpp_test_custom_snpp.csv

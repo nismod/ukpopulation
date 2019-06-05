@@ -92,6 +92,12 @@ class NPPData:
     """
     Return a subset of the raw data
     """
+    if isinstance(ages, int):
+      ages = [ages]
+
+    if isinstance(genders, int):
+      genders = [genders]
+
     if not variant_name in NPPData.VARIANTS:
       raise RuntimeError("invalid variant name: " + variant_name)
     # make years a valid range (this *silently* removes invalid years)

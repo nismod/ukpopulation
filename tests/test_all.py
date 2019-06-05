@@ -85,7 +85,6 @@ class Test(unittest.TestCase):
     self.assertTrue(sum(integral) == 1.01 * 100)
     self.assertTrue(np.array_equal(np.unique(integral), [1, 2]))
 
-
   def test_mye(self):
     self.assertEqual(self.mye.min_year(), 1991)
     self.assertEqual(self.mye.max_year(), 2016) # for test data, real data is 2039
@@ -117,8 +116,8 @@ class Test(unittest.TestCase):
       ['E06000005', 'E06000047', 'E06000001', 'W06000011', 'W06000016', 'W06000018', 'S12000033', 'S12000034', 'S12000041']))
     self.assertTrue(np.array_equal(self.snpp.all_lads(utils.UK), 
       ['E06000005', 'E06000047', 'E06000001', 'W06000011', 'W06000016', 'W06000018', 'S12000033', 'S12000034', 'S12000041', 'N09000001', 'N09000011', 'N09000002']))
-    # North Korean projections are unavailable
-    self.assertTrue(np.array_equal(self.snpp.all_lads("DPRK"), []))
+    # Empty for non-UK country 
+    self.assertTrue(np.array_equal(self.snpp.all_lads("IE"), []))
 
     # 3 LADs * 91 ages * 2 genders * 14 years
     self.assertEqual(len(self.snpp.data[utils.EN]), 3 * 91 * 2 * 14)    
@@ -156,6 +155,7 @@ class Test(unittest.TestCase):
 
     # check we get an error if an invalid LAD code is used
     self.assertRaises(ValueError, self.snpp.aggregate, ["GENDER", "C_AGE"], "E07000097", 2030)
+    
   def test_npp(self):
 
     self.assertEqual(self.npp.min_year(), 2016)
@@ -235,9 +235,24 @@ class Test(unittest.TestCase):
     customdata = pd.read_csv(os.path.join(TEST_DATA_DIR, "custom_snpp.csv"))
     CustomSNPPData.register_custom_projection("test_custom_snpp", customdata, TEST_DATA_DIR)
 
+    projs = CustomSNPPData.list_custom_projections(TEST_DATA_DIR)
+    self.assertEqual(len(projs), 1)
+    self.assertEqual(projs[0], "test_custom_snpp")
+
     custom = CustomSNPPData.CustomSNPPData("test_custom_snpp", TEST_DATA_DIR)
     geogs = np.array(['E06000001', 'E06000005', 'E06000047', 'S12000033', 'S12000034', 'S12000041', 'W06000011', 'W06000016', 'W06000018'])
+    self.assertTrue(np.array_equal(sorted(custom.all_lads()), geogs))
     self.assertTrue(np.array_equal(sorted(custom.data.GEOGRAPHY_CODE.unique()), geogs))
+
+    data = custom.filter(["E06000001", "W06000018"], range(2018,2020))
+    self.assertEqual(len(data), 728) # 91(ages) * 2(genders) * 2(LADs) * 2(years)
+    self.assertAlmostEqual(data[data.PROJECTED_YEAR_NAME==2018].OBS_VALUE.sum(), 274097.537766, 5) 
+
+    agg = custom.aggregate(["GENDER", "C_AGE"], ["S12000033","S12000041"], [2018], range(0,18), 1)
+    self.assertEqual(len(agg), 2)
+    self.assertAlmostEqual(agg.OBS_VALUE.sum(), 30760.0, 5) # remember this is population under 46
+
+
 
   # test datasets have consistent ranges
   def test_consistency(self):

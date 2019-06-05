@@ -64,9 +64,15 @@ class SNPPData:
 
   def filter(self, geog_codes, years=None, ages=range(0,91), genders=[1,2]):
 
-    # convert geog_codes and years to arrays if single values supplied (for isin)
+    # convert inputs to arrays if single values supplied (for isin)
     if isinstance(geog_codes, str):
       geog_codes = [geog_codes]
+
+    if isinstance(ages, int):
+      ages = [ages]
+
+    if isinstance(genders, int):
+      genders = [genders]
 
     countries = utils.country(geog_codes)
 
