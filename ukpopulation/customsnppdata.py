@@ -111,7 +111,7 @@ class CustomSNPPData:
     for country in geog_codes:
       if not geog_codes[country]: continue
 
-      max_year = self.max_year(country)
+      max_year = self.max_year()
       last_year = self.filter(geog_codes[country], max_year)
 
       (in_range, ex_range) = utils.split_range(year_range, max_year)
