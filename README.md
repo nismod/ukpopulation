@@ -8,7 +8,29 @@
 
 # ukpopulation: UK Demographic Projections
 
-> ## Latest news: 1.1 release
+> ## Latest news: 1.2 release
+> - adds support for custom subnational population projections
+> ### Custom SNPP Data
+> An externally generated SNPP dataset (from e.g. [simim](https://github.com/nismod/simim)) can be registered with the `ukpopulation` package and used as if it was the standard ONS/StatsWales/NRScotland/NISRA projection:
+> ```python3
+> >>> import ukpopulation.customsnppdata as CustomSNPPData
+> >>> customdata = pd.read_csv("custom_snpp.csv")
+> >>> customdata.head()
+>   GEOGRAPHY_CODE  GENDER  C_AGE  OBS_VALUE  PROJECTED_YEAR_NAME
+> 0      E06000005       1      0      603.0                 2018
+> 1      E06000005       1      1      600.0                 2018
+> 2      E06000005       1      2      624.0                 2018
+> 3      E06000005       1      3      636.0                 2018
+> 4      E06000005       1      4      661.0                 2018
+> >>> CustomSNPPData.register_custom_projection("custom_snpp", customdata, "cache_directory")
+> Writing custom SNPP custom_snpp to cache/ukpopulation_custom_snpp_custom_snpp.csv
+> >>> CustomSNPPData.list_custom_projections("cache_directory")
+> ['custom_snpp']
+> >>>
+> ```
+> The external dataset must follow the format/column name conventions as above, but can also contain extra data if required for other use. The `GENDER` column should only take the values 1 (male) or 2 (female); the `C_AGE` column should contain the range 0-90 inclusive (90 meaning 90 or over).
+
+> ## 1.1 release
 > - adds UK household projections
 > - initial support for custom SNPP variants
 > - better consistency across the MYE/NPP/SNPP APIs (breaks backwards compatibility)

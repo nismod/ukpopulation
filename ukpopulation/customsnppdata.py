@@ -67,13 +67,13 @@ class CustomSNPPData:
 
     if years is None:
       years=range(self.min_year(), self.max_year()+1)
-    if isinstance(years, int):
+    if np.isscalar(years):
       years = [years]
 
-    if isinstance(ages, int):
+    if np.isscalar(ages):
       ages = [ages]
 
-    if isinstance(genders, int):
+    if np.isscalar(genders):
       genders = [genders]
 
     # check for any codes requested that werent present
@@ -111,16 +111,16 @@ class CustomSNPPData:
     for country in geog_codes:
       if not geog_codes[country]: continue
 
-      max_year = self.max_year()
-      last_year = self.filter(geog_codes[country], max_year)
+      maxyear = self.max_year()
+      last_year = self.filter(geog_codes[country], maxyear)
 
-      (in_range, ex_range) = utils.split_range(year_range, max_year)
+      (in_range, ex_range) = utils.split_range(year_range, maxyear)
       # years that dont need to be extrapolated 
       all_years = self.filter(geog_codes[country], in_range) if in_range else pd.DataFrame()
 
       for year in ex_range:
         data = last_year.copy()
-        scaling = npp.year_ratio("ppp", country, max_year, year)
+        scaling = npp.year_ratio("ppp", country, maxyear, year)
         data = data.merge(scaling[["GENDER", "C_AGE", "OBS_VALUE"]], on=["GENDER", "C_AGE"])
         data["OBS_VALUE"] = data.OBS_VALUE_x * data.OBS_VALUE_y
         data.PROJECTED_YEAR_NAME = year

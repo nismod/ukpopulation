@@ -92,10 +92,10 @@ class NPPData:
     """
     Return a subset of the raw data
     """
-    if isinstance(ages, int):
+    if np.isscalar(ages):
       ages = [ages]
 
-    if isinstance(genders, int):
+    if np.isscalar(genders):
       genders = [genders]
 
     if not variant_name in NPPData.VARIANTS:

@@ -252,7 +252,14 @@ class Test(unittest.TestCase):
     self.assertEqual(len(agg), 2)
     self.assertAlmostEqual(agg.OBS_VALUE.sum(), 30760.0, 5) # remember this is population under 46
 
-
+    # test extrapolagg is equivalent to extrapolate + external agg
+    years = range(custom.max_year()-1, custom.max_year() + 2)
+    ext = utils.aggregate(custom.extrapolate(self.npp, "E06000001", years), ["GENDER", "C_AGE"])
+    extagg = custom.extrapolagg(["GENDER", "C_AGE"], self.npp, "E06000001", years)
+    self.assertTrue(ext.equals(extagg))
+    self.assertEqual(len(ext.GEOGRAPHY_CODE.unique()), 1)
+    self.assertEqual(ext.GEOGRAPHY_CODE.unique()[0], "E06000001")
+    self.assertAlmostEqual(ext.OBS_VALUE.sum(), 279841.6197443956, 5)
 
   # test datasets have consistent ranges
   def test_consistency(self):

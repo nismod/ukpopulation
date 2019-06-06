@@ -2,6 +2,7 @@
 MYEData - wrapper around Mid-Year Estimate data by LAD, SYoA and gender
 """
 
+import numpy as np
 import pandas as pd
 import ukcensusapi.Nomisweb as Api
 import ukpopulation.utils as utils
@@ -47,9 +48,9 @@ class MYEData:
     # ensure array inputs
     if isinstance(geog_codes, str):
       geog_codes = [geog_codes]
-    if isinstance(ages, int):
+    if np.isscalar(ages):
       ages = [ages]
-    if isinstance(genders, int):
+    if np.isscalar(genders):
       genders = [genders]
 
     result = pd.DataFrame()

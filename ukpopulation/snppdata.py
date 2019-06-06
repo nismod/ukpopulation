@@ -68,10 +68,10 @@ class SNPPData:
     if isinstance(geog_codes, str):
       geog_codes = [geog_codes]
 
-    if isinstance(ages, int):
+    if np.isscalar(ages):
       ages = [ages]
 
-    if isinstance(genders, int):
+    if np.isscalar(genders):
       genders = [genders]
 
     countries = utils.country(geog_codes)
