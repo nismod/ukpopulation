@@ -43,16 +43,18 @@ class CustomSNPPData:
     filename = _custom_snpp_filename(name, self.cache_dir)
     self.data = pd.read_csv(filename)
 
-  def min_year(self):
+  def min_year(self, _=None):
     """
     Returns the first year in the projection
+    (usused argument to make interface consistent with SNPPData)
     """
     # convert to country if necessary
     return min(self.data.PROJECTED_YEAR_NAME.unique())
 
-  def max_year(self):
+  def max_year(self, _=None):
     """
     Returns the final year in the projection
+    (usused argument to make interface consistent with SNPPData)
     """
     return max(self.data.PROJECTED_YEAR_NAME.unique())
 
@@ -153,7 +155,7 @@ class CustomSNPPData:
       # split out any years prior to the NPP data (currently SNPP is 2014 based but NPP is 2016)
       (pre_range, in_range) = utils.split_range(year_range, npp.min_year() - 1)
       # for any years prior to NPP we just use the SNPP data as-is (i.e. "ppp")
-      pre_data = self.filter(geog_code, pre_range)
+      pre_data = self.filter(geog_code, pre_range) if pre_range else pd.DataFrame()
       if len(pre_data) > 0:
         print("WARNING: variant {} not applied for years {} that predate the NPP data".format(variant_name, pre_range))
 

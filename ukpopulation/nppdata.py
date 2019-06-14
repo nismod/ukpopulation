@@ -99,7 +99,7 @@ class NPPData:
       genders = [genders]
 
     if not variant_name in NPPData.VARIANTS:
-      raise RuntimeError("invalid variant name: " + variant_name)
+      raise RuntimeError("invalid NPP variant name: " + variant_name)
     # make years a valid range (this *silently* removes invalid years)
     years = utils.trim_range(years, self.min_year(), self.max_year())
 
