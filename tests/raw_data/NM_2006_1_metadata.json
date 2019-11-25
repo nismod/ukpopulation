@@ -6,8 +6,6 @@
       "2092957699": "England"
     },
     "PROJECTED_YEAR": {
-      "2014": 2014,
-      "2015": 2015,
       "2016": 2016,
       "2017": 2017,
       "2018": 2018,
@@ -31,7 +29,9 @@
       "2036": 2036,
       "2037": 2037,
       "2038": 2038,
-      "2039": 2039
+      "2039": 2039,
+      "2040": 2040,
+      "2041": 2041
     },
     "GENDER": {
       "0": "Total",
@@ -170,6 +170,8 @@
     }
   },
   "geographies": {
+    "TYPE433": "local authorities: county / unitary (as of April 2019)",
+    "TYPE434": "local authorities: district / unitary (as of April 2019)",
     "TYPE442": "combined authorities",
     "TYPE446": "local authorities: county / unitary (as of April 2015)",
     "TYPE448": "local authorities: district / unitary (as of April 2015)",
