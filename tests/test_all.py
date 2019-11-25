@@ -30,16 +30,16 @@ class Test(unittest.TestCase):
         # fix issue with test dataset
         self.snpp.data[utils.EN].PROJECTED_YEAR_NAME = self.snpp.data[utils.EN].PROJECTED_YEAR_NAME.astype(int)
 
-        if not self.npp.data_api.key == "DUMMY" or not self.snpp.data_api.key == "DUMMY":
-            print("Test requires NOMIS_API_KEY=DUMMY in env")
-            sys.exit()
+        # if not self.npp.data_api.key == "DUMMY" or not self.snpp.data_api.key == "DUMMY":
+        #     print("Test requires NOMIS_API_KEY=DUMMY in env")
+        #     sys.exit()
 
     def test_utils(self):
         year_range = range(2018, 2050)
         (in_range, ex_range) = utils.split_range(year_range, self.snpp.max_year(utils.EN))
         self.assertEqual(min(in_range), min(year_range))
-        self.assertEqual(max(in_range), 2027)
-        self.assertEqual(min(ex_range), 2028)
+        self.assertEqual(max(in_range), 2029)
+        self.assertEqual(min(ex_range), 2030)
         self.assertEqual(max(ex_range), max(year_range))
 
         self.assertEqual(utils.trim_range(2011, 1991, 2016), [2011])
@@ -104,21 +104,21 @@ class Test(unittest.TestCase):
     def test_snpp(self):
 
         # NB this is the test data (real data is 2016-2041)
-        self.assertEqual(self.snpp.min_year(utils.EN), 2014)
-        self.assertEqual(self.snpp.max_year(utils.EN), 2027)  # for test data, real data is 2039
+        self.assertEqual(self.snpp.min_year(utils.EN), 2016)
+        self.assertEqual(self.snpp.max_year(utils.EN), 2029)  # for test data, real data is 2039
 
         # test all_lads functionality
         self.assertTrue(np.array_equal(self.snpp.all_lads(utils.EN), ['E06000005', 'E06000047', 'E06000001']))
-        self.assertTrue(np.array_equal(self.snpp.all_lads(utils.WA), ['W06000011', 'W06000016', 'W06000018']))
+        self.assertTrue(np.array_equal(self.snpp.all_lads(utils.WA), ['W92000004', 'WXX000001', 'WXX000002']))
         self.assertTrue(np.array_equal(self.snpp.all_lads(utils.SC), ['S12000033', 'S12000034', 'S12000041']))
         self.assertTrue(np.array_equal(self.snpp.all_lads(utils.NI), ['N09000001', 'N09000011', 'N09000002']))
         self.assertTrue(np.array_equal(self.snpp.all_lads(utils.EW),
-                                       ['E06000005', 'E06000047', 'E06000001', 'W06000011', 'W06000016', 'W06000018']))
+                                       ['E06000005', 'E06000047', 'E06000001', 'W92000004', 'WXX000001', 'WXX000002']))
         self.assertTrue(np.array_equal(self.snpp.all_lads(utils.GB),
-                                       ['E06000005', 'E06000047', 'E06000001', 'W06000011', 'W06000016', 'W06000018',
+                                       ['E06000005', 'E06000047', 'E06000001', 'W92000004', 'WXX000001', 'WXX000002',
                                         'S12000033', 'S12000034', 'S12000041']))
         self.assertTrue(np.array_equal(self.snpp.all_lads(utils.UK),
-                                       ['E06000005', 'E06000047', 'E06000001', 'W06000011', 'W06000016', 'W06000018',
+                                       ['E06000005', 'E06000047', 'E06000001', 'W92000004', 'WXX000001', 'WXX000002',
                                         'S12000033', 'S12000034', 'S12000041', 'N09000001', 'N09000011', 'N09000002']))
         # Empty for non-UK country
         self.assertTrue(np.array_equal(self.snpp.all_lads("IE"), []))
@@ -128,23 +128,23 @@ class Test(unittest.TestCase):
 
         # print(snpp.data.head())
         geogs = np.array(['E06000001', 'E06000005', 'E06000047', 'N09000001', 'N09000002', 'N09000011',
-                          'S12000033', 'S12000034', 'S12000041', 'W06000011', 'W06000016', 'W06000018'])
+                          'S12000033', 'S12000034', 'S12000041', 'W92000004', 'WXX000001', 'WXX000002'])
         self.assertTrue(np.array_equal(sorted(self.snpp.data[utils.EN].GEOGRAPHY_CODE.unique()), geogs[:3]))
-        self.assertTrue(
-            np.array_equal(sorted(self.snpp.data[utils.EN].PROJECTED_YEAR_NAME.unique()), np.array(range(2014, 2028))))
+        self.assertTrue(np.array_equal(sorted(self.snpp.data[utils.EN].PROJECTED_YEAR_NAME.unique()),
+                                       np.array(range(2016, 2030))))
         self.assertTrue(np.array_equal(sorted(self.snpp.data[utils.EN].C_AGE.unique()), np.array(range(0, 91))))
         self.assertTrue(np.array_equal(self.snpp.data[utils.EN].GENDER.unique(), np.array([1, 2])))
 
         data = self.snpp.filter(["E06000001", "E06000005"], range(2016, 2020))
         self.assertEqual(len(data), 1456)  # 91(ages) * 2(genders) * 2(LADs) * 4(years)
-        self.assertEqual(data[data.PROJECTED_YEAR_NAME == 2016].OBS_VALUE.sum(), 198400)
+        self.assertEqual(data[data.PROJECTED_YEAR_NAME == 2016].OBS_VALUE.sum(), 199172)
 
         agg = self.snpp.aggregate(["GENDER", "C_AGE"], ["S12000033", "S12000041"], [2016])
         self.assertEqual(len(agg), 2)
-        self.assertEqual(agg.OBS_VALUE.sum(), 349517)  # remember this is population under 46
+        self.assertEqual(agg.OBS_VALUE.sum(), 346360)  # remember this is population under 46
 
         # get from multiple countries at once
-        codes = ['E06000001', 'N09000002', 'S12000033', 'W06000011']
+        codes = ['E06000001', 'N09000002', 'S12000033', 'W92000004']
         data = self.snpp.filter(codes, 2018)
         self.assertEqual(len(data), 728)  # 91(ages) * 2(genders) * 4(LADs) * 1(years)
         self.assertEqual(sorted(data.GEOGRAPHY_CODE.unique()), codes)
@@ -163,8 +163,7 @@ class Test(unittest.TestCase):
         self.assertRaises(ValueError, self.snpp.aggregate, ["GENDER", "C_AGE"], "E07000097", 2030)
 
     def test_npp(self):
-
-        self.assertEqual(2018, self.npp.min_year(),)
+        self.assertEqual(2018, self.npp.min_year())
         self.assertEqual(2035, self.npp.max_year())  # for test data, real data is 2118
 
         # only ppp is present
@@ -178,9 +177,9 @@ class Test(unittest.TestCase):
         self.assertTrue(np.array_equal(self.npp.data["ppp"].GENDER.unique(), np.array([1, 2])))
 
         # country populations for 2018 high variant
-        data = self.npp.detail("hhh", utils.EW, range(2018, 2020))
+        data = self.npp.detail("hhh", utils.EW, range(2018, 2022))
         self.assertEqual(len(data), 1456)  # 91(ages) * 2(genders) * 2(countries) * 4(years)
-        self.assertEqual(data[data.PROJECTED_YEAR_NAME == 2018].OBS_VALUE.sum(), 58381217)
+        self.assertEqual(data[data.PROJECTED_YEAR_NAME == 2018].OBS_VALUE.sum(), 59115809)
 
         # now hhh and ppp are present
         self.assertCountEqual(list(self.npp.data.keys()), ["ppp", "hhh"])
@@ -188,7 +187,7 @@ class Test(unittest.TestCase):
         # similar to above, but all of UK summed by age and gender
         agg = self.npp.aggregate(["GENDER", "C_AGE"], "hhh", utils.UK, [2018])
         self.assertEqual(len(agg), 4)
-        self.assertEqual(agg.OBS_VALUE.sum(), 65648054)  # remember this is population under 46
+        self.assertEqual(agg.OBS_VALUE.sum(), 66435550)  # remember this is population under 46
 
     def test_npp_errors(self):
         # invalid variant code
@@ -221,7 +220,7 @@ class Test(unittest.TestCase):
                                        ["E06000001", "E06000005", "E06000047", "S12000033", "S12000041"]))
 
         # check for non-contiguous extrapolation-only range
-        years = [2030, 2035]
+        years = [2029, 2035]
         extagg = self.snpp.extrapolagg(["GENDER", "C_AGE"], self.npp,
                                        ["E06000001", "E06000005", "E06000047", "S12000033", "S12000041"], years)
         self.assertTrue(np.array_equal(extagg.PROJECTED_YEAR_NAME.unique(), years))
@@ -231,7 +230,6 @@ class Test(unittest.TestCase):
     def test_snpp_variant(self):
         # test variant projection
         # Offset the min year to aline the snpp and npp data.
-        # TODO This test could be adaptable to new data to avoid manual changing every time.
         years = range(self.snpp.min_year(utils.EN), self.snpp.min_year(utils.EN) + 5)
 
         # most of this just tests the code runs without error
