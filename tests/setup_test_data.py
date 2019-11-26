@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """ 
-create a small subset of real data for testing - 3 LADs per country and years up to 2027
+create a small subset of real data for testing - 3 LADs per country and years up to 2029
 test data is under source control - this script only required if the data format changes
 NOTE: ensure NOMIS_API_KEY=DUMMY in order to match the cached filenames for England
 """
@@ -12,9 +12,9 @@ test_data_dir = "./tests/raw_data/"
 
 def setup_snpp_data():
   """
-  SNPP test data is 3 LADs per country for years 2014-2027
+  SNPP test data is 3 LADs per country for years 2016-2029 (Including Wales which was previously 2014!)
   """
-  raw_files = ["NM_2006_1_d9b41c77ffd9da86c7ff40ddedd64fe6.tsv", # England 
+  raw_files = ["NM_2006_1_daab3ca05fa48b4ce204ee108a561c8b.tsv", # England
               "snpp_w.csv","snpp_s.csv","snpp_ni.csv"]
 
   for file in raw_files:
@@ -22,18 +22,18 @@ def setup_snpp_data():
     df = pd.read_csv(real_data_dir + file, sep=sep)
 
     geogs = df.GEOGRAPHY_CODE.unique()[:3]
-    df = df[(df.GEOGRAPHY_CODE.isin(geogs)) & (df.PROJECTED_YEAR_NAME < 2028)]
+    df = df[(df.GEOGRAPHY_CODE.isin(geogs)) & (df.PROJECTED_YEAR_NAME <= 2029)]
 
     df.to_csv(test_data_dir + file, sep=sep, index=False)
 
-  # NB the file NM_2006_1_80dd181418e34b263810a07ede7655a6.tsv also needs to be in the test data folder,
+  # NB the file NM_2006_1_d76d72a49d14b5e740ea04a14b741101.tsv also needs to be in the test data folder,
   # containing column headings only. (This will prevent the data being re-downloaded)
 
 def setup_npp_data():
   """
-  NPP test data is 3 variants, all ages, for years 2016-2035
+  NPP test data is 3 variants, all ages, for years 2018-2035
   """
-  raw_files = ["NM_2009_1_0bcd330bc936cd7902566cf7198d8868.tsv", # ppp  
+  raw_files = ["NM_2009_1_a312e4ffeb62374b4277cb8711d68b78.tsv", # ppp
               "npp_hhh.csv","npp_lll.csv"]
   
   for file in raw_files:
@@ -44,4 +44,5 @@ def setup_npp_data():
 
 
 if __name__ == '__main__':
+  # setup_snpp_data()
   setup_npp_data()
