@@ -75,6 +75,10 @@ class SNPPData:
         if np.isscalar(genders):
             genders = [genders]
 
+        # Handle problem with empty list not being recognised as Null, was causing problem in utils.trim_range() below
+        if not years:
+            years = None
+
         countries = utils.country(geog_codes)
 
         # TODO fix incorrect assumption is that all countries have the same year range
@@ -159,7 +163,7 @@ class SNPPData:
 
         for geog_code in geog_codes:
 
-            # split out any years prior to the NPP data (currently SNPP is 2014 based but NPP is 2018)
+            # split out any years prior to the NPP data (currently SNPP is 2016 based but NPP is 2018)
             (pre_range, in_range) = utils.split_range(year_range, npp.min_year() - 1)
             # for any years prior to NPP we just use the SNPP data as-is (i.e. "ppp")
             pre_data = self.filter(geog_code, pre_range)
