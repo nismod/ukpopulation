@@ -12,7 +12,7 @@ test_data_dir = "./tests/raw_data/"
 
 def setup_snpp_data():
     """
-    SNPP test data is 3 LADs per country for years 2016-2029 (Including Wales which was previously 2014!)
+    SNPP test data is 3 LADs per country for years 2016-2029 (Not including Wales which is 2014!)
     """
     raw_files = ["NM_2006_1_daab3ca05fa48b4ce204ee108a561c8b.tsv", # England
                  "snpp_w.csv", "snpp_s.csv", "snpp_ni.csv"]
