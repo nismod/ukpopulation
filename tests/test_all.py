@@ -30,9 +30,9 @@ class Test(unittest.TestCase):
         # fix issue with test dataset
         self.snpp.data[utils.EN].PROJECTED_YEAR_NAME = self.snpp.data[utils.EN].PROJECTED_YEAR_NAME.astype(int)
 
-        # if not self.npp.data_api.key == "DUMMY" or not self.snpp.data_api.key == "DUMMY":
-        #     print("Test requires NOMIS_API_KEY=DUMMY in env")
-        #     sys.exit()
+        if not self.npp.data_api.key == "DUMMY" or not self.snpp.data_api.key == "DUMMY":
+            print("Test requires NOMIS_API_KEY=DUMMY in env")
+            sys.exit()
 
     def test_utils(self):
         year_range = range(2018, 2050)
