@@ -13,7 +13,7 @@ class SNPPData:
     """
   Functionality for downloading and collating UK Subnational Population Projection (NPP) data
   Nomisweb stores the England data (only)
-  Wales/Scotland/NI are not the responsibility of ONS and are made available online by the relevant statistical agency
+  Wales/Scotland/NI are not the responsiblity of ONS and are made avilable online by the relevant statistical agency
   """
 
     def __init__(self, cache_dir=utils.default_cache_dir()):
@@ -213,7 +213,6 @@ class SNPPData:
         }
         snpp_e = self.data_api.get_data(table_internal, query_params)
 
-        # Second Batch
         query_params["projected_year"] = "2030...2041"
         snpp_e = snpp_e.append(self.data_api.get_data(table_internal, query_params))
         # make age actual year
@@ -223,6 +222,7 @@ class SNPPData:
         # assert(len(snpp_e) == 26*2*91*326) # 326 LADs x 91 ages x 2 genders x 26 years
         return snpp_e
 
+    # Alternative method of downloading the en data from ONS website(Only works with 2014 as it stands).
     def __do_england_ons(self):
         print("Collating SNPP data for England...")
         england_src = "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/localauthoritiesinenglandz1/2014based/snppz1population.zip"
@@ -298,7 +298,7 @@ class SNPPData:
                                             "Year_Code": "PROJECTED_YEAR_NAME"})
             # Remove all but SYOA and make numeric
             snpp_w = snpp_w[(snpp_w.C_AGE != "AllAges") & (snpp_w.C_AGE != "00To15") & (snpp_w.C_AGE != "16To64") & (
-                        snpp_w.C_AGE != "65Plus")]
+                    snpp_w.C_AGE != "65Plus")]
             snpp_w.loc[snpp_w.C_AGE == "90Plus", "C_AGE"] = "90"
             snpp_w.C_AGE = pd.to_numeric(snpp_w.C_AGE)
 
