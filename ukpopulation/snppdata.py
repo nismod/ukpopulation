@@ -49,7 +49,7 @@ class SNPPData:
 
     def all_lads(self, countries):
         """
-    Returns all the LAD codes in the country or countries specfied 
+    Returns all the LAD codes in the country or countries specified
     Supports EN WA SC NI EW GB UK
     """
         if isinstance(countries, str):

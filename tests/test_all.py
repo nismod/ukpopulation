@@ -4,24 +4,22 @@ import unittest
 import numpy as np
 import pandas as pd
 
-# import ukcensusapi.Nomisweb as Api
 import ukpopulation.myedata as MYEData
 import ukpopulation.nppdata as NPPData
 import ukpopulation.snppdata as SNPPData
-import ukpopulation.customsnppdata as CustomSNPPData
 import ukpopulation.snhpdata as SNHPData
+import ukpopulation.customsnppdata as CustomSNPPData
 import ukpopulation.utils as utils
 
 TEST_DATA_DIR = "./tests/raw_data"
 
 
 class Test(unittest.TestCase):
-
     def setUp(self):
         """
-    Check env set up correctly for tests
-    (it's too late to override the env in this function unfortunately)
+    Check env set up correctly for tests. It's too late to override the env in this function unfortunately.
     """
+        # Build the test data objects from the raw_data directory.
         self.mye = MYEData.MYEData(TEST_DATA_DIR)
         self.npp = NPPData.NPPData(TEST_DATA_DIR)
         self.snpp = SNPPData.SNPPData(TEST_DATA_DIR)
