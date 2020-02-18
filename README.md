@@ -51,7 +51,7 @@ Adults and children       | 'Households with one dependent child'<br>'Households
 Adults only               | 'Other households with two or more adults'| '2 person (No children)'<br>'3 person (No children)'<br>'4 person (No children)'<br>'5+ person (No children)'| '2 adults'<br>'3+ adults'| 'Two adults without children'<br>'Other households without children'
 
 
-National population projections (NPP) are the responsibility of ONS who provide the data for each country within the UK, including 15 variants covering a number of possible future scenarios. The current data is based on 2016 population estimates and project a century to 2116.
+National population projections (NPP) are the responsibility of ONS who provide the data for each country within the UK, including 15 variants covering a number of possible future scenarios. The current data is based on 2018 population estimates and project a century to 2118.
 
 Subnational population projections (SNPP) are the responsibility of each country's agencies (ONS for England), and project 25 years from a base year that depends on the country in question:
 
