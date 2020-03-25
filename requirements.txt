@@ -7,6 +7,7 @@ jdcal>=1.4
 lml>=0.0.9
 lxml>=4.3.2
 numpy>=1.16.2
+openpyxl>=2.6.1
 pandas>=0.24.1
 pyexcel>=0.5.13
 pyexcel-io>=0.5.14
