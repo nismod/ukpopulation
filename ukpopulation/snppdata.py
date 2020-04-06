@@ -207,13 +207,13 @@ class SNPPData:
             "c_age": "101...191",
             "MEASURES": "20100",
             "date": "latest",  # 2016-based
-            "projected_year": "2016...2029",
+            "projected_year": "2018...2031",
             "select": "geography_code,projected_year_name,gender,c_age,obs_value",
             "geography": "1946157057...1946157382"
         }
         snpp_e = self.data_api.get_data(table_internal, query_params)
 
-        query_params["projected_year"] = "2030...2041"
+        query_params["projected_year"] = "2032...2043"
         snpp_e = snpp_e.append(self.data_api.get_data(table_internal, query_params))
         # make age actual year
         snpp_e.C_AGE = snpp_e.C_AGE - 101
