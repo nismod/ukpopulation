@@ -102,8 +102,8 @@ class MYEData:
 
         query_params["date"] = "latest"
 
-        # if year < MYEData.MAX_YEAR:
-        #     query_params["date"] += "MINUS" + str(2018 - year)
+        if year < MYEData.MAX_YEAR:
+            query_params["date"] += "MINUS" + str(2018 - year)
 
         self.data[year] = self.data_api.get_data(table_internal, query_params)
 
