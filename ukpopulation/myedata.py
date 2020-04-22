@@ -11,13 +11,13 @@ import ukpopulation.utils as utils
 class MYEData:
     """
   Functionality for downloading and collating UK mid-year estimate (MYE) data
-  Nomisweb stores the data for the entire UK, from 1991-2016 inclusive
+  Nomisweb stores the data for the entire UK, from 1991-2018 inclusive
   """
 
     # update as and when necessary (this is unlike (S)NPP where we query the data for the year range)
     # the data is stored differently at nomisweb (year is part of the query)
     MIN_YEAR = 1991
-    MAX_YEAR = 2016
+    MAX_YEAR = 2018
 
     def __init__(self, cache_dir=None):
         if cache_dir is None:
@@ -87,7 +87,7 @@ class MYEData:
         if year in self.data:
             return
 
-        table_internal = "NM_2002_1"  # 2016-based MYE
+        table_internal = "NM_2002_1"  # 2018-based MYE
         query_params = {
             "gender": "1,2",
             "c_age": "101...191",
@@ -101,8 +101,9 @@ class MYEData:
                                                                                              MYEData.MAX_YEAR))
 
         query_params["date"] = "latest"
-        if year < MYEData.MAX_YEAR:
-            query_params["date"] += "MINUS" + str(2016 - year)
+
+        # if year < MYEData.MAX_YEAR:
+        #     query_params["date"] += "MINUS" + str(2018 - year)
 
         self.data[year] = self.data_api.get_data(table_internal, query_params)
 

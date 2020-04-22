@@ -22,9 +22,9 @@ class Test(unittest.TestCase):
         print("Warning: Some SNPP tests are disabled temporarily for the sake of development of the new dynamic "
               "microsimulation but the code works")
         # Build the test data objects from the raw_data directory.
-        self.mye = MYEData.MYEData(TEST_DATA_DIR)
-        self.npp = NPPData.NPPData(TEST_DATA_DIR)
-        self.snpp = SNPPData.SNPPData(TEST_DATA_DIR)
+        self.mye = MYEData.MYEData(TEST_DATA_DIR) # Needs to be complete data for tests when upgrading to new estimates.
+        self.npp = NPPData.NPPData(TEST_DATA_DIR) # Need to build the test version every migration.
+        self.snpp = SNPPData.SNPPData(TEST_DATA_DIR) # Need to build the test version every migration.
         self.snhp = SNHPData.SNHPData(TEST_DATA_DIR)
 
         # fix issue with test dataset
@@ -35,11 +35,11 @@ class Test(unittest.TestCase):
             sys.exit()
 
     # def test_utils(self):
-    #     year_range = range(2018, 2050)
+    #     year_range = range(2018, 2030)
     #     (in_range, ex_range) = utils.split_range(year_range, self.snpp.max_year(utils.EN))
     #     self.assertEqual(min(in_range), min(year_range))
-    #     self.assertEqual(max(in_range), 2029)
-    #     self.assertEqual(min(ex_range), 2030)
+    #     self.assertEqual(2019, max(in_range))
+    #     self.assertEqual(2030, min(ex_range))
     #     self.assertEqual(max(ex_range), max(year_range))
     #
     #     self.assertEqual(utils.trim_range(2011, 1991, 2016), [2011])
@@ -91,15 +91,14 @@ class Test(unittest.TestCase):
         self.assertEqual(self.mye.max_year(), 2016)  # for test data, real data is 2039
 
         year = 2011
-        self.assertEqual(self.mye.aggregate(["GENDER", "C_AGE"], "E09000001", year).OBS_VALUE.sum(), 7412)
-        self.assertEqual(self.mye.filter("E09000001", year).OBS_VALUE.sum(), 7412)
+        self.assertEqual(8706, self.mye.aggregate(["GENDER", "C_AGE"], "E09000001", year).OBS_VALUE.sum())
+        self.assertEqual(8706, self.mye.filter("E09000001", year).OBS_VALUE.sum())
 
-        self.assertEqual(self.mye.aggregate(["GENDER", "C_AGE"], "E09000001", year, genders=1).OBS_VALUE.sum(), 4133)
-        self.assertEqual(self.mye.filter("E09000001", year, genders=1).OBS_VALUE.sum(), 4133)
+        self.assertEqual(4788, self.mye.aggregate(["GENDER", "C_AGE"], "E09000001", year, genders=1).OBS_VALUE.sum())
+        self.assertEqual(4788, self.mye.filter("E09000001", year, genders=1).OBS_VALUE.sum())
 
-        self.assertEqual(self.mye.aggregate(["GENDER", "C_AGE"], "E09000001", year, ages=range(16, 75)).OBS_VALUE.sum(),
-                         6333)
-        self.assertEqual(self.mye.filter("E09000001", year, ages=range(16, 75)).OBS_VALUE.sum(), 6333)
+        self.assertEqual(6689, self.mye.aggregate(["GENDER", "C_AGE"], "E09000001", year, ages=range(16, 75)).OBS_VALUE.sum())
+        self.assertEqual(6689, self.mye.filter("E09000001", year, ages=range(16, 75)).OBS_VALUE.sum())
 
     # def test_snpp(self):
     #
