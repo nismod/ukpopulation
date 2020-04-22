@@ -87,8 +87,8 @@ class Test(unittest.TestCase):
     #     self.assertTrue(np.array_equal(np.unique(integral), [1, 2]))
 
     def test_mye(self):
-        self.assertEqual(self.mye.min_year(), 1991)
-        self.assertEqual(self.mye.max_year(), 2016)  # for test data, real data is 2039
+        self.assertEqual(1991, self.mye.min_year())
+        self.assertEqual(2018, self.mye.max_year())
 
         year = 2011
         self.assertEqual(8706, self.mye.aggregate(["GENDER", "C_AGE"], "E09000001", year).OBS_VALUE.sum())
