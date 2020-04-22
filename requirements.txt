@@ -9,7 +9,6 @@ lxml
 numpy
 openpyxl
 pandas
-pyexcel
 pyexcel-io
 pyexcel-xls
 pyexcel-xlsx
