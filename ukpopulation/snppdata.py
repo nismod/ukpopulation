@@ -163,7 +163,6 @@ class SNPPData:
 
         for geog_code in geog_codes:
 
-            # split out any years prior to the NPP data (currently SNPP is 2016 based but NPP is 2018)
             (pre_range, in_range) = utils.split_range(year_range, npp.min_year() - 1)
             # for any years prior to NPP we just use the SNPP data as-is (i.e. "ppp")
             pre_data = self.filter(geog_code, pre_range)
