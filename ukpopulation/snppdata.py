@@ -168,7 +168,7 @@ class SNPPData:
             pre_data = self.filter(geog_code, pre_range)
 
             if not pre_range:
-                pre_data = None
+                pre_data = pd.DataFrame()
             elif len(pre_data) > 0:
                 print("WARNING: variant {} not applied for years {} that predate the NPP data".format(variant_name,
                                                                                                       pre_range))
