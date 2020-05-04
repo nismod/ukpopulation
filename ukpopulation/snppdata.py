@@ -163,11 +163,13 @@ class SNPPData:
 
         for geog_code in geog_codes:
 
-            # split out any years prior to the NPP data (currently SNPP is 2016 based but NPP is 2018)
             (pre_range, in_range) = utils.split_range(year_range, npp.min_year() - 1)
             # for any years prior to NPP we just use the SNPP data as-is (i.e. "ppp")
             pre_data = self.filter(geog_code, pre_range)
-            if len(pre_data) > 0:
+
+            if not pre_range:
+                pre_data = pd.DataFrame()
+            elif len(pre_data) > 0:
                 print("WARNING: variant {} not applied for years {} that predate the NPP data".format(variant_name,
                                                                                                       pre_range))
 
@@ -266,16 +268,17 @@ class SNPPData:
 
     def __do_wales(self):
         print("Collating SNPP data for Wales...")
+        cache_dir = utils.default_cache_dir()
 
-        wales_raw = self.cache_dir + "/snpp_w.csv"
+        wales_raw = cache_dir + "/snpp_w.csv"
         if os.path.isfile(wales_raw):
             snpp_w = pd.read_csv(wales_raw)
         else:
             fields = ['Area_AltCode1', 'Year_Code', 'Data', 'Gender_Code', 'Age_Code', 'Area_Hierarchy', 'Variant_Code']
             # StatsWales is an OData endpoint, so select fields of interest
-            url = "http://open.statswales.gov.wales/dataset/popu5099?$select={}".format(",".join(fields))
+            url = "http://open.statswales.gov.wales/dataset/popu6010?$select={}".format(",".join(fields))
             # use OData syntax to filter P (persons), AllAges (all ages), Area_Hierarchy 596 (LADs)
-            url += "&$filter=Gender_Code ne 'P' and Area_Hierarchy eq 596 and Variant_Code eq 'Principal'"
+            url += "&$filter=Gender_Code ne 'P' and Area_Hierarchy eq 693 and Variant_Code eq 'Principal'"
             #
             data = []
             while True:
@@ -306,6 +309,7 @@ class SNPPData:
             snpp_w.GENDER = snpp_w.GENDER.map({"M": 1, "F": 2})
 
             # assert(len(snpp_w) == 26*2*91*22) # 22 LADs x 91 ages x 2 genders x 26 years
+            print(wales_raw)
             snpp_w.to_csv(wales_raw, index=False)
 
         return snpp_w
