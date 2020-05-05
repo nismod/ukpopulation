@@ -196,9 +196,9 @@ class SNPPData:
 
     def __do_england(self):
         # return self.__do_england_ons() # 2014
-        return self.__do_england_nomisweb()  # 2016
+        return self.__do_england_nomisweb()  # 2018
 
-    # nomisweb data is now 2016-based
+    # nomisweb data is now 2018-based
     def __do_england_nomisweb(self):
         print("Collating SNPP data for England...")
 
@@ -208,7 +208,7 @@ class SNPPData:
             "gender": "1,2",
             "c_age": "101...191",
             "MEASURES": "20100",
-            "date": "latest",  # 2016-based
+            "date": "latest",  # 2018-based
             "projected_year": "2018...2031",
             "select": "geography_code,projected_year_name,gender,c_age,obs_value",
             "geography": "1946157057...1946157382"
@@ -277,7 +277,7 @@ class SNPPData:
             fields = ['Area_AltCode1', 'Year_Code', 'Data', 'Gender_Code', 'Age_Code', 'Area_Hierarchy', 'Variant_Code']
             # StatsWales is an OData endpoint, so select fields of interest
             url = "http://open.statswales.gov.wales/dataset/popu6010?$select={}".format(",".join(fields))
-            # use OData syntax to filter P (persons), AllAges (all ages), Area_Hierarchy 596 (LADs)
+            # use OData syntax to filter P (persons), AllAges (all ages), Area_Hierarchy 693 (LADs)
             url += "&$filter=Gender_Code ne 'P' and Area_Hierarchy eq 693 and Variant_Code eq 'Principal'"
             #
             data = []

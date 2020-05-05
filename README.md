@@ -55,11 +55,11 @@ National population projections (NPP) are the responsibility of ONS who provide 
 
 Subnational population projections (SNPP) are the responsibility of each country's agencies (ONS for England), and project 25 years from a base year that depends on the country in question:
 
-Country          | Latest SNPP year range (as of June 2018) |
+Country          | Latest SNPP year range (as of May 2020) |
 -----------------|------------------------------------------|
-England          | 2016-2041                                |
-Wales            | 2014-2039                                |
-Scotland         | 2016-2041                                |
+England          | 2018-2043                                |
+Wales            | 2018-2043                                |
+Scotland         | 2018-2043                                |
 Northern Ireland | 2016-2041                                |
 
 Mid-year population estimates (MYE) are available for the entire UK by local authority, single year of age and gender, from 1991 to 2016 inclusive.
