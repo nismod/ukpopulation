@@ -165,11 +165,9 @@ class SNPPData:
 
             (pre_range, in_range) = utils.split_range(year_range, npp.min_year() - 1)
             # for any years prior to NPP we just use the SNPP data as-is (i.e. "ppp")
-            pre_data = self.filter(geog_code, pre_range)
+            pre_data = self.filter(geog_code, pre_range) if pre_range else pd.DataFrame()
 
-            if not pre_range:
-                pre_data = pd.DataFrame()
-            elif len(pre_data) > 0:
+            if len(pre_data) > 0:
                 print("WARNING: variant {} not applied for years {} that predate the NPP data".format(variant_name,
                                                                                                       pre_range))
 
@@ -185,7 +183,7 @@ class SNPPData:
                 ["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
             # scaling.to_csv(variant_name + ".csv", index=False)
 
-            # print("DF: ", len(data), ":", len(scaling))
+            print("DF: ", len(data), ":", len(scaling))
             assert (len(data) == len(scaling))
             data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
 
@@ -391,7 +389,9 @@ class SNPPData:
 
                 chunk = chunk.reset_index(drop=True)
 
-                chunk.loc[chunk.index[(chunk["C_AGE"] == "MALES")][0] + 1:chunk.index[(chunk["C_AGE"] == "FEMALES")][0] - 4, "GENDER"] = 1
+                chunk.loc[
+                chunk.index[(chunk["C_AGE"] == "MALES")][0] + 1:chunk.index[(chunk["C_AGE"] == "FEMALES")][0] - 4,
+                "GENDER"] = 1
                 chunk.loc[chunk.index[(chunk["C_AGE"] == "FEMALES")][0] + 1:, "GENDER"] = 2
 
                 chunk = chunk[chunk.GENDER != '']
@@ -402,7 +402,10 @@ class SNPPData:
                     appendable_chunk["PROJECTED_YEAR_NAME"] = year
                     snpp_s = snpp_s.append(appendable_chunk)
             snpp_s.reset_index(drop=True)
+            snpp_s['OBS_VALUE'] = snpp_s['OBS_VALUE'].str.replace(',', '')
+            snpp_s['OBS_VALUE'] = pd.to_numeric(snpp_s['OBS_VALUE'])
             snpp_s.to_csv(scotland_raw, index=False)
+
         return snpp_s
 
     def __do_nireland(self):
