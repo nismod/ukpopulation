@@ -275,8 +275,8 @@ class SNPPData:
             fields = ['Area_AltCode1', 'Year_Code', 'Data', 'Gender_Code', 'Age_Code', 'Area_Hierarchy', 'Variant_Code']
             # StatsWales is an OData endpoint, so select fields of interest
             url = "http://open.statswales.gov.wales/dataset/popu6010?$select={}".format(",".join(fields))
-            # use OData syntax to filter P (persons), AllAges (all ages), Area_Hierarchy 693 (LADs)
-            url += "&$filter=Gender_Code ne 'P' and Area_Hierarchy eq 693 and Variant_Code eq 'Principal'"
+            # use OData syntax to filter P (persons), AllAges (all ages), Area_Hierarchy 691 (LADs)
+            url += "&$filter=Gender_Code ne 'P' and Area_Hierarchy gt 690 and Area_Hierarchy lt 694 and Variant_Code eq 'Principal'"
             #
             data = []
             while True:
