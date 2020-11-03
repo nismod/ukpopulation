@@ -163,10 +163,10 @@ class SNPPData:
 
         for geog_code in geog_codes:
 
-            # split out any years prior to the NPP data (currently SNPP is 2016 based but NPP is 2018)
             (pre_range, in_range) = utils.split_range(year_range, npp.min_year() - 1)
             # for any years prior to NPP we just use the SNPP data as-is (i.e. "ppp")
-            pre_data = self.filter(geog_code, pre_range)
+            pre_data = self.filter(geog_code, pre_range) if pre_range else pd.DataFrame()
+
             if len(pre_data) > 0:
                 print("WARNING: variant {} not applied for years {} that predate the NPP data".format(variant_name,
                                                                                                       pre_range))
@@ -183,7 +183,7 @@ class SNPPData:
                 ["C_AGE", "GENDER", "PROJECTED_YEAR_NAME"])
             # scaling.to_csv(variant_name + ".csv", index=False)
 
-            # print("DF: ", len(data), ":", len(scaling))
+            print("DF: ", len(data), ":", len(scaling))
             assert (len(data) == len(scaling))
             data.OBS_VALUE = data.OBS_VALUE * scaling.OBS_VALUE
 
@@ -194,9 +194,9 @@ class SNPPData:
 
     def __do_england(self):
         # return self.__do_england_ons() # 2014
-        return self.__do_england_nomisweb()  # 2016
+        return self.__do_england_nomisweb()  # 2018
 
-    # nomisweb data is now 2016-based
+    # nomisweb data is now 2018-based
     def __do_england_nomisweb(self):
         print("Collating SNPP data for England...")
 
@@ -206,14 +206,14 @@ class SNPPData:
             "gender": "1,2",
             "c_age": "101...191",
             "MEASURES": "20100",
-            "date": "latest",  # 2016-based
-            "projected_year": "2016...2029",
+            "date": "latest",  # 2018-based
+            "projected_year": "2018...2031",
             "select": "geography_code,projected_year_name,gender,c_age,obs_value",
             "geography": "1946157057...1946157382"
         }
         snpp_e = self.data_api.get_data(table_internal, query_params)
 
-        query_params["projected_year"] = "2030...2041"
+        query_params["projected_year"] = "2032...2043"
         snpp_e = snpp_e.append(self.data_api.get_data(table_internal, query_params))
         # make age actual year
         snpp_e.C_AGE = snpp_e.C_AGE - 101
@@ -266,16 +266,17 @@ class SNPPData:
 
     def __do_wales(self):
         print("Collating SNPP data for Wales...")
+        cache_dir = utils.default_cache_dir()
 
-        wales_raw = self.cache_dir + "/snpp_w.csv"
+        wales_raw = cache_dir + "/snpp_w.csv"
         if os.path.isfile(wales_raw):
             snpp_w = pd.read_csv(wales_raw)
         else:
             fields = ['Area_AltCode1', 'Year_Code', 'Data', 'Gender_Code', 'Age_Code', 'Area_Hierarchy', 'Variant_Code']
             # StatsWales is an OData endpoint, so select fields of interest
-            url = "http://open.statswales.gov.wales/dataset/popu5099?$select={}".format(",".join(fields))
-            # use OData syntax to filter P (persons), AllAges (all ages), Area_Hierarchy 596 (LADs)
-            url += "&$filter=Gender_Code ne 'P' and Area_Hierarchy eq 596 and Variant_Code eq 'Principal'"
+            url = "http://open.statswales.gov.wales/dataset/popu6010?$select={}".format(",".join(fields))
+            # use OData syntax to filter P (persons), AllAges (all ages), Area_Hierarchy 691 (LADs)
+            url += "&$filter=Gender_Code ne 'P' and Area_Hierarchy gt 690 and Area_Hierarchy lt 694 and Variant_Code eq 'Principal'"
             #
             data = []
             while True:
@@ -306,17 +307,53 @@ class SNPPData:
             snpp_w.GENDER = snpp_w.GENDER.map({"M": 1, "F": 2})
 
             # assert(len(snpp_w) == 26*2*91*22) # 22 LADs x 91 ages x 2 genders x 26 years
+            print(wales_raw)
             snpp_w.to_csv(wales_raw, index=False)
 
         return snpp_w
 
     def __do_scotland(self):
+        lookup = {
+            'Aberdeen City': 'S12000033',
+            'Aberdeenshire': 'S12000034',
+            'Angus': 'S12000041',
+            'Argyll & Bute': 'S12000035',
+            'City of Edinburgh': 'S12000036',
+            'Clackmannanshire': 'S12000005',
+            'Dumfries & Galloway': 'S12000006',
+            'Dundee City': 'S12000042',
+            'East Ayrshire': 'S12000008',
+            'East Dunbartonshire': 'S12000045',
+            'East Lothian': 'S12000010',
+            'East Renfrewshire': 'S12000011',
+            'Falkirk': 'S12000014',
+            'Fife': 'S12000015',
+            'Glasgow City': 'S12000046',
+            'Highland': 'S12000017',
+            'Inverclyde': 'S12000018',
+            'Midlothian': 'S12000019',
+            'Moray': 'S12000020',
+            'Na h-Eileanan Siar': 'S12000013',
+            'North Ayrshire': 'S12000021',
+            'North Lanarkshire': 'S12000044',
+            'Orkney Islands': 'S12000023',
+            'Perth & Kinross': 'S12000024',
+            'Renfrewshire': 'S12000038',
+            'Scottish Borders': 'S12000026',
+            'Shetland Islands': 'S12000027',
+            'South Ayrshire': 'S12000028',
+            'South Lanarkshire': 'S12000029',
+            'Stirling': 'S12000030',
+            'West Dunbartonshire': 'S12000039',
+            'West Lothian': 'S12000040'
+        }
+
         print("Collating SNPP data for Scotland...")
 
         scotland_raw = self.cache_dir + "/snpp_s.csv"
 
-        scotland_src = "https://www.nrscotland.gov.uk/files//statistics/population-projections/sub-national-pp-16/detailed/CA%201.zip"
-        scotland_zip = self.cache_dir + "/snpp_s.zip"
+        scotland_src = "https://www.nrscotland.gov.uk/files//statistics/population-projections/sub-national-pp-18/detailed-tables/pop-proj-principal-2018-council-area.zip"
+        scotland_zip = self.cache_dir + "/snpp_s_2018.zip"
 
         if os.path.isfile(scotland_raw):
             snpp_s = pd.read_csv(scotland_raw)
@@ -328,28 +365,47 @@ class SNPPData:
                 print("Downloaded", scotland_zip)
 
             z = zipfile.ZipFile(scotland_zip)
-            # print(z.namelist())
-
             snpp_s = pd.DataFrame()
-            for year in range(2016, 2042):
-                for gender in [1, 2]:
-                    filename = "CA 1/Population-" + str(year) + ("-Male" if gender == 1 else "-Female") + ".csv"
-                    chunk = pd.read_csv(z.open(filename)
-                                        ).drop(["Area", "All Ages"], axis=1
-                                               ).drop(0
-                                                      ).rename(columns={"90 and over": "90"}
-                                                               ).set_index("Code")
 
-                    chunk = chunk.stack().reset_index()
-                    chunk.columns = ["GEOGRAPHY_CODE", "C_AGE", "OBS_VALUE"]
-                    chunk["GENDER"] = gender
-                    chunk["PROJECTED_YEAR_NAME"] = year
-                    # print(chunk.head())
-                    snpp_s = snpp_s.append(chunk)
+            for filename in z.namelist():
+                council_area = filename[37:-4]
+                if council_area in ["Metadata", "Scotland"]:
+                    continue
+                GEOGRAPHY_CODE = lookup[council_area]
 
-            print(len(snpp_s))
-            # assert(len(snpp_s) == 26*2*91*32) # 32 districts x 91 ages x 2 genders x 26 years
+                chunk = pd.read_csv(z.open(filename), encoding="ISO-8859-1", header=102)
+                # Drop Nan Rows
+                chunk = chunk.dropna(axis=0, how="all")
+                # Drop Last row with containing Copyright Cell.
+                chunk = chunk.drop(chunk.tail(1).index[0])
+
+                chunk = chunk.rename(columns={"Unnamed: 0": "C_AGE"})
+                chunk["GEOGRAPHY_CODE"] = GEOGRAPHY_CODE
+                chunk["GENDER"] = ''
+
+                # Drop rows where C_AGE == "All Ages"
+                chunk = chunk.drop(chunk.index[chunk["C_AGE"] == "All ages"])
+                chunk.loc[(chunk.C_AGE == '90 and over'), 'C_AGE'] = 90
+
+                chunk = chunk.reset_index(drop=True)
+
+                chunk.loc[
+                chunk.index[(chunk["C_AGE"] == "MALES")][0] + 1:chunk.index[(chunk["C_AGE"] == "FEMALES")][0] - 4,
+                "GENDER"] = 1
+                chunk.loc[chunk.index[(chunk["C_AGE"] == "FEMALES")][0] + 1:, "GENDER"] = 2
+
+                chunk = chunk[chunk.GENDER != '']
+
+                for year in range(2018, 2044):
+                    appendable_chunk = chunk[["GEOGRAPHY_CODE", "C_AGE", str(year), "GENDER"]].rename(
+                        columns={str(year): "OBS_VALUE"})
+                    appendable_chunk["PROJECTED_YEAR_NAME"] = year
+                    snpp_s = snpp_s.append(appendable_chunk)
+            snpp_s.reset_index(drop=True)
+            snpp_s['OBS_VALUE'] = snpp_s['OBS_VALUE'].str.replace(',', '')
+            snpp_s['OBS_VALUE'] = pd.to_numeric(snpp_s['OBS_VALUE'])
             snpp_s.to_csv(scotland_raw, index=False)
+
         return snpp_s
 
     def __do_nireland(self):

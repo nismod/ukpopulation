@@ -148,6 +148,8 @@
     }
   },
   "geographies": {
+    "TYPE433": "local authorities: county / unitary (as of April 2019)",
+    "TYPE434": "local authorities: district / unitary (as of April 2019)",
     "TYPE442": "combined authorities",
     "TYPE446": "local authorities: county / unitary (as of April 2015)",
     "TYPE448": "local authorities: district / unitary (as of April 2015)",
