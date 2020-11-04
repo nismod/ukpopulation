@@ -1,3 +1,5 @@
+# ukpopulation: UK Demographic Projections
+
 [![Build Status](https://travis-ci.org/nismod/ukpopulation.png?branch=master)](https://travis-ci.org/nismod/ukpopulation) [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
 [![status](http://joss.theoj.org/papers/269be2c1044e902e2cf7716bc9f0f7c0/status.svg)](http://joss.theoj.org/papers/269be2c1044e902e2cf7716bc9f0f7c0)
 [![DOI](https://zenodo.org/badge/131988266.svg)](https://zenodo.org/badge/latestdoi/131988266)
@@ -5,42 +7,58 @@
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/ukpopulation/badges/version.svg)](https://anaconda.org/conda-forge/ukpopulation)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/ukpopulation/badges/downloads.svg)](https://anaconda.org/conda-forge/ukpopulation)
 
+> ## Latest Release: 1.2.2
+>
+> - update to 2018 mid-year population estimates
+> - fixes for changed data formats for some of the subnational population projections
+> - credit and thanks to @BenjaminIsaac0111 and @ld_archer for the work
 
-# ukpopulation: UK Demographic Projections
 
-> ## Latest news: 1.2 release
-> - adds support for custom subnational population projections
-> ### Custom SNPP Data
-> An externally generated SNPP dataset (from e.g. [simim](https://github.com/nismod/simim)) can be registered with the `ukpopulation` package and used as if it was the standard ONS/StatsWales/NRScotland/NISRA projection:
-> ```python3
-> >>> import ukpopulation.customsnppdata as CustomSNPPData
-> >>> customdata = pd.read_csv("custom_snpp.csv")
-> >>> customdata.head()
->   GEOGRAPHY_CODE  GENDER  C_AGE  OBS_VALUE  PROJECTED_YEAR_NAME
-> 0      E06000005       1      0      603.0                 2018
-> 1      E06000005       1      1      600.0                 2018
-> 2      E06000005       1      2      624.0                 2018
-> 3      E06000005       1      3      636.0                 2018
-> 4      E06000005       1      4      661.0                 2018
-> >>> CustomSNPPData.register_custom_projection("custom_snpp", customdata, "cache_directory")
-> Writing custom SNPP custom_snpp to cache/ukpopulation_custom_snpp_custom_snpp.csv
-> >>> CustomSNPPData.list_custom_projections("cache_directory")
-> ['custom_snpp']
-> >>>
-> ```
-> The external dataset must follow the format/column name conventions as above, but can also contain extra data if required for other use. The `GENDER` column should only take the values 1 (male) or 2 (female); the `C_AGE` column should contain the range 0-90 inclusive (90 meaning 90 or over).
+## 1.2 Release
 
-> ## 1.1 release
-> - adds UK household projections
-> - initial support for custom SNPP variants
-> - better consistency across the MYE/NPP/SNPP APIs (breaks backwards compatibility)
-> - fixes some bugs/issues
-> ### Household Projections
-> Version 1.1 adds functionality is aggregates household projection data for the UK at LAD (or equivalent level). Each country's statistical agency provides a disaggregation by household type, but as there is little or no consistency between them, no attempt has (yet) been made to provide a UK-wide unified disaggregation. The year ranges mirror the year ranges for the SNPP for each country (see below). Extrapolation, or application of a national projection variant to the data is not provided at this stage.
-> ### Custom SNPP Variants
-> Given externally-generated data describing variations to an official projection variant, by geography (LAD) and year, this new functionality generates a full SNPP dataset, disaggregated proportionately by age and gender. The custom variant can optionally be forced to nearest-integer values, preserving the original (rounded) total.
-> ### API consistency
-> The public methods of the `MYEData`, `SNPPData`, `NPPData` and `SNHPData` classes now consistently order arguments: firstly `categories` (where appropriate) then `geogs`, then `years`.
+Adds support for custom subnational population projections.
+
+### Custom SNPP Data
+
+An externally generated SNPP dataset (from e.g. [simim](https://github.com/nismod/simim)) can be registered with the `ukpopulation` package and used as if it was the standard ONS/StatsWales/NRScotland/NISRA projection:
+
+```python3
+>>> import ukpopulation.customsnppdata as CustomSNPPData
+>>> customdata = pd.read_csv("custom_snpp.csv")
+>>> customdata.head()
+  GEOGRAPHY_CODE  GENDER  C_AGE  OBS_VALUE  PROJECTED_YEAR_NAME
+0      E06000005       1      0      603.0                 2018
+1      E06000005       1      1      600.0                 2018
+2      E06000005       1      2      624.0                 2018
+3      E06000005       1      3      636.0                 2018
+4      E06000005       1      4      661.0                 2018
+>>> CustomSNPPData.register_custom_projection("custom_snpp", customdata, "cache_directory")
+Writing custom SNPP custom_snpp to cache/ukpopulation_custom_snpp_custom_snpp.csv
+>>> CustomSNPPData.list_custom_projections("cache_directory")
+['custom_snpp']
+>>>
+```
+
+The external dataset must follow the format/column name conventions as above, but can also contain extra data if required for other use. The `GENDER` column should only take the values 1 (male) or 2 (female); the `C_AGE` column should contain the range 0-90 inclusive (90 meaning 90 or over).
+
+## 1.1 release
+
+- adds UK household projections
+- initial support for custom SNPP variants
+- better consistency across the MYE/NPP/SNPP APIs (breaks backwards compatibility)
+- fixes some bugs/issues
+
+### Household Projections
+
+Version 1.1 adds functionality is aggregates household projection data for the UK at LAD (or equivalent level). Each country's statistical agency provides a disaggregation by household type, but as there is little or no consistency between them, no attempt has (yet) been made to provide a UK-wide unified disaggregation. The year ranges mirror the year ranges for the SNPP for each country (see below). Extrapolation, or application of a national projection variant to the data is not provided at this stage.
+
+### Custom SNPP Variants
+
+Given externally-generated data describing variations to an official projection variant, by geography (LAD) and year, this new functionality generates a full SNPP dataset, disaggregated proportionately by age and gender. The custom variant can optionally be forced to nearest-integer values, preserving the original (rounded) total.
+
+### API consistency
+
+The public methods of the `MYEData`, `SNPPData`, `NPPData` and `SNHPData` classes now consistently order arguments: firstly `categories` (where appropriate) then `geogs`, then `years`.
 
 The statistical agencies of the United Kingdom, that is: [ONS](https://www.ons.gov.uk/), [StatsWales](https://statswales.gov.wales/), [NR Scotland](https://www.nrscotland.gov.uk/), and [NISRA](https://www.nisra.gov.uk/), all produce annual population estimates and projection data. Although the data are essentially the same, the quantity, format, and availability varies between agencies and datasets. All of the population projection data is available by (single year of) age and gender. Household projection data is more varied, with each country/agency producing inconsistent disaggregations of households in terms of HRP age and/or household type. For now, this package does not disaggregate by age and leaves the household type disaggregations as-is, which are:
 
@@ -104,6 +122,7 @@ All other data: ONS NPP variants, SNPP data for Wales, Scotland and Northern Ire
 # Rationale
 
 The purpose of this package is to provide a unified interface to both SNPP and NPP data, including variants:
+
 - encapsulating the downloading, processing and caching of the NPP and SNPP data from the various sources.
 - consistently differentiating by age (single year, up to 90) and gender over the various datasets.
 - providing a unified format for all the data.
@@ -112,7 +131,9 @@ The purpose of this package is to provide a unified interface to both SNPP and N
 - enabling easy filtering and aggregating of of the data, e.g. extracting projections of the working-age population.
 
 # Methodology and Detail
+
 ## Data Sources
+
 - [Nomisweb](https://www.nomisweb.co.uk): UK NPP by country/age/gender, England SNPP by LAD/age/gender, UK MYE by LAD/age/gender.
 - [ONS](https://www.ons.gov.uk): UK NPP variants by country/age/gender.
 - [Stats Wales](http://open.statswales.gov.wales): Wales SNPP by LAD/age/gender.
@@ -120,17 +141,18 @@ The purpose of this package is to provide a unified interface to both SNPP and N
 - [Northern Ireland Statistics and Research Agency](https://www.nisra.gov.uk): Northern Ireland SNPP by LAD equivalent/age/gender.
 
 ## Data Processing
+
 - Note that the SNPP for each country, and the NPP data may not have the same reference year. (See table above).
 - NPP data is broken down by country (England/Wales/Scotland/Northern Ireland), for all the variant projections indicated in the second table above. 
 - Column headings and category values follow the nomisweb/census conventions:
   - `GEOGRAPHY_CODE`: ONS country, LAD, or LAD-equivalent code
   - `GENDER`: 1=Male, 2=Female
   - `C_AGE`: 0-90, where 90 represents 90 or over. To avoid ambiguity, this is an exception - nomisweb census values are typically age+1)
-  - `PROJECTED_YEAR_NAME`: 2014-2116   
+  - `PROJECTED_YEAR_NAME`: 2014-2116
   - `OBS_VALUE`: count of persons
 - All data are cached for swift retrieval.  
 
-# Extrapolation 
+# Extrapolation
 
 The SNPP data can be extrapolated using the longer-term NPP data. This is done independently for each age and gender in order to try to capture the age-gender structure of the original population. Aggregation only takes place  on the extrapolated age-gender specific values. This means that the trends shown by SNPP geographies with different age-gender structures will differ.
 
@@ -155,25 +177,29 @@ where the subscripts _V_ and _0_ refer to the variant and the principal projecti
 ## Requirements
 
 ### API Key
-This package uses the [UKCensusAPI](http://github.com/virgesmith/UKCensusAPI) package to obtain some of the projection data. The package requires an API key to function correctly, see [here](https://github.com/virgesmith/UKCensusAPI/blob/master/README.md) for details. 
+
+This package uses the [UKCensusAPI](http://github.com/virgesmith/UKCensusAPI) package to obtain some of the projection data. The package requires an API key to function correctly, see [here](https://github.com/virgesmith/UKCensusAPI/blob/master/README.md) for details.
 
 ### Package
 
-Requires Python 3.5 or higher. Dependencies *should* resolve automatically, but if not see [troubleshooting](#troubleshooting) 
+Requires Python 3.5 or higher. Dependencies *should* resolve automatically, but if not see [troubleshooting](#troubleshooting)
 
 #### PyPI
 
 ```bash
-$ python3 -m pip install ukpopulation
+python3 -m pip install ukpopulation
 ```
 
 #### Conda
+
 ```bash
-$ conda install ukpopulation
+conda install ukpopulation
 ```
+
 This assumes you have added the conda-forge channel, which can be done with
+
 ```bash
-$ conda config --add channels conda-forge
+conda config --add channels conda-forge
 ```
 
 Some of the examples (see below) plot graphs and have a dependency on `matplotlib`, which can be installed with either pip or conda as appropriate.
@@ -183,14 +209,14 @@ Some of the examples (see below) plot graphs and have a dependency on `matplotli
 To clone the repo and install locally:
 
 ```bash
-$ git clone https://github.com/nismod/ukpopulation
-$ ./setup.py install
+git clone https://github.com/nismod/ukpopulation
+./setup.py install
 ```
 
 (substituting the URL if a fork has been taken). The test data cache directory contains a file `NOMIS_API_KEY` which defines a dummy key for testing purposes only. The test suite can be run from the (project root dir) using:
 
 ```bash
-$ ./setup.py test
+./setup.py test
 ```
 
 ## Troubleshooting
@@ -198,32 +224,37 @@ $ ./setup.py test
 Ensure you are using the correct version (>=3) of pip:
 
 ```bash
-$ pip --version
+pip --version
 pip 9.0.1 from /usr/lib/python3/dist-packages (python 3.6)
 ```
 
 If not replace `pip` with `pip3` or `python3 -m pip`
 
 If the installation has missing dependencies, try:
+
 ```bash
-$ pip install -r requirements.txt
-$ ./setup.py install
+pip install -r requirements.txt
+./setup.py install
 ```
 
 If (with python 3.5?) you encounter 
+
 ```bash
 AttributeError: module 'html5lib.treebuilders' has no attribute '_base'
 ```
+
 then
+
 ```bash
-$ pip install html5lib=0.9999999
+pip install html5lib=0.9999999
 ```
+
 should fix it. But better solution is to upgrade to python3.6
 
 If matplotlib fails to install due to a missing dependency (tkinter), this can be fixed on Debian variants by
 
 ```bash
-$ sudo apt install python3-tk
+sudo apt install python3-tk
 ```
 
 If your problem isn't addressed above, please post an issue including as much supporting information as possible.
@@ -231,13 +262,17 @@ If your problem isn't addressed above, please post an issue including as much su
 # Usage Examples
 
 ## Retrieve SNPP for specific LADs
+
 ### Detailed data
-This example fetches the 2018 projection for Newcastle by gender and age. 
+
+This example fetches the 2018 projection for Newcastle by gender and age.
+
 ```python
 >>> import ukpopulation.snppdata as SNPPData
 >>> snpp = SNPPData.SNPPData()
 ```
-```
+
+```text
 Cache directory:  ./raw_data/
 using cached LAD codes: ./raw_data/lad_codes.json
 Collating SNPP data for England...
@@ -249,11 +284,13 @@ Collating SNPP data for Wales...
 Collating SNPP data for Scotland...
 Collating SNPP data for Northern Ireland...
 ```
+
 ```python
 >>> newcastle=snpp.filter("E08000021", 2018)
 >>> newcastle.head()
 ```
-```
+
+```text
    C_AGE  GENDER GEOGRAPHY_CODE  OBS_VALUE  PROJECTED_YEAR_NAME
 0      0       1      E08000021     1814.0                 2018
 1      1       1      E08000021     1780.0                 2018
@@ -263,11 +300,14 @@ Collating SNPP data for Northern Ireland...
 ```
 
 ### Aggregated data
+
 This example fetches the total population projections for Newcastle from 2018 to 2039.
-```python 
+
+```python
 >>> import ukpopulation.snppdata as SNPPData
 >>> snpp = SNPPData.SNPPData()
 ```
+
 ```
 Cache directory:  ./raw_data/
 using cached LAD codes: ./raw_data/lad_codes.json
@@ -283,6 +323,7 @@ Collating SNPP data for Northern Ireland...
 >>> newcastle=snpp.aggregate(["GENDER", "C_AGE"], "E08000021", range(2018,2039))
 >>> newcastle.head()
 ```
+
 ```
   GEOGRAPHY_CODE  PROJECTED_YEAR_NAME  OBS_VALUE
 0      E08000021                 2018   299132.0
@@ -293,12 +334,14 @@ Collating SNPP data for Northern Ireland...
 ```
 
 ## Retrieve NPP data filtered by age
+
 Here's how to get the total working-age population by country from 2016 to 2050:
 
 ```python
 >>> import ukpopulation.nppdata as NPPData
 >>> npp = NPPData.NPPData()
 ```
+
 ```
 Cache directory:  ./raw_data/
 using cached LAD codes: ./raw_data/lad_codes.json
@@ -306,6 +349,7 @@ Loading NPP principal (ppp) data for England, Wales, Scotland & Northern Ireland
 ./raw_data/NM_2009_1_metadata.json found, using cached metadata...
 Using cached data: ./raw_data/NM_2009_1_444caf1f672f0646722e389963289973.tsv
 ```
+
 ```python
 >>> uk_working_age=npp.aggregate(["GENDER", "C_AGE"], "ppp", NPPData.NPPData.UK, range(2016,2051), ages=range(16,75))
 >>> uk_working_age.head()
@@ -316,7 +360,9 @@ Using cached data: ./raw_data/NM_2009_1_444caf1f672f0646722e389963289973.tsv
 3      E92000001                 2019   40704521
 4      E92000001                 2020   40834471
 ```
+
 And this aggregates the figures for Great Britain:
+
 ```python
 >>> gb_working_age=npp.aggregate(["GEOGRAPHY_CODE", "GENDER", "C_AGE"], "ppp", NPPData.NPPData.GB, range(2016,2051), ages=range(16,75))
 >>> gb_working_age.head()
@@ -327,6 +373,7 @@ And this aggregates the figures for Great Britain:
 3                 2019   47063069
 4                 2020   47201882
 ```
+
 NB SNPP data can also be filtered by age and/or gender and/or geography in the same way.
 
 ## Retrieve NPP variants for England & Wales
@@ -365,6 +412,7 @@ Using cached data: ./raw_data/NM_2009_1_444caf1f672f0646722e389963289973.tsv
 ### Single Area
 
 Construct aggregate data for Exeter from 2011-2065:
+
 - use MYE data up to 2016, aggregated by age and gender.
 - then use SNPP data up to 2041, aggregated by age and gender. 
 - extrapolate using NPP data and Exeter's (2041) age-gender structure.
@@ -378,7 +426,8 @@ Construct aggregate data for Exeter from 2011-2065:
 ### Bulk Calculation
 
 In this example we extrapolate and aggregrate the SNPP for every LAD in Wales:
-- for each area, 
+
+- for each area,
   - extrapolate from 2039 to 2050 using the 2039 age-gender structure.
   - aggregate the extrapolated datma by age and gender.
   - append to full dataset.
@@ -402,6 +451,7 @@ In this example we extrapolate and aggregrate the SNPP for every LAD in Wales:
 ## Construct an SNPP variant by applying NPP variant to a specific LAD
 
 Here we apply the "hhh" (high growth) and "lll" (low growth) NPP variants to the SNPP data for Newcastle:
+
 - calculate the principal ("ppp") projection by simply aggregrating the SNPP data for Newcastle, 2018-2039, by age and gender.
 - calculate the variants by weighting the unaggregated data (i.e. by age and gender) by the ratio of the NPP variant/principal.
 - aggregrate the variant data by age and gender.
@@ -414,7 +464,7 @@ Here we apply the "hhh" (high growth) and "lll" (low growth) NPP variants to the
 ## Extrapolating an SNPP variant
 
 Here we build on the examples above by not only applying the NPP variant, but extrapolating too. The process first involves extrapolating the SNPP by the NPP principal variant. The extrapolated data then has the variant adjustments applied to it.  
- 
+
 [Source Code](doc/example_variant_ex.py)
 
 ![Newcastle Population Projection Variants](doc/img/Newcastle_var_ex.png)
@@ -429,7 +479,9 @@ In this example we simply plot the aggregate household projections for Newcastle
 
 
 # Code Documentation
+
 Package documentation can be viewed like so:
+
 ```python
 import ukpopulation.myedata as MYEData
 help(MYEData)
@@ -450,4 +502,5 @@ Contributions to this package are welcomed via the usual pull request mechanism.
 If you encounter a bug, feel the documentation is incorrect or incomplete, or want to suggest new features, please post an issue in the [issues](https://github.com/nismod/ukpopulation/issues) tab. 
 
 # Acknowledgements
+
 This package was developed as a component of the EPSRC-funded [MISTRAL](https://www.itrc.org.uk/) programme, part of the Infrastructure Transitions Research Consortium.
