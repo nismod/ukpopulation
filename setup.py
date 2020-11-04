@@ -17,8 +17,8 @@ setuptools.setup(
   long_description=readme(),
   long_description_content_type="text/markdown",
   url='https://github.com/nismod/ukpopulation',
-  author='Andrew P Smith, Tom Russell',
-  author_email='a.p.smith@leeds.ac.uk, tom.russell@ouce.ox.ac.uk',
+  author='Andrew P Smith, Tom Russell, Benjamin Wilson, Luke Archer',
+  author_email='a.p.smith@leeds.ac.uk, tom.russell@ouce.ox.ac.uk, benjamintaya0111@gmail.com, l.archer@leeds.ac.uk',
   packages=setuptools.find_packages(),
   install_requires=read_reqs(),
   classifiers=(
