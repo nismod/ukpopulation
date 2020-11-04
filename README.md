@@ -493,14 +493,29 @@ import ukpopulation.snhpdata as SNHPData
 help(SNHPData)
 ```
 
-# Contributions
+## Contributions
 
 Contributions to this package are welcomed via the usual pull request mechanism.
 
-# Support
+## Support
 
-If you encounter a bug, feel the documentation is incorrect or incomplete, or want to suggest new features, please post an issue in the [issues](https://github.com/nismod/ukpopulation/issues) tab. 
+If you encounter a bug, feel the documentation is incorrect or incomplete, or want to suggest new features, please post an issue in the [issues](https://github.com/nismod/ukpopulation/issues) tab.
 
-# Acknowledgements
+## Citing
+
+Please acknowledge this software if you use it in your work:
+
+```bibtex
+@software{neworder,
+   doi = { 10.5281/zenodo.4244147 },
+   author = { Andrew P Smith, Tom Russell },
+   year = { 2020 },
+   version = { 1.2.2 },
+   url = { https://github.com/nismod/ukpopulation },
+   title = { ukpopulation: UK Demographic Projections }
+}
+```
+
+## Acknowledgements
 
 This package was developed as a component of the EPSRC-funded [MISTRAL](https://www.itrc.org.uk/) programme, part of the Infrastructure Transitions Research Consortium.
