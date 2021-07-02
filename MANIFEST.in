@@ -1,4 +1,4 @@
 include requirements.txt
-include LICENCE
+include LICENCE.md
 include README.md
 include doc/*
