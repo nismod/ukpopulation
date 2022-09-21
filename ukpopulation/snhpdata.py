@@ -176,7 +176,8 @@ class SNHPData:
         if os.path.isfile(scotland_processed):
             snhp_s = pd.read_csv(scotland_processed)
         else:
-            response = requests.get(scotland_src)
+            headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:105.0) Gecko/20100101 Firefox/105.0'}
+            response = requests.get(scotland_src, headers=headers)
             with open(scotland_raw, 'wb') as fd:
                 for chunk in response.iter_content(chunk_size=1024):
                     fd.write(chunk)
